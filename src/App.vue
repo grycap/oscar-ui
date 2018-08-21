@@ -1,59 +1,84 @@
 <template>
-  <v-app>
-    <v-navigation-drawer persistent :mini-variant="miniVariant" :clipped="clipped" v-model="drawer" enable-resize-watcher fixed app>
-      <v-list>
-        <v-list-tile value="true" v-for="(item, i) in items" :key="i">
-          <v-list-tile-action>
-            <v-icon v-html="item.icon"></v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title v-text="item.title"></v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
-    </v-navigation-drawer>
-    <v-toolbar app :clipped-left="clipped">
-      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-btn icon @click.stop="miniVariant = !miniVariant">
-        <v-icon v-html="miniVariant ? 'chevron_right' : 'chevron_left'"></v-icon>
+  <div id="appRoot">
+    <template v-if="!$route.meta.public">
+      <v-app id="inspire" class="app">
+        <app-drawer class="app--drawer"></app-drawer>
+        <app-toolbar class="app--toolbar"></app-toolbar>
+        <v-content>
+          <v-breadcrumbs fixed>
+            <v-icon slot="divider">chevron_right</v-icon>
+            <v-breadcrumbs-item
+              v-for="item in breadcrumbList"
+              :disabled="item.disabled"
+              :key="item.name"
+              :to="item.link"
+            >
+              {{ item.name }}
+            </v-breadcrumbs-item>
+          </v-breadcrumbs>
+          <router-view/>
+        </v-content>
+        <!--v-footer app>
+          <v-flex primary lighten-3 py-1 text-xs-center white--text xs12>
+            &copy;2018 - <strong>OSCAR</strong>
+          </v-flex>
+        </v-footer-->
+      </v-app>
+    </template>
+    <template v-else>
+      <transition>
+        <keep-alive>
+          <router-view></router-view>
+        </keep-alive>
+      </transition>
+    </template>
+    <v-snackbar :timeout="3000" bottom right :color="snackbar.color" v-model="snackbar.show">
+      {{ snackbar.text }}
+      <v-btn dark flat @click.native="snackbar.show = false" icon>
+        <v-icon>close</v-icon>
       </v-btn>
-      <v-btn icon @click.stop="clipped = !clipped">
-        <v-icon>web</v-icon>
-      </v-btn>
-      <v-btn icon @click.stop="fixed = !fixed">
-        <v-icon>remove</v-icon>
-      </v-btn>
-      <v-toolbar-title v-text="title"></v-toolbar-title>
-      <v-spacer></v-spacer>
-    </v-toolbar>
-    <v-content>
-      <router-view/>
-    </v-content>
-    <v-footer :fixed="fixed" app>
-      <v-flex primary lighten-3 py-1 text-xs-center white--text xs12>
-        &copy;2018 - <strong>OSCAR</strong>
-      </v-flex>
-    </v-footer>
-  </v-app>
+    </v-snackbar>
+  </div>
 </template>
 
 <script>
-
+import AppDrawer from '@/components/AppDrawer'
+import AppToolbar from '@/components/AppToolbar'
+import AppEvents from './event'
 export default {
   name: 'App',
-  data () {
-    return {
-      clipped: false,
-      drawer: true,
-      fixed: false,
-      items: [{
-        icon: 'bubble_chart',
-        title: 'Inspire'
-      }],
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: 'OSCAR'
+  components: {
+    AppDrawer,
+    AppToolbar
+  },
+  data: () => ({
+    expanded: true,
+    rightDrawer: false,
+    snackbar: {
+      show: false,
+      text: '',
+      color: ''
+    },
+    breadcrumbList: {}
+  }),
+
+  computed: {},
+
+  created () {
+    AppEvents.forEach(item => {
+      this.$on(item.name, item.callback)
+    })
+    window.getApp = this
+  },
+  methods: {
+    openThemeSettings () {
+      this.$vuetify.goTo(0)
+      this.rightDrawer = (!this.rightDrawer)
+    }
+  },
+  watch: {
+    '$route' () {
+      this.breadcrumbList = this.$route.meta.breadcrumb
     }
   }
 }

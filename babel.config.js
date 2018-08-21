@@ -1,14 +1,14 @@
 module.exports = {
-  "presets": [
-    "@vue/app"
+  'presets': [
+    '@vue/app'
   ],
-  "plugins": [
+  'plugins': [
     [
-      "transform-imports",
+      'transform-imports',
       {
-        "vuetify": {
-          "transform": "vuetify/es5/components/${member}",
-          "preventFullImport": true
+        'vuetify': {
+          'transform': 'vuetify/es5/components/${member}',
+          'preventFullImport': true
         }
       }
     ]

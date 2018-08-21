@@ -10,8 +10,11 @@
     "test:e2e": "vue-cli-service test:e2e"
   },
   "dependencies": {
+    "axios": "^0.18.0",
+    "nprogress": "^0.2.0",
     "register-service-worker": "^1.0.0",
     "vue": "^2.5.17",
+    "vue-perfect-scrollbar": "^0.1.0",
     "vue-router": "^3.0.1",
     "vuetify": "^1.0.19"
   },
