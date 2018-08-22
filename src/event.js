@@ -56,6 +56,12 @@ export default [
     callback: function (msg) {
       this.$message.success(msg)
     }
+  },
+  {
+    name: 'APP_SHOW_SNACKBAR',
+    callback: function (data) {
+      console.log(data)
+    }
   }
 
 ]

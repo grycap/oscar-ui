@@ -1,13 +1,8 @@
 <template>
-  <div id="media" class="media">
+  <div id="functions">
     <v-toolbar flat color="white">
       <v-spacer></v-spacer>
-      <v-dialog v-model="dialog" max-width="500px">
-        <v-btn slot="activator" color="teal" dark class="mb-2">
-          <v-icon left>add_box</v-icon>
-          Deploy new function
-        </v-btn>
-      </v-dialog>
+      <FunctionForm></FunctionForm>
     </v-toolbar>
     <template>
       <v-data-table
@@ -26,7 +21,7 @@
           <td class="text-xs-center">{{ props.item.replicas }}</td>
           <td class="text-xs-center">{{ props.item.invocationCount }}</td>
           <td class="justify-center layout px-0">
-            <v-icon small @click="deleteItem(props.item)">delete</v-icon>
+            <v-icon small @click="deleteFunction(props.item)">delete</v-icon>
           </td>
         </template>
         <template slot="no-data">
@@ -41,9 +36,11 @@
 <script>
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import axios from 'axios'
+import FunctionForm from '@/components/forms/FunctionForm'
 
 export default {
   components: {
+    FunctionForm,
     VuePerfectScrollbar
   },
   data: () => ({
@@ -69,9 +66,28 @@ export default {
       this.selectedFunction = func
     },
 
-    deleteItem (item) {
-      const index = this.functions.indexOf(item)
-      confirm('Are you sure you want to delete this item?') && this.functions.splice(index, 1)
+    deleteFunction (func) {
+      const index = this.functions.indexOf(func)
+      if (confirm('Are you sure you want to delete this function?')) {
+        axios.delete('/system/functions', {
+          data: {
+            functionName: func.name
+          }
+        })
+          .then((response) => {
+            // handle success
+            this.functions.splice(index, 1)
+            window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${func.name} was deleted`, color: 'success' })
+          })
+          .catch((error) => {
+            // handle error
+            console.log(error)
+          })
+          .then(function () {
+            // always executed
+            console.log(func.name)
+          })
+      }
     },
     close () {
       this.dialog = false
