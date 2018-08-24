@@ -59,9 +59,11 @@ export default [
   },
   {
     name: 'APP_SHOW_SNACKBAR',
-    callback: function (data) {
-      console.log(data)
-    }
+    callback: (data) => {}
+  },
+  {
+    name: 'FUNC_GET_FUNCTIONS_LIST',
+    callback: (data) => {}
   }
 
 ]

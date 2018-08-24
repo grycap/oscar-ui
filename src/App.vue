@@ -27,7 +27,7 @@
         </keep-alive>
       </transition>
     </template>
-    <v-snackbar @show-snackbar="onShowSnackbar" right bottom v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout">
+    <v-snackbar @show-snackbar="onShowSnackbar" center top v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout">
       {{ snackbar.text }}
       <v-btn dark flat @click="snackbar.show = false" icon>
         <v-icon>close</v-icon>
@@ -71,8 +71,6 @@ export default {
   },
   methods: {
     onShowSnackbar (data) {
-      console.log('Evento cazado')
-      console.log(data)
       this.snackbar.text = data.text
       this.snackbar.color = data.color
       this.snackbar.show = true
