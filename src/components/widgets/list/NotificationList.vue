@@ -30,11 +30,10 @@
 </template>
 
 <script>
-import notes from '@/api/notification'
 
 export default {
   data: () => ({
-    items: notes
+    items: []
   }),
   methods: {
     handleClick: (e) => {

@@ -12,8 +12,8 @@
     </v-btn>
     <v-menu offset-y origin="center center" class="elelvation-1" :nudge-bottom="14" transition="scale-transition">
       <v-btn icon flat slot="activator">
-        <v-badge color="red" overlap>
-          <span slot="badge">3</span>
+        <v-badge color="pink" overlap v-model="notificationShow">
+          <span slot="badge"> {{ notificationCounter }}</span>
           <v-icon medium>notifications</v-icon>
         </v-badge>
       </v-btn>
@@ -74,9 +74,14 @@ export default {
           window.getApp.$emit('APP_LOGOUT')
         }
       }
-    ]
+    ],
+    notificationCounter: 3
   }),
-  computed: {},
+  computed: {
+    notificationShow () {
+      return (this.notificationCounter > 0)
+    }
+  },
   methods: {
     handleDrawerToggle () {
       window.getApp.$emit('APP_DRAWER_TOGGLED')
