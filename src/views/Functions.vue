@@ -1,50 +1,54 @@
 <template>
-    <v-card id="functions">
-      <v-card-title>
-        <v-text-field
-          v-model="search"
-          append-icon="search"
-          label="Search"
-          single-line
-          hide-details
-        ></v-text-field>
-        <v-spacer></v-spacer>
-        <FunctionForm></FunctionForm>
-      </v-card-title>
-      <v-data-table
-        :headers="headers"
-        :items="functions"
-        :loading="loading"
-        class="elevation-1"
-        item-key="name"
-        :search="search"
-      >
-        <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
-        <template slot="items" slot-scope="props">
-          <tr>
-            <td class="justify-center layout px-0">
-              <v-icon medium class="mr-2">{{props.item.ready ? 'check_circle_outline' : 'highlight_off'}}</v-icon>
-            </td>
-            <td class="text-xs-left">{{ props.item.name }}</td>
-            <td class="text-xs-center">{{ props.item.availableReplicas }}</td>
-            <td class="text-xs-center">{{ props.item.replicas }}</td>
-            <td class="text-xs-center">{{ props.item.invocationCount }}</td>
-            <td class="justify-center layout px-0">
-              <v-icon small class="mr-2" @click="editFunction(props.item)">edit</v-icon>
-              <v-icon small @click="deleteFunction(props.item)">delete</v-icon>
-            </td>
-          </tr>
-        </template>
-        <template slot="no-data">
-          <v-alert :value="true" color="error" icon="warning">
-            Sorry, there are no functions to display here :(
+  <v-layout>
+    <v-flex xs12>
+      <v-card id="functions">
+        <v-card-title>
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="Search"
+            single-line
+            hide-details
+          ></v-text-field>
+          <v-spacer></v-spacer>
+          <FunctionForm></FunctionForm>
+        </v-card-title>
+        <v-data-table
+          :headers="headers"
+          :items="functions"
+          :loading="loading"
+          class="elevation-1"
+          item-key="name"
+          :search="search"
+        >
+          <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
+          <template slot="items" slot-scope="props">
+            <tr>
+              <td class="justify-center layout px-0">
+                <v-icon medium class="mr-2">{{props.item.ready ? 'check_circle_outline' : 'highlight_off'}}</v-icon>
+              </td>
+              <td class="text-xs-left">{{ props.item.name }}</td>
+              <td class="text-xs-center">{{ props.item.availableReplicas }}</td>
+              <td class="text-xs-center">{{ props.item.replicas }}</td>
+              <td class="text-xs-center">{{ props.item.invocationCount }}</td>
+              <td class="justify-center layout px-0">
+                <v-icon small class="mr-2" @click="editFunction(props.item)">edit</v-icon>
+                <v-icon small @click="deleteFunction(props.item)">delete</v-icon>
+              </td>
+            </tr>
+          </template>
+          <template slot="no-data">
+            <v-alert :value="true" color="error" icon="warning">
+              Sorry, there are no functions to display here :(
+            </v-alert>
+          </template>
+          <v-alert slot="no-results" :value="true" color="error" icon="warning">
+            Your search for "{{ search }}" found no results.
           </v-alert>
-        </template>
-        <v-alert slot="no-results" :value="true" color="error" icon="warning">
-          Your search for "{{ search }}" found no results.
-        </v-alert>
-      </v-data-table>
-    </v-card>
+        </v-data-table>
+      </v-card>
+    </v-flex>
+  </v-layout>
 </template>
 <script>
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
