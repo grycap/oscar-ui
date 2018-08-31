@@ -11,37 +11,20 @@
       <v-list dense expand>
         <template v-for="(item, i) in menus">
           <!--group with subitems-->
-          <v-list-group v-if="item.items" :key="item.name" :group="item.group" :prepend-icon="item.icon"
-                        no-action="no-action">
+          <v-list-group v-if="item.items" :key="item.name" :group="item.group"
+                        :prepend-icon="item.icon" no-action>
+            <!-- group header -->
             <v-list-tile slot="activator" ripple>
               <v-list-tile-content>
                 <v-list-tile-title>{{ item.title }}</v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
+            <!--child item-->
             <template v-for="(subItem, i) in item.items">
-              <!--sub group-->
-              <v-list-group v-if="subItem.items" :key="subItem.name" :group="subItem.group" sub-group="sub-group">
-                <v-list-tile slot="activator" ripple="ripple">
-                  <v-list-tile-content>
-                    <v-list-tile-title>{{ subItem.title }}</v-list-tile-title>
-                  </v-list-tile-content>
-                </v-list-tile>
-                <v-list-tile v-for="(grand, i) in subItem.children" :key="i" :to="genChildTarget(item, grand)"
-                             :href="grand.href" ripple="ripple">
-                  <v-list-tile-content>
-                    <v-list-tile-title>{{ grand.title }}</v-list-tile-title>
-                  </v-list-tile-content>
-                </v-list-tile>
-              </v-list-group>
-              <!--child item-->
-              <v-list-tile v-else :key="i" :to="genChildTarget(item, subItem)" :href="subItem.href"
-                           :disabled="subItem.disabled" :target="subItem.target" ripple="ripple">
-                <v-list-tile-content>
-                  <v-list-tile-title><span>{{ subItem.title }}</span></v-list-tile-title>
-                </v-list-tile-content>
-                <!-- <v-circle class="white--text pa-0 circle-pill" v-if="subItem.badge" color="red" disabled="disabled">{{ subItem.badge }}</v-circle> -->
-                <v-list-tile-action v-if="subItem.action">
-                  <v-icon :class="[subItem.actionClass || 'success--text']">{{ subItem.action }}</v-icon>
+              <v-list-tile :key="i" :to="genChildTarget(item, subItem)" :href="subItem.href"
+                           :disabled="subItem.disabled" :target="subItem.target" ripple>
+                <v-list-tile-action>
+                  <span>{{ subItem.title }}</span>
                 </v-list-tile-action>
               </v-list-tile>
             </template>
@@ -57,11 +40,6 @@
             <v-list-tile-content>
               <v-list-tile-title>{{ item.title }}</v-list-tile-title>
             </v-list-tile-content>
-            <!-- <v-circle class="white--text pa-0 chip--x-small" v-if="item.badge" :color="item.color || 'primary'" disabled="disabled">{{ item.badge }}</v-circle> -->
-            <v-list-tile-action v-if="item.subAction">
-              <v-icon class="success--text">{{ item.subAction }}</v-icon>
-            </v-list-tile-action>
-            <!-- <v-circle class="caption blue lighten-2 white--text mx-0" v-else-if="item.chip" label="label" small="small">{{ item.chip }}</v-circle> -->
           </v-list-tile>
         </template>
       </v-list>
@@ -71,8 +49,7 @@
 <script>
 import menu from '@/api/menu'
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
-import axios from 'axios'
-
+import {Client} from 'minio'
 export default {
   name: 'app-drawer',
   components: {
@@ -92,7 +69,7 @@ export default {
     scrollSettings: {
       maxScrollbarLength: 160
     },
-    functions: []
+    buckets: []
   }),
   computed: {
     computeLogo () {
@@ -108,30 +85,28 @@ export default {
     })
   },
   mounted: function () {
-    axios.get('/system/functions')
-      .then((response) => {
-        // handle success
-        const functions = response.data.map((func) => {
-          return {
-            title: func.name
-          }
-        })
-        this.functions = functions
-        menu.find((obj) => {
-          if (obj.title === 'Functions') {
-            obj.items = functions
-          }
-        })
+    const minioClient = new Client({
+      endPoint: '192.168.99.100',
+      port: 30001,
+      useSSL: false,
+      accessKey: 'minio',
+      secretKey: 'minio123'
+    })
+    minioClient.listBuckets((err, gettedBuckets) => {
+      if (err) return window.getApp.$emit('APP_SHOW_SNACKBAR', { text: err.message, color: 'error' })
+      this.buckets = gettedBuckets.map((bucket) => {
+        return {
+          title: bucket.name,
+          to: `/buckets/${bucket.name}`
+        }
       })
-      .catch((error) => {
-        // handle error
-        console.log(error)
+      menu.find((obj) => {
+        if (obj.title === 'Storage') {
+          obj.items = this.buckets
+        }
       })
-      .then(function () {
-        // always executed
-      })
+    })
   },
-
   methods: {
     genChildTarget (item, subItem) {
       if (subItem.href) return
@@ -140,7 +115,10 @@ export default {
           name: subItem.component
         }
       }
-      return {name: `${item.group}/${(subItem.name)}`}
+      if (subItem.to) {
+        return subItem.to
+      }
+      return {name: subItem.name}
     }
   }
 }

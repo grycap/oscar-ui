@@ -1,5 +1,5 @@
 <template>
-  <v-layout>
+  <v-layout row wrap>
     <v-flex xs12>
       <v-card id="functions">
         <v-card-title>

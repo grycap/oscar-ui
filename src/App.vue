@@ -5,19 +5,10 @@
         <app-drawer class="app--drawer"></app-drawer>
         <app-toolbar class="app--toolbar"></app-toolbar>
         <v-content>
-          <!--v-breadcrumbs>
-            <v-icon slot="divider">chevron_right</v-icon>
-            <v-breadcrumbs-item v-for="item in breadcrumbList" :disabled="item.disabled" :key="item.name" :to="item.link">
-              {{ item.name }}
-            </v-breadcrumbs-item>
-          </v-breadcrumbs-->
-          <router-view/>
+          <v-container fluid wrap grid-list-md align-start justify-space-between>
+            <router-view/>
+          </v-container>
         </v-content>
-        <!--v-footer app>
-          <v-flex primary lighten-3 py-1 text-xs-center white--text xs12>
-            &copy;2018 - <strong>OSCAR</strong>
-          </v-flex>
-        </v-footer-->
       </v-app>
     </template>
     <template v-else>
@@ -27,7 +18,7 @@
         </keep-alive>
       </transition>
     </template>
-    <v-snackbar @show-snackbar="onShowSnackbar" center top v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout">
+    <v-snackbar @show-snackbar="onShowSnackbar" center top v-model="snackbar.showBucketContent" :color="snackbar.color" :timeout="snackbar.timeout">
       {{ snackbar.text }}
       <v-btn dark flat @click="snackbar.show = false" icon>
         <v-icon>close</v-icon>
@@ -51,7 +42,7 @@ export default {
     expanded: true,
     rightDrawer: false,
     snackbar: {
-      show: false,
+      showBucketContent: false,
       text: '',
       color: '', // ['success', 'info', 'error', 'cyan darken-2']
       timeout: 5000
@@ -73,7 +64,7 @@ export default {
     onShowSnackbar (data) {
       this.snackbar.text = data.text
       this.snackbar.color = data.color
-      this.snackbar.show = true
+      this.snackbar.showBucketContent = true
     }
   },
   watch: {

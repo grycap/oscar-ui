@@ -68,10 +68,7 @@ export default [
   {
     path: '/dashboard',
     meta: {
-      public: false,
-      breadcrumb: [
-        {name: 'Dashboard', link: 'Dashboard', disabled: true}
-      ]
+      public: false
     },
     name: 'Dashboard',
     component: () => import(
@@ -83,10 +80,7 @@ export default [
   {
     path: '/functions',
     meta: {
-      public: false,
-      breadcrumb: [
-        {name: 'Functions', link: 'Functions', disabled: true}
-      ]
+      public: false
     },
     name: 'Functions',
     component: () => import(
@@ -96,18 +90,16 @@ export default [
     )
   },
   {
-    path: '/storage',
+    path: '/buckets/:bucketName',
     meta: {
-      public: false,
-      breadcrumb: [
-        {name: 'Storage', link: 'Storage', disabled: true}
-      ]
+      public: false
     },
-    name: 'Storage',
+    name: 'BucketContent',
     component: () => import(
       /* webpackChunkName: "routes" */
       /* webpackMode: "lazy" */
-      `@/views/Storage.vue`
-    )
+      `@/views/BucketContent.vue`
+    ),
+    props: true
   }
 ]

@@ -9,7 +9,7 @@ export default [
     name: 'APP_LOGOUT',
     callback: function (e) {
       this.snackbar = {
-        show: true,
+        showBucketContent: true,
         color: 'green',
         text: 'Logout successfully.'
       }

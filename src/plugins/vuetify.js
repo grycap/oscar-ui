@@ -8,8 +8,10 @@ import {
   VBreadcrumbs,
   VBtn,
   VBtnToggle,
+  VBottomNav,
   VCard,
   VCheckbox,
+  VChip,
   VDataTable,
   VDivider,
   VDialog,
@@ -26,6 +28,7 @@ import {
   VSubheader,
   VTextField,
   VToolbar,
+  VTooltip,
   transitions
 } from 'vuetify'
 import 'vuetify/src/stylus/app.styl'
@@ -39,8 +42,10 @@ Vue.use(Vuetify, {
     VBreadcrumbs,
     VBtn,
     VBtnToggle,
+    VBottomNav,
     VCard,
     VCheckbox,
+    VChip,
     VDataTable,
     VDialog,
     VDivider,
@@ -57,6 +62,7 @@ Vue.use(Vuetify, {
     VSubheader,
     VTextField,
     VToolbar,
+    VTooltip,
     transitions
   }
 })

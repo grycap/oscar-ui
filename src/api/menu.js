@@ -10,15 +10,16 @@ const Menu = [
     title: 'Storage',
     group: 'apps',
     icon: 'cloud',
-    name: 'Storage'
+    name: 'Storage',
+    items: [
+      // { name: 'post', title: 'Post', component: 'components/widget-post' },
+    ]
   },
   {
     title: 'Functions',
     group: 'functions',
     icon: 'functions',
-    items: [
-      // { name: 'post', title: 'Post', component: 'components/widget-post' },
-    ]
+    name: 'Functions'
   }
 ]
 // reorder menu
