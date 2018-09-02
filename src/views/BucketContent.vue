@@ -3,26 +3,20 @@
       <v-flex xs12>
         <v-card>
           <v-card-title primary-title>
-            <span class="headline">Bucket <b>{{bucketName}}</b>: </span>
-            <v-spacer></v-spacer>
-            <v-text-field
-              v-model="search"
-              append-icon="search"
-              label="Search"
-              single-line
-              hide-details
-            ></v-text-field>
-            <v-btn
-              :loading="uploadingFile.loading"
-              :disabled="uploadingFile.loading"
-              color="teal"
-              class="white--text"
-              @click.native="uploadFile"
-            >
-              Upload
-              <v-icon right dark>cloud_upload</v-icon>
-            </v-btn>
+            <v-flex xs4>
+              <span class="headline">Bucket <b>{{bucketName}}</b>: </span>
+            </v-flex>
+            <v-flex xs8 row>
+              <v-text-field
+                v-model="search"
+                append-icon="search"
+                label="Search"
+                single-line
+                hide-details
+              ></v-text-field>
+            </v-flex>
           </v-card-title>
+          <input-file :bucketName="bucketName"></input-file>
         </v-card>
       </v-flex>
       <v-flex row xs12>
@@ -157,6 +151,7 @@
             dark
             small
             color="green"
+            @click="menu = true"
           >
             <v-icon>add</v-icon>
           </v-btn>
@@ -165,16 +160,38 @@
             dark
             small
             color="red"
+            @click="removeBucket(bucketName)"
           >
             <v-icon>delete</v-icon>
           </v-btn>
         </v-speed-dial>
       </v-layout>
+      <v-container xs12 grid-list-xl id="createMenu">
+      <v-layout row justify-space-between>
+        <v-flex xs3 offset-xs8>
+          <v-card v-show="menu">
+            <v-flex xs12>
+              <v-text-field
+                label="Bucket name"
+                v-model="newBucketName"
+              ></v-text-field>
+            </v-flex>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="error" flat @click="menu = false">Cancel</v-btn>
+              <v-btn color="success" flat @click="createBucket(newBucketName)">Save</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-flex>
+      </v-layout>
+      </v-container>
     </v-layout>
 </template>
 <script>
 import { Client } from 'minio'
+import InputFile from '@/components/widgets/InputFile'
 export default {
+  components: {InputFile},
   props: ['bucketName'],
   data: function () {
     return {
@@ -206,7 +223,9 @@ export default {
       dialog: {
         visible: false,
         deleting: false
-      }
+      },
+      menu: false,
+      newBucketName: ''
     }
   },
   created: function () {
@@ -216,6 +235,12 @@ export default {
       useSSL: false,
       accessKey: 'minio',
       secretKey: 'minio123'
+    })
+    /**
+     *  Add the new file uploaded to list
+     */
+    window.getApp.$on('FILE_UPLOADED', (file) => {
+      this.addFileToList(file)
     })
   },
   mounted: function () {
@@ -242,6 +267,13 @@ export default {
     $route: 'fetchData'
   },
   methods: {
+    /**
+     * Add file received from inputFile component
+     * @param file
+     */
+    addFileToList (file) {
+      this.files.push(file)
+    },
     toggleAll () {
       if (this.selected.length) this.selected = []
       else this.selected = this.files.slice()
@@ -345,8 +377,56 @@ export default {
         })
       })
     },
-    uploadFile () {
-      this.uploadingFile.loading = true
+    createBucket (name) {
+      this.minioCreateBucket(name).then(() => {
+        window.getApp.$emit('APP_SHOW_SNACKBAR', {
+          text: `Bucket ${name} has been successfully created`,
+          color: 'success'
+        })
+        window.getApp.$emit('REFRESH_BUCKETS_LIST')
+      }).catch((err) => {
+        window.getApp.$emit('APP_SHOW_SNACKBAR', {
+          text: err.message,
+          color: 'error'
+        })
+      }).finally(() => {
+        this.menu = false
+        this.newBucketName = ''
+      })
+    },
+    minioCreateBucket (name) {
+      return new Promise((resolve, reject) => {
+        this.minioClient.makeBucket(name, function (err) {
+          if (err) {
+            reject(err)
+          }
+          resolve(true)
+        })
+      })
+    },
+    removeBucket (name) {
+      this.minioRemoveBucket(name).then(() => {
+        window.getApp.$emit('APP_SHOW_SNACKBAR', {
+          text: `Bucket ${name} has been successfully created`,
+          color: 'success'
+        })
+        window.getApp.$emit('REFRESH_BUCKETS_LIST')
+      }).catch((err) => {
+        window.getApp.$emit('APP_SHOW_SNACKBAR', {
+          text: err.message,
+          color: 'error'
+        })
+      })
+    },
+    minioRemoveBucket (name) {
+      return new Promise((resolve, reject) => {
+        this.minioClient.removeBucket(name, function (err) {
+          if (err) {
+            reject(err)
+          }
+          resolve(true)
+        })
+      })
     }
   },
   computed: {

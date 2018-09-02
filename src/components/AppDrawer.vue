@@ -83,29 +83,12 @@ export default {
     window.getApp.$on('APP_DRAWER_MINI', () => {
       this.mini = (!this.mini)
     })
+    window.getApp.$on('REFRESH_BUCKETS_LIST', () => {
+      this.getBucketsList()
+    })
   },
   mounted: function () {
-    const minioClient = new Client({
-      endPoint: '192.168.99.100',
-      port: 30001,
-      useSSL: false,
-      accessKey: 'minio',
-      secretKey: 'minio123'
-    })
-    minioClient.listBuckets((err, gettedBuckets) => {
-      if (err) return window.getApp.$emit('APP_SHOW_SNACKBAR', { text: err.message, color: 'error' })
-      this.buckets = gettedBuckets.map((bucket) => {
-        return {
-          title: bucket.name,
-          to: `/buckets/${bucket.name}`
-        }
-      })
-      menu.find((obj) => {
-        if (obj.title === 'Storage') {
-          obj.items = this.buckets
-        }
-      })
-    })
+    this.getBucketsList()
   },
   methods: {
     genChildTarget (item, subItem) {
@@ -119,6 +102,29 @@ export default {
         return subItem.to
       }
       return {name: subItem.name}
+    },
+    getBucketsList () {
+      const minioClient = new Client({
+        endPoint: '192.168.99.100',
+        port: 30001,
+        useSSL: false,
+        accessKey: 'minio',
+        secretKey: 'minio123'
+      })
+      minioClient.listBuckets((err, obtainedBuckets) => {
+        if (err) return window.getApp.$emit('APP_SHOW_SNACKBAR', { text: err.message, color: 'error' })
+        this.buckets = obtainedBuckets.map((bucket) => {
+          return {
+            title: bucket.name,
+            to: `/buckets/${bucket.name}`
+          }
+        })
+        menu.find((obj) => {
+          if (obj.title === 'Storage') {
+            obj.items = this.buckets
+          }
+        })
+      })
     }
   }
 }

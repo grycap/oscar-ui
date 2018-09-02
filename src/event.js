@@ -64,6 +64,14 @@ export default [
   {
     name: 'FUNC_GET_FUNCTIONS_LIST',
     callback: (data) => {}
+  },
+  {
+    name: 'FILE_UPLOADED',
+    callback: (data) => {}
+  },
+  {
+    name: 'REFRESH_BUCKETS_LIST',
+    callback: (data) => {}
   }
 
 ]
