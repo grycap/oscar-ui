@@ -11,7 +11,7 @@
             hide-details
           ></v-text-field>
           <v-spacer></v-spacer>
-          <FunctionForm></FunctionForm>
+          <FunctionForm :openFaaS="openFaaS"></FunctionForm>
         </v-card-title>
         <v-data-table
           :headers="headers"
@@ -60,6 +60,9 @@ export default {
     FunctionForm,
     VuePerfectScrollbar
   },
+  props: {
+    openFaaS: {}
+  },
   data: () => ({
     size: 'lg',
     view: 'grid',
@@ -91,7 +94,7 @@ export default {
     deleteFunction (func) {
       const index = this.functions.indexOf(func)
       if (confirm('Are you sure you want to delete this function?')) {
-        axios.delete('/system/functions', {
+        axios.delete(this.openFaaS.endpoint, {
           data: {
             functionName: func.name
           }
@@ -111,7 +114,7 @@ export default {
       }
     },
     loadFunctions () {
-      axios.get('/system/functions')
+      axios.get(this.openFaaS.endpoint)
         .then((response) => {
           // handle success
           this.functions = response.data.map((func) => {
@@ -129,10 +132,7 @@ export default {
         })
         .catch((error) => {
           // handle error
-          console.log(error)
-        })
-        .then(function () {
-          // always executed
+          window.getApp.$emit('APP_SHOW_SNACKBAR', { text: error.response.data, color: 'error' })
         })
     }
   },

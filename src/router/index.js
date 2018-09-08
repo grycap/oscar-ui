@@ -1,8 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import paths from './paths'
-import NProgress from 'nprogress'
-import 'nprogress/nprogress.css'
 
 Vue.use(Router)
 
@@ -14,13 +12,16 @@ const router = new Router({
 })
 // router gards
 router.beforeEach((to, from, next) => {
-  NProgress.start()
-  next()
+  if (to.meta.public) {
+    next()
+  } else {
+    // next('/login')
+    next()
+  }
 })
 
 router.afterEach((to, from) => {
   // ...
-  NProgress.done()
 })
 
 export default router

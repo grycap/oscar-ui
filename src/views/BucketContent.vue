@@ -188,14 +188,18 @@
     </v-layout>
 </template>
 <script>
-import { Client } from 'minio'
 import InputFile from '@/components/widgets/InputFile'
 export default {
   components: {InputFile},
-  props: ['bucketName'],
+  props: {
+    bucketName: {
+      type: String,
+      default: ''
+    },
+    minioClient: {}
+  },
   data: function () {
     return {
-      minioClient: '',
       showBucketContent: false,
       search: '',
       pagination: {
@@ -229,13 +233,6 @@ export default {
     }
   },
   created: function () {
-    this.minioClient = new Client({
-      endPoint: '192.168.99.100',
-      port: 30001,
-      useSSL: false,
-      accessKey: 'minio',
-      secretKey: 'minio123'
-    })
     /**
      *  Add the new file uploaded to list
      */

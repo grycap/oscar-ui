@@ -59,7 +59,9 @@ export default [
   },
   {
     path: '/',
-    meta: {},
+    meta: {
+      public: false
+    },
     name: 'Root',
     redirect: {
       name: 'Dashboard'
@@ -88,6 +90,19 @@ export default [
       /* webpackMode: "lazy" */
       `@/views/Functions.vue`
     )
+  },
+  {
+    path: '/settings',
+    meta: {
+      public: false
+    },
+    name: 'Settings',
+    component: () => import(
+      /* webpackChunkName: "routes" */
+      /* webpackMode: "lazy" */
+      `@/views/Settings.vue`
+    ),
+    props: true
   },
   {
     path: '/buckets/:bucketName',

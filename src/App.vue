@@ -2,11 +2,11 @@
   <div id="app">
     <template v-if="!$route.meta.public">
       <v-app id="inspire" class="app">
-        <app-drawer class="app--drawer"></app-drawer>
+        <app-drawer :minioClient="minioClient" :minio="minio" :openFaaS="openFaaS" class="app--drawer"></app-drawer>
         <app-toolbar class="app--toolbar"></app-toolbar>
         <v-content>
           <v-container fluid wrap grid-list-md align-start justify-space-between>
-            <router-view/>
+            <router-view :minioClient="minioClient" :minio="minio" :openFaaS="openFaaS"/>
           </v-container>
         </v-content>
       </v-app>
@@ -31,6 +31,7 @@
 import AppDrawer from '@/components/AppDrawer'
 import AppToolbar from '@/components/AppToolbar'
 import AppEvents from './event'
+import {Client} from 'minio'
 export default {
   name: 'App',
   components: {
@@ -47,7 +48,20 @@ export default {
       color: '', // ['success', 'info', 'error', 'cyan darken-2']
       timeout: 5000
     },
-    breadcrumbList: {}
+    breadcrumbList: {},
+    minio: {
+      endpoint: '192.168.99.100',
+      port: 30001,
+      useSSL: false,
+      accessKey: 'minio',
+      secretKey: 'minio123',
+      showSecretKey: false
+    },
+    openFaaS: {
+      endpoint: '/system/functions',
+      port: null
+    },
+    minioClient: {}
   }),
   computed: {
   },
@@ -59,12 +73,30 @@ export default {
     window.getApp.$on('APP_SHOW_SNACKBAR', (data) => {
       this.onShowSnackbar(data)
     })
+    /**
+     * In the case that the minio access configuration is modified, the client instance must be recreated.
+     */
+    window.getApp.$on('MINIO_RECONNECT', () => {
+      this.createMinioClient()
+    })
+
+    this.createMinioClient()
   },
   methods: {
     onShowSnackbar (data) {
       this.snackbar.text = data.text
       this.snackbar.color = data.color
       this.snackbar.showBucketContent = true
+    },
+    createMinioClient () {
+      this.minioClient = null
+      this.minioClient = new Client({
+        endPoint: this.minio.endpoint,
+        port: this.minio.port,
+        useSSL: this.minio.useSSL,
+        accessKey: this.minio.accessKey,
+        secretKey: this.minio.secretKey
+      })
     }
   },
   watch: {

@@ -69,6 +69,9 @@
 import axios from 'axios'
 export default {
   name: 'FunctionForm',
+  props: {
+    openFaas: {}
+  },
   data () {
     return {
       dialog: false,
@@ -111,7 +114,7 @@ export default {
       this.editionMode = false
     },
     newFunction () {
-      axios.post('/system/functions', {
+      axios.post(this.openFaaS.endpoint, {
         service: this.form.name,
         network: this.form.network,
         image: this.form.image,
@@ -130,7 +133,7 @@ export default {
       })
     },
     editFunction () {
-      axios.put('/system/functions', {
+      axios.put(this.openFaaS.endpoint, {
         service: this.form.name,
         network: this.form.network,
         image: this.form.image,

@@ -72,6 +72,10 @@ export default [
   {
     name: 'REFRESH_BUCKETS_LIST',
     callback: (data) => {}
+  },
+  {
+    name: 'STORAGE_BUCKETS_COUNT',
+    callback: (data) => {}
   }
 
 ]

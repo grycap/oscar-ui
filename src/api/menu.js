@@ -17,9 +17,15 @@ const Menu = [
   },
   {
     title: 'Functions',
-    group: 'functions',
+    group: 'apps',
     icon: 'functions',
     name: 'Functions'
+  },
+  {
+    title: 'Settings',
+    group: 'apps',
+    icon: 'settings',
+    name: 'Settings'
   }
 ]
 // reorder menu

@@ -49,7 +49,6 @@
 <script>
 import menu from '@/api/menu'
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
-import {Client} from 'minio'
 export default {
   name: 'app-drawer',
   components: {
@@ -59,7 +58,10 @@ export default {
     expanded: {
       type: Boolean,
       default: true
-    }
+    },
+    minio: {},
+    openFaaS: {},
+    minioClient: {}
   },
   data: () => ({
     clipped: false,
@@ -89,6 +91,7 @@ export default {
   },
   mounted: function () {
     this.getBucketsList()
+    window.getApp.$emit('STORAGE_BUCKETS_COUNT', this.buckets.length)
   },
   methods: {
     genChildTarget (item, subItem) {
@@ -104,14 +107,7 @@ export default {
       return {name: subItem.name}
     },
     getBucketsList () {
-      const minioClient = new Client({
-        endPoint: '192.168.99.100',
-        port: 30001,
-        useSSL: false,
-        accessKey: 'minio',
-        secretKey: 'minio123'
-      })
-      minioClient.listBuckets((err, obtainedBuckets) => {
+      this.minioClient.listBuckets((err, obtainedBuckets) => {
         if (err) return window.getApp.$emit('APP_SHOW_SNACKBAR', { text: err.message, color: 'error' })
         this.buckets = obtainedBuckets.map((bucket) => {
           return {
