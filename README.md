@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # oscar-ui
 
 ## Project setup
@@ -29,3 +30,6 @@ npm run test:unit
 ```
 npm run test:e2e
 ```
+=======
+# oscar-ui
+>>>>>>> refs/remotes/origin/master
