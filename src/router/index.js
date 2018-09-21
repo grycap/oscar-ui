@@ -6,7 +6,7 @@ Vue.use(Router)
 
 const router = new Router({
   base: '/',
-  mode: 'history',
+  // mode: 'history',
   linkActiveClass: 'active',
   routes: paths
 })
