@@ -94,7 +94,8 @@ export default {
     deleteFunction (func) {
       const index = this.functions.indexOf(func)
       if (confirm('Are you sure you want to delete this function?')) {
-        axios.delete(this.openFaaS.endpoint, {
+        var params = {'url': this.openFaaS.endpoint}
+        axios({method: 'delete', url: 'http://localhost:3000', data: params}, {
           data: {
             functionName: func.name
           }
@@ -114,7 +115,8 @@ export default {
       }
     },
     loadFunctions () {
-      axios.get(this.openFaaS.endpoint)
+      var params = {'url': this.openFaaS.endpoint}
+      axios({method: 'post', url: 'http://localhost:3000', data: params})
         .then((response) => {
           // handle success
           this.functions = response.data.map((func) => {

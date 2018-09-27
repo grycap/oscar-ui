@@ -114,7 +114,12 @@ export default {
       this.editionMode = false
     },
     newFunction () {
-      axios.post(this.openFaaS.endpoint, {
+      var params =  {'url': this.openFaaS.endpoint};
+      axios({
+               method: 'post',
+               url: 'http://localhost:3000',
+               data: params,
+           }, {
         service: this.form.name,
         network: this.form.network,
         image: this.form.image,
@@ -133,7 +138,12 @@ export default {
       })
     },
     editFunction () {
-      axios.put(this.openFaaS.endpoint, {
+      var params =  {'url': this.openFaaS.endpoint};
+      axios({
+               method: 'put',
+               url: 'http://localhost:3000',
+               data: params,
+           }, {
         service: this.form.name,
         network: this.form.network,
         image: this.form.image,
