@@ -70,7 +70,7 @@ import axios from 'axios'
 export default {
   name: 'FunctionForm',
   props: {
-    openFaas: {}
+    openFaaS: {}
   },
   data () {
     return {
@@ -114,52 +114,48 @@ export default {
       this.editionMode = false
     },
     newFunction () {
-      var params =  {'url': this.openFaaS.endpoint};
-      axios({
-               method: 'post',
-               url: 'http://localhost:3000',
-               data: params,
-           }, {
-        service: this.form.name,
-        network: this.form.network,
-        image: this.form.image,
-        envProcess: this.form.process
-      }).then((response) => {
-        // handle success
-        window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${this.form.name} has been deployed`, color: 'success' })
-        this.dialog = false
-        this.clear()
-        this.updateFunctionsGrid()
-      }).catch((error, data) => {
-        // handle error
-        window.getApp.$emit('APP_SHOW_SNACKBAR', { text: error.response.data, color: 'error' })
-      }).then(() => {
-        this.progress.active = false
-      })
+      var params = { 'type': "new", 'url': this.openFaaS.endpoint, 'service': this.form.name, 'network': this.form.network, 'image': this.form.image, 'envProcess': this.form.process }
+      axios({ method: 'post', url: 'http://localhost:3000', data: params })
+      // {
+      //   service: this.form.name,
+      //   network: this.form.network,
+      //   image: this.form.image,
+      //   envProcess: this.form.process
+      // })
+        .then((response) => {
+          // handle success
+          window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${this.form.name} has been deployed`, color: 'success' })
+          this.dialog = false
+          this.clear()
+          this.updateFunctionsGrid()
+        }).catch((error, data) => {
+          // handle error
+          window.getApp.$emit('APP_SHOW_SNACKBAR', { text: error.response.data, color: 'error' })
+        }).then(() => {
+          this.progress.active = false
+        })
     },
-    editFunction () {
-      var params =  {'url': this.openFaaS.endpoint};
-      axios({
-               method: 'put',
-               url: 'http://localhost:3000',
-               data: params,
-           }, {
-        service: this.form.name,
-        network: this.form.network,
-        image: this.form.image,
-        envProcess: this.form.process
-      }).then((response) => {
+    editFunction () {      
+      var params = { 'url': this.openFaaS.endpoint, 'service': this.form.name, 'network': this.form.network, 'image': this.form.image, 'envProcess': this.form.process }
+      axios({ method: 'put', url: 'http://localhost:3000', data: params })
+      // , {
+      //   service: this.form.name,
+      //   network: this.form.network,
+      //   image: this.form.image,
+      //   envProcess: this.form.process
+      // })
+        .then((response) => {
         // handle success
-        window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${this.form.name} has been updated`, color: 'success' })
-        this.dialog = false
-        this.clear()
-        this.updateFunctionsGrid()
-      }).catch((error, data) => {
-        // handle error
-        window.getApp.$emit('APP_SHOW_SNACKBAR', { text: error.response.data, color: 'error' })
-      }).then(() => {
-        this.progress.active = false
-      })
+          window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${this.form.name} has been updated`, color: 'success' })
+          this.dialog = false
+          this.clear()
+          this.updateFunctionsGrid()
+        }).catch((error, data) => {
+          // handle error
+          window.getApp.$emit('APP_SHOW_SNACKBAR', { text: error.response.data, color: 'error' })
+        }).then(() => {
+          this.progress.active = false
+        })
     },
     updateFunctionsGrid () {
       window.getApp.$emit('FUNC_GET_FUNCTIONS_LIST')

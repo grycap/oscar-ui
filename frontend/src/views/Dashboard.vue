@@ -68,8 +68,8 @@ export default {
   methods: {
     // TODO: Refactor these methods to obtain the values of events between components
     functionsCount () {
-      var params = {'url': this.openFaaS.endpoint}
-        axios({method: 'post', url: 'http://localhost:3000', data: params})
+      var params = { 'type':'load', 'url': this.openFaaS.endpoint }
+      axios({ method: 'post', url: 'http://localhost:3000', data: params })
         .then((response) => {
           // handle success
           this.functions.count = response.data.length

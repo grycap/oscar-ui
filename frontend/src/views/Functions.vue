@@ -69,12 +69,12 @@ export default {
     selectedFunction: '',
     functions: [],
     headers: [
-      {text: 'Ready', align: 'left', sortable: true, value: 'ready'},
-      {text: 'Name', align: 'left', sortable: true, value: 'name'},
-      {text: 'Available Replicas', value: 'availableReplicas'},
-      {text: 'Replicas', value: 'replicas'},
-      {text: 'Invocation Count', value: 'invocationCount'},
-      {text: 'Actions', value: 'actions'}
+      { text: 'Ready', align: 'left', sortable: true, value: 'ready' },
+      { text: 'Name', align: 'left', sortable: true, value: 'name' },
+      { text: 'Available Replicas', value: 'availableReplicas' },
+      { text: 'Replicas', value: 'replicas' },
+      { text: 'Invocation Count', value: 'invocationCount' },
+      { text: 'Actions', value: 'actions' }
     ],
     loading: true,
     search: ''
@@ -94,12 +94,8 @@ export default {
     deleteFunction (func) {
       const index = this.functions.indexOf(func)
       if (confirm('Are you sure you want to delete this function?')) {
-        var params = {'url': this.openFaaS.endpoint}
-        axios({method: 'delete', url: 'http://localhost:3000', data: params}, {
-          data: {
-            functionName: func.name
-          }
-        })
+        var parames = { 'url': this.openFaaS.endpoint, 'functionName': func.name }
+        axios({ method: 'delete', url: 'http://localhost:3000', data: parames })
           .then((response) => {
             // handle success
             this.functions.splice(index, 1)
@@ -115,8 +111,8 @@ export default {
       }
     },
     loadFunctions () {
-      var params = {'url': this.openFaaS.endpoint}
-      axios({method: 'post', url: 'http://localhost:3000', data: params})
+      var params = { 'type':'load', 'url': this.openFaaS.endpoint }
+      axios({ method: 'post', url: 'http://localhost:3000', data: params })
         .then((response) => {
           // handle success
           this.functions = response.data.map((func) => {

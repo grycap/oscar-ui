@@ -4,7 +4,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/system': {
-        target: 'http://gateway.openfaas:31112/',
+        target: 'http://192.168.99.100:31112/',
         ws: true,
         changeOrigin: true
       }

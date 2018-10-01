@@ -17,10 +17,11 @@ RUN cp -r /usr/src/frontend/dist/. /var/www/html
 COPY backend/.  /usr/src/appbackend/.
 RUN cd /usr/src/appbackend; npm install 
 EXPOSE 80 3000
-CMD ["nginx", "-g", "daemon off;"]
+#CMD ["nginx", "-g", "daemon off;"]
 #WORKDIR /usr/src/appbackend
-#RUN pwd
-#CMD ["npm", "start", "&"]
+#CMD ["npm", "start"] 
+CMD ["sh","-c","service nginx start && cd /usr/src/appbackend && npm start"]
+
 
 
 
