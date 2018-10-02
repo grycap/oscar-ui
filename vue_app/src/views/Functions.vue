@@ -103,7 +103,6 @@ export default {
           })
           .catch((error) => {
             // handle error
-            console.log(error)
             window.getApp.$emit('APP_SHOW_SNACKBAR', { text: error.response.data, color: 'error' })
           })
           .then(function () {
@@ -112,7 +111,7 @@ export default {
       }
     },
     loadFunctions () {
-      var params = { 'type':'load', 'url': this.openFaaS.endpoint }
+      var params = { 'type': 'load', 'url': this.openFaaS.endpoint }
       axios({ method: 'post', url: '$VUE_APP_BACKEND_HOST:31114', data: params })
         .then((response) => {
           // handle success
