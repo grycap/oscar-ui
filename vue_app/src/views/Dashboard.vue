@@ -75,7 +75,7 @@ export default {
           this.functions.count = response.data.length
         })
         .catch((error) => {
-          // handle error          
+          // handle error
           window.getApp.$emit('APP_SHOW_SNACKBAR', { text: error.response.data, color: 'error' })
         })
     },

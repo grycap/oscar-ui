@@ -1,6 +1,7 @@
 .DS_Store
-node_modules
-/dist
+/vue_app/node_modules
+/vue_app/dist
+/node_server/node_modules
 
 /tests/e2e/reports/
 selenium-debug.log
