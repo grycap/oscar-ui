@@ -27,7 +27,7 @@ export default {
         href: '#',
         title: 'Profile',
         click: (e) => {
-          console.log(e)
+          // console.log(e)
         }
       },
       {
@@ -35,7 +35,7 @@ export default {
         href: '#',
         title: 'Settings',
         click: (e) => {
-          console.log(e)
+          // console.log(e)
         }
       },
       {
