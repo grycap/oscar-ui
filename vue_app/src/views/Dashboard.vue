@@ -68,14 +68,14 @@ export default {
   methods: {
     // TODO: Refactor these methods to obtain the values of events between components
     functionsCount () {
-      var params = { 'type':'load', 'url': this.openFaaS.endpoint }
-      axios({ method: 'post', url: 'http://localhost:3000', data: params })
+      var params = { 'type': 'load', 'url': this.openFaaS.endpoint }
+      axios({ method: 'post', url: '$VUE_APP_BACKEND_HOST', data: params })
         .then((response) => {
           // handle success
           this.functions.count = response.data.length
         })
         .catch((error) => {
-          // handle error
+          // handle error          
           window.getApp.$emit('APP_SHOW_SNACKBAR', { text: error.response.data, color: 'error' })
         })
     },

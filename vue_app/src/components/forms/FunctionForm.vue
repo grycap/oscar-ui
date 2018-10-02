@@ -114,8 +114,8 @@ export default {
       this.editionMode = false
     },
     newFunction () {
-      var params = { 'type': "new", 'url': this.openFaaS.endpoint, 'service': this.form.name, 'network': this.form.network, 'image': this.form.image, 'envProcess': this.form.process }
-      axios({ method: 'post', url: 'http://localhost:3000', data: params })
+      var params = { 'type': 'new', 'url': this.openFaaS.endpoint, 'service': this.form.name, 'network': this.form.network, 'image': this.form.image, 'envProcess': this.form.process }
+      axios({ method: 'post', url: '$VUE_APP_BACKEND_HOST', data: params })
       // {
       //   service: this.form.name,
       //   network: this.form.network,
@@ -135,9 +135,9 @@ export default {
           this.progress.active = false
         })
     },
-    editFunction () {      
+    editFunction () {
       var params = { 'url': this.openFaaS.endpoint, 'service': this.form.name, 'network': this.form.network, 'image': this.form.image, 'envProcess': this.form.process }
-      axios({ method: 'put', url: 'http://localhost:3000', data: params })
+      axios({ method: 'put', url: '$VUE_APP_BACKEND_HOST', data: params })
       // , {
       //   service: this.form.name,
       //   network: this.form.network,

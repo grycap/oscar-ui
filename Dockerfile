@@ -1,7 +1,5 @@
 FROM ubuntu:16.04
-LABEL Name=lemp Version=0.0.1
-
-ENV DEBIAN_FRONTEND noninteractive
+LABEL Name=OSCAR-UI Version=1.0.0
 
 RUN apt-get update -y && apt-get upgrade -y && apt-get install -y software-properties-common python-software-properties &&\
     LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php &&\
@@ -10,17 +8,17 @@ RUN apt-get update -y && apt-get upgrade -y && apt-get install -y software-prope
     curl --silent --location https://deb.nodesource.com/setup_8.x |su - && \
     apt-get install -y nodejs build-essential unzip vim mc
     
-
-COPY frontend/. /usr/src/frontend/.
-RUN cd /usr/src/frontend; npm install && npm run build
-RUN cp -r /usr/src/frontend/dist/. /var/www/html
-COPY backend/.  /usr/src/appbackend/.
-RUN cd /usr/src/appbackend; npm install 
-EXPOSE 80 3000
-#CMD ["nginx", "-g", "daemon off;"]
-#WORKDIR /usr/src/appbackend
-#CMD ["npm", "start"] 
-CMD ["sh","-c","service nginx start && cd /usr/src/appbackend && npm start"]
+RUN apt-get install -y gettext
+COPY vue_app/. /usr/src/vue_app/.
+RUN cd /usr/src/vue_app; npm install && npm run build
+COPY node_server/.  /usr/src/node_server/.
+RUN cd /usr/src/node_server; npm install && mkdir static
+RUN cp -r /usr/src/vue_app/dist/. /usr/src/node_server/static/.
+COPY entrypoint.sh /
+RUN ["chmod", "+x", "entrypoint.sh"]
+EXPOSE 3000
+#CMD ["/entrypoint.sh"]
+CMD ["sh","-c","/entrypoint.sh && cd /usr/src/node_server && npm start"]
 
 
 
