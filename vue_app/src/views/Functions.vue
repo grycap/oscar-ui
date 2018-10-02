@@ -54,6 +54,7 @@
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import axios from 'axios'
 import FunctionForm from '@/components/forms/FunctionForm'
+/* eslint-disable */
 
 export default {
   components: {
