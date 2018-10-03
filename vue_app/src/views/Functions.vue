@@ -96,7 +96,7 @@ export default {
       const index = this.functions.indexOf(func)
       if (confirm('Are you sure you want to delete this function?')) {
         var parames = { 'url': this.openFaaS.endpoint, 'functionName': func.name }
-        axios({ method: 'delete', url: '$VUE_APP_BACKEND_HOST:31114', data: parames })
+        axios({ method: 'delete', url: 'http://$VUE_APP_BACKEND_HOST:31114', data: parames })
           .then((response) => {
             // handle success
             this.functions.splice(index, 1)
@@ -113,7 +113,7 @@ export default {
     },
     loadFunctions () {
       var params = { 'type': 'load', 'url': this.openFaaS.endpoint }
-      axios({ method: 'post', url: '$VUE_APP_BACKEND_HOST:31114', data: params })
+      axios({ method: 'post', url: 'http://$VUE_APP_BACKEND_HOST:31114', data: params })
         .then((response) => {
           // handle success
           this.functions = response.data.map((func) => {
