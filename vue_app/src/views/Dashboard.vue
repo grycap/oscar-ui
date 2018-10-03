@@ -49,6 +49,7 @@
 
 <script>
 import axios from 'axios'
+/* eslint-disable */
 export default {
   name: 'dashboard',
   props: {

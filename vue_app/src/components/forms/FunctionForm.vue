@@ -67,6 +67,7 @@
 
 <script>
 import axios from 'axios'
+/* eslint-disable */
 export default {
   name: 'FunctionForm',
   props: {
