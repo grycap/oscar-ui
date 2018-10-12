@@ -50,7 +50,7 @@ export default {
     },
     breadcrumbList: {},
     minio: {
-      endpoint: '158.42.105.208',
+      endpoint: '158.42.104.167',
       port: 31852,
       useSSL: false,
       accessKey: 'minio',
@@ -58,7 +58,7 @@ export default {
       showSecretKey: false
     },
     openFaaS: {
-      endpoint: 'http://gateway.openfaas:8080/system/functions',
+      endpoint: 'http://158.42.104.167:31112/system/functions',
       port: null
     },
     minioClient: {}

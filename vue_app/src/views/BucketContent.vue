@@ -57,7 +57,7 @@
                 </v-card-actions>
               </v-card>
             </v-dialog>
-            <v-btn outline color="white">{{ downloadTitle }}</v-btn>
+            <v-btn outline color="white" @click.native="downloadFile">{{ downloadTitle }}</v-btn>
             <v-btn fab icon>
               <v-icon color="white" @click="closeActionsBar">cancel</v-icon>
             </v-btn>
@@ -107,8 +107,8 @@
                 ></v-checkbox>
               </td>
               <td class="text-xs-left">{{ props.item.name }}</td>
-              <td class="text-xs-center">{{ props.item.size }}</td>
-              <td class="text-xs-center">{{ props.item.lastModified }}</td>
+              <td class="text-xs-center">{{ filesize(props.item.size) }}</td>
+              <td class="text-xs-center">{{ moment(props.item.lastModified).format("YYYY-MM-DD HH:mm") }}</td>
               <td class="justify-center layout px-0">
                 <v-icon small @click="removeFile(props.item)" color="red darken-2">delete_forever</v-icon>
               </td>
@@ -175,6 +175,7 @@
                 label="Bucket name"
                 v-model="newBucketName"
               ></v-text-field>
+              <span v-show="error" style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>
             </v-flex>
             <v-card-actions>
               <v-spacer></v-spacer>
@@ -189,6 +190,9 @@
 </template>
 <script>
 import InputFile from '@/components/widgets/InputFile'
+import axios from 'axios'
+import moment from 'moment'
+import filesize from 'filesize'
 export default {
   components: {InputFile},
   props: {
@@ -200,6 +204,9 @@ export default {
   },
   data: function () {
     return {
+      error: false,
+      moment : moment,
+      filesize : filesize,
       showBucketContent: false,
       search: '',
       pagination: {
@@ -236,8 +243,16 @@ export default {
     /**
      *  Add the new file uploaded to list
      */
+    
     window.getApp.$on('FILE_UPLOADED', (file) => {
       this.addFileToList(file)
+    })
+    //  window.getApp.$on('NEW_BUCKET', () => {
+    //   this.addFileToList(file)
+    // })
+
+    window.getApp.$on('REMOVE_BUCKET', (bucketName) => {
+      this.removeBucket(bucketName)
     })
   },
   mounted: function () {
@@ -268,8 +283,23 @@ export default {
      * Add file received from inputFile component
      * @param file
      */
+       
+    
     addFileToList (file) {
-      this.files.push(file)
+      var fileExist = false;
+      
+      console.log(this.files)
+      console.log(file.etag)
+      
+      for (var i=0; i < this.files.length; i++){
+        if (this.files[i].etag == file.etag){
+          fileExist = true;
+        }        
+      } 
+      console.log(fileExist)
+      if (!fileExist) {
+        this.files.push(file);
+      }
     },
     toggleAll () {
       if (this.selected.length) this.selected = []
@@ -297,32 +327,78 @@ export default {
     },
     getBucketFiles (name) {
       return new Promise((resolve, reject) => {
-        let files = []
-        let stream = this.minioClient.listObjects(name, '', true)
-        stream.on('data', function (obj) {
-          files.push(obj)
-        })
-        stream.on('error', function (err) {
-          reject(err)
-        })
-        stream.on('end', function (e) {
+        let files = []       
+        var params = {'name': name }
+        axios({ method: 'post', url: 'http://localhost:3000/listObjects', data: params})
+        .then((response) => {
+          // console.log(response)  
+          if(response.data.err != ""){
+            reject(err)   
+          }
+          if(response.data.files != ""){
+            files=response.data.files
+          }
           resolve(files)
-        })
-      })
+        })                     
+      })      
     },
     bucketExists (name) {
       return new Promise((resolve, reject) => {
-        this.minioClient.bucketExists(name, function (err, exists) {
-          if (err) {
-            reject(err)
-          } else {
-            resolve(exists)
-          }
+        var params = {'name': name }
+        axios({ method: 'post', url: 'http://localhost:3000/bucketExists', data: params})
+        .then((response) => {
+          resolve(response) 
         })
+        .catch((error) => {
+          // handle error
+          reject(error)
+        })       
       })
     },
     closeActionsBar () {
       this.selected = []
+    },
+    downloadFile(){
+      let toDownload = []
+      this.selected.map((sel) => {
+        return toDownload.push(sel.name)
+      })
+      console.log(toDownload)
+       var params = {'bucketName': this.bucketName, "fileName": toDownload }
+       axios({ 
+         method: 'post', 
+         url: 'http://localhost:3000/downloadFile', 
+         data: params,
+         responseType: 'blob', // important
+         })
+        .then((response) => {
+          console.log(response)
+          console.log(response.data)
+          if (this.selected.length == 1){
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', toDownload[0]);
+          document.body.appendChild(link);
+          link.click();
+          } else {          
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', this.bucketName + '.zip');
+          document.body.appendChild(link);
+          link.click();
+          
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+          window.getApp.$emit('APP_SHOW_SNACKBAR', {
+          text: err.message,
+          color: 'error'
+        })
+        }) 
+      
     },
     removeSelectedFiles () {
       this.dialog.deleting = true
@@ -334,7 +410,7 @@ export default {
         window.getApp.$emit('APP_SHOW_SNACKBAR', {
           text: `Files deleted correctly`,
           color: 'success'
-        })
+        })        
         this.selected.map((sel) => {
           return this.files.splice(this.files.indexOf(sel), 1)
         })
@@ -355,7 +431,7 @@ export default {
           window.getApp.$emit('APP_SHOW_SNACKBAR', {
             text: `File ${file.name} deleted correctly`,
             color: 'success'
-          })
+          })          
         }).catch((err) => {
           window.getApp.$emit('APP_SHOW_SNACKBAR', {
             text: err.message,
@@ -366,15 +442,27 @@ export default {
     },
     minioRemoveFile (fileName) {
       return new Promise((resolve, reject) => {
-        this.minioClient.removeObjects(this.bucketName, fileName, function (err) {
-          if (err) {
-            reject(err)
-          }
-          resolve(true)
+        var params = {'bucketName': this.bucketName, "fileName": fileName }
+        axios({ method: 'post', url: 'http://localhost:3000/removeFile', data: params})
+        .then((response) => {
+          resolve(response)
         })
+        .catch((error) => {
+          // handle error
+          reject(error)
+        })     
+     
+        // this.minioClient.removeObjects(this.bucketName, fileName, function (err) {
+        //   if (err) {
+        //     reject(err)
+        //   }
+        //   resolve(true)
+        // })
       })
     },
     createBucket (name) {
+      this.error = false;
+      if(this.newBucketName.length > 0){
       this.minioCreateBucket(name).then(() => {
         window.getApp.$emit('APP_SHOW_SNACKBAR', {
           text: `Bucket ${name} has been successfully created`,
@@ -382,47 +470,67 @@ export default {
         })
         window.getApp.$emit('REFRESH_BUCKETS_LIST')
       }).catch((err) => {
+        if(err.response.data.code == "BucketAlreadyOwnedByYou"){
+          window.getApp.$emit('APP_SHOW_SNACKBAR', {
+          text: "The bucket already exists",
+          color: 'error'
+        })
+        }else{
         window.getApp.$emit('APP_SHOW_SNACKBAR', {
           text: err.message,
           color: 'error'
         })
+        }
       }).finally(() => {
         this.menu = false
         this.newBucketName = ''
       })
+      }else {
+        this.error = true;
+      }
     },
     minioCreateBucket (name) {
       return new Promise((resolve, reject) => {
-        this.minioClient.makeBucket(name, function (err) {
-          if (err) {
-            reject(err)
-          }
-          resolve(true)
+        var params = {'name': name.replace(/[^A-Z0-9]+/ig, "")};
+        axios({ method: 'post', url: 'http://localhost:3000/makeBucket', data: params})
+        .then((response) => {
+          resolve(response)
         })
+        .catch((err) => {
+          // handle error
+          reject(err)
+           
+        })           
       })
     },
+    
     removeBucket (name) {
-      this.minioRemoveBucket(name).then(() => {
-        window.getApp.$emit('APP_SHOW_SNACKBAR', {
-          text: `Bucket ${name} has been successfully created`,
+      return new Promise((resolve, reject) => {
+        var params = {'name': name}
+        axios({ method: 'post', url: 'http://localhost:3000/removeBucket', data: params})
+        .then((response) => {
+          window.getApp.$emit('APP_SHOW_SNACKBAR', {
+          text: `Bucket ${name} has been successfully deleted`,
           color: 'success'
         })
-        window.getApp.$emit('REFRESH_BUCKETS_LIST')
-      }).catch((err) => {
-        window.getApp.$emit('APP_SHOW_SNACKBAR', {
-          text: err.message,
-          color: 'error'
+        window.getApp.$emit('REFRESH_BUCKETS_LIST')      
+        window.location.href = "/";  
         })
-      })
-    },
-    minioRemoveBucket (name) {
-      return new Promise((resolve, reject) => {
-        this.minioClient.removeBucket(name, function (err) {
-          if (err) {
-            reject(err)
+        .catch((err) => {
+          // handle error          
+          if (err.response.data.code == "BucketNotEmpty"){
+            window.getApp.$emit('APP_SHOW_SNACKBAR', {
+            text: "The bucket is not empty",
+            color: 'error'
+            })
+          }else {
+            window.getApp.$emit('APP_SHOW_SNACKBAR', {
+            text: err.message,
+            color: 'error'
+            })
           }
-          resolve(true)
-        })
+        }) 
+        
       })
     }
   },
