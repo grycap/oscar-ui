@@ -6,6 +6,8 @@ var AWS = require ('aws-sdk');
 let multer = require('multer');
 let upload = multer();
 var fs = require ('fs');
+var archiver = require('archiver');
+var path = require('path');
 
 var app = express();
 
@@ -15,10 +17,21 @@ router.get('/', function(req, res, next) {
    res.render('index', { title: 'Express' });
 });
 
+outer.post('/newfaas', (req, res, next) => {  
+axios.post(req.body['url'], {service:req.body['service'], network:req.body['network'], image:req.body['image'], envProcess:req.body['envProcess']})
+    .then((response) => {
+    // handle success        
+    res.status(200).json(response.data);              
+    })
+    .catch((error) => {
+     // handle error
+    console.log(error)
+    res.status(400).json(error.response)        
+  }) 
+});
 
-router.post('/', (req, res, next) => {     
-console.log()
-  if (req.body['type'] == "load") {
+router.post('/loadfaas', (req, res, next) => {     
+
     axios.get(req.body['url'])
     .then((response) => {
     // handle success        
@@ -29,21 +42,9 @@ console.log()
     console.log(error) 
     res.status(400).json(error.response)        
   }) 
-  } else if (req.body['type'] == "new") {
-    axios.post(req.body['url'], {service:req.body['service'], network:req.body['network'], image:req.body['image'], envProcess:req.body['envProcess']})
-    .then((response) => {
-    // handle success        
-    res.status(200).json(response.data);              
-    })
-    .catch((error) => {
-     // handle error
-    console.log(error)
-    res.status(400).json(error.response)        
-  }) 
-  } 
   
 });
-router.delete('/', (req, res, next) => {
+router.delete('/deletefaas', (req, res, next) => {
   var funct = req.body['functionName']
   axios.delete(req.body['url'], {data: {functionName: funct} })
   .then((response) => {
@@ -57,7 +58,7 @@ router.delete('/', (req, res, next) => {
   }) 
 });
 
-router.put('/', (req, res, next) => {  
+router.put('/editfaas', (req, res, next) => {  
   
   axios.put(req.body['url'], {service:req.body['service'], network:req.body['network'], image:req.body['image'], envProcess:req.body['envProcess']})
   .then((response) => {
@@ -77,8 +78,8 @@ minioClient = "";
 console.log(minioClient)
 
 var minioClient = new Minio.Client({
-  endPoint: '158.42.104.167',
-  port: 31852,
+  endPoint: 'http://minio-service.minio',
+  port: 9000,
   useSSL: false,
   accessKey: 'minio',
   secretKey: 'minio123'
@@ -163,7 +164,7 @@ router.post('/minioUpload', upload.any(), (req, res, next) => {
       var s3Client = new AWS.S3({
         // apiVersion: '2006-03-01',
         // params: {Bucket: req.body["bucketName"]},
-        endpoint: 'http://158.42.104.167:31852/',
+        endpoint: 'http://minio-service.minio:9000/',
         accessKeyId: 'minio',
         secretAccessKey: 'minio123',
         s3ForcePathStyle: true,
@@ -200,6 +201,8 @@ router.post('/downloadFile', (req, res, next) => {
   console.log(req.body["fileName"]) 
   console.log(req.body["fileName"].length)
   var data = {};
+  
+  if(req.body["select"]==1){
   for  (var i=0; i < req.body["fileName"].length; i++) {
     minioClient.getObject(req.body["bucketName"], req.body["fileName"][i], function(error, stream) {
     if(error) {
@@ -210,8 +213,52 @@ router.post('/downloadFile', (req, res, next) => {
     stream.pipe(res)   
     });   
   }
-  
+  }else{
+    nextFile(0,req,res)
+  }
 
 });
+function nextFile(i, req, res){  
+	minioClient.fGetObject(req.body["bucketName"], req.body["fileName"][i], path.join(__dirname , '/' ,req.body["fileName"][i]), function(err) {
+        if (err) {
+          return console.log(err)
+        } 
+        
+      if(i < req.body["fileName"].length - 1){
+			nextFile(i+1, req, res)
+		}else{
+			zipFile(req, res);
+		}
+        
+	})
+} 
+
+function zipFile(req, res){
+	/*Compress files*/ 
+	var archive = archiver('zip');
+	archive.on('error', function(err) {
+	  res.status(500).send({error: err.message});
+	});
+	//on stream closed we can end the request
+	archive.on('end', function() {
+	  console.log('Archive wrote %d bytes', archive.pointer());
+	  /*Delete files */
+	  for  (var i=0; i < req.body["fileName"].length; i++){
+		fs.unlinkSync(path.join(__dirname + '/' + req.body["fileName"][i]), function(error){
+		  if (error){
+			throw error;
+		  }
+		  console.log("Delete success")    
+		})
+	  }
+	  download_finish = false
+	});
+	archive.pipe(res);  
+	// add a file
+	for  (var i=0; i < req.body["fileName"].length; i++){
+		archive.file(path.join(__dirname, req.body["fileName"][i]), { name: req.body["fileName"][i] });
+	}
+	archive.finalize();
+}
 
 module.exports = router;

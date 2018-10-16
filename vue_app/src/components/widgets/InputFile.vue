@@ -117,17 +117,7 @@ export default {
       /*
         Initialize the form data
       */
-      // /************teststststss****/
-      //     let files = []       
-      //     var params = {'name': this.bucketName }
-      //     axios({ method: 'post', url: 'http://localhost:3000/listObjects', data: params})
-      //     .then((response) => {
-      //     // console.log(response) 
-      //     var before = response.data.files
-      //     // console.log(before)
-      //     })  
-        /************teststststss****/ 
-
+      
       /*
         Iteate over any file sent over appending the files
         to the form data.
@@ -147,7 +137,7 @@ export default {
         axios({ 
           headers: {'Content-Type': 'multipart/form-data'},
           method: 'post', 
-          url: 'http://localhost:3000/minioUpload', 
+          url: 'http://$VUE_APP_BACKEND_HOST:31114/minioUpload', 
           data: formData
         })
         .then((response) => {   
@@ -228,58 +218,7 @@ export default {
      * Upload file to minio server
      * @param file
      */
-    // minioUpload (file) {
-    //   console.log(file)
-    //   console.log(file.name)
-    //   file.append("bucketName",this.bucketName)
-      
-    //   // var paramfile = { "bucketName": this.bucketName, "file": file, "fileName": file.name }
-    //   axios({ 
-    //     headers: {'Content-Type': 'multipart/form-data'},
-    //     method: 'post', 
-    //     url: 'http://localhost:3000/minioUpload', 
-    //     data: file
-    //     })
-    //     .then((response) => {
-         
-    //     })
-    //   // AWS.config.s3 = { s3BucketEndpoint: false }
-    //   // let s3Client = new AWS.S3({
-    //   //   apiVersion: '2006-03-01',
-    //   //   params: {Bucket: this.bucketName},
-    //   //   endpoint: 'http://158.42.104.167:31852/',
-    //   //   accessKeyId: 'minio',
-    //   //   secretAccessKey: 'minio123',
-    //   //   s3ForcePathStyle: true,
-    //   //   signatureVersion: 'v4',
-    //   //   logger: window.console
-    //   // })
-      
-    //   /* s3Client.upload({
-    //     Bucket: this.bucketName,
-    //     Key: file.name,
-    //     Body: file
-    //   }, function (err, data) {
-    //     if (err) {
-    //       console.error(err)
-    //       return alert(err.message)
-    //     }
-    //     alert('Successfully uploaded photo.')
-    //   }) */
-
-    //   let params = {
-    //     Bucket: this.bucketName,
-    //     Key: file.name,
-    //     Body: file
-    //   }
-    //   console.log(file)
-    //   this.files.find((f) => {
-    //     if (f.name === file.name) {
-    //       f.showUploading = true
-    //     }
-    //   })      
-    //   return s3Client.putObject(params).promise()      
-    // },
+    
     successUploadCallback (data) {
       console.log(this.files)
     }

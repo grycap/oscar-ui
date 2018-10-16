@@ -38,7 +38,10 @@
             </tr>
           </template>
           <template slot="no-data">
-            <v-alert :value="true" color="error" icon="warning">
+            <div v-show="show_spinner" style="position:fixed; left:50%;">	
+              <intersecting-circles-spinner :animation-duration="1200" :size="50" :color="'#0066ff'" />              		
+            </div>
+            <v-alert v-show="!show_spinner" :value="true" color="error" icon="warning">
               Sorry, there are no functions to display here :(
             </v-alert>
           </template>
@@ -54,12 +57,15 @@
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import axios from 'axios'
 import FunctionForm from '@/components/forms/FunctionForm'
+import { IntersectingCirclesSpinner } from 'epic-spinners'
 /* eslint-disable */
 
 export default {
   components: {
     FunctionForm,
-    VuePerfectScrollbar
+    VuePerfectScrollbar,
+    IntersectingCirclesSpinner
+    
   },
   props: {
     openFaaS: {}
@@ -69,6 +75,7 @@ export default {
     view: 'grid',
     selectedFunction: '',
     functions: [],
+    show_spinner: true,
     headers: [
       { text: 'Ready', align: 'left', sortable: true, value: 'ready' },
       { text: 'Name', align: 'left', sortable: true, value: 'name' },
@@ -91,16 +98,17 @@ export default {
         network: this.functions[index].network
       }
       window.getApp.$emit('FUNC_OPEN_MANAGEMENT_DIALOG', funcInfo)
-    },
+    },    
     deleteFunction (func) {
+      this.show_spinner = false
       const index = this.functions.indexOf(func)
       if (confirm('Are you sure you want to delete this function?')) {
         var parames = { 'url': this.openFaaS.endpoint, 'functionName': func.name }
-        axios({ method: 'delete', url: 'http://localhost:3000', data: parames })
+        axios({ method: 'delete', url: 'http://$VUE_APP_BACKEND_HOST:31114/deletefaas', data: parames })
           .then((response) => {
             // handle success
             this.functions.splice(index, 1)
-            window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${func.name} was deleted`, color: 'success' })
+            window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${func.name} was deleted`, color: 'success' })           
           })
           .catch((error) => {
             // handle error
@@ -112,10 +120,13 @@ export default {
       }
     },
     loadFunctions () {
-      var params = { 'type': 'load', 'url': this.openFaaS.endpoint }
-      axios({ method: 'post', url: 'http://localhost:3000', data: params })
+      var params = { 'url': this.openFaaS.endpoint }
+      axios({ method: 'post', url: 'http://$VUE_APP_BACKEND_HOST:31114/loadfaas', data: params })
         .then((response) => {
           // handle success
+          if(response.data.length == 0){
+            this.show_spinner = false;
+          }         
           this.functions = response.data.map((func) => {
             return {
               name: func.name,
@@ -127,7 +138,7 @@ export default {
               ready: (Number(func.availableReplicas) > 0)
             }
           })
-          this.loading = false
+          this.loading = false          
         })
         .catch((error) => {
           // handle error

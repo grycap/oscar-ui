@@ -101,9 +101,12 @@ export default {
   created () {
     window.getApp.$on('APP_DRAWER_TOGGLED', () => {
       this.drawer = (!this.drawer)
+      this.menucreate = false;
+
     })
     window.getApp.$on('APP_DRAWER_MINI', () => {
       this.mini = (!this.mini)
+      this.menucreate = false;
     })
     window.getApp.$on('REFRESH_BUCKETS_LIST', () => {
       this.getBucketsList()
@@ -153,7 +156,7 @@ export default {
     minioCreateBucket (name) {
       return new Promise((resolve, reject) => {
         var params = {'name': name.replace(/[^A-Z0-9]+/ig, "")};
-        axios({ method: 'post', url: 'http://localhost:3000/makeBucket', data: params})
+        axios({ method: 'post', url: 'http://$VUE_APP_BACKEND_HOST:31114/makeBucket', data: params})
         .then((response) => {
           resolve(response)
         })
@@ -178,7 +181,7 @@ export default {
       return {name: subItem.name}
     },
     getBucketsList () {
-       axios({ method: 'post', url: 'http://localhost:3000/listbuckets'})
+       axios({ method: 'post', url: 'http://$VUE_APP_BACKEND_HOST:31114/listbuckets'})
         .then((response) => {
           // handle success          
           this.buckets = response.data.map((bucket) => {

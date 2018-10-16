@@ -12,6 +12,7 @@
   "dependencies": {
     "aws-sdk": "^2.307.0",
     "axios": "^0.18.0",
+    "epic-spinners": "^1.0.3",
     "filesize": "^3.6.1",
     "minio": "^7.0.0",
     "moment": "^2.22.2",

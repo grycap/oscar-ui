@@ -97,7 +97,7 @@
               </th>
             </tr>
           </template>
-          <template slot="items" slot-scope="props">
+          <template slot="items" slot-scope="props" expand="true">
             <tr :active="props.selected">
               <td @click="props.selected = !props.selected">
                 <v-checkbox
@@ -115,9 +115,15 @@
             </tr>
           </template>
           <template slot="no-data">
-            <v-alert :value="true" color="error" icon="warning">
-              Sorry, there are no files to display in this bucket :(
+             <div v-show="show_spinner" style="position:fixed; left:50%;">	
+              <intersecting-circles-spinner :animation-duration="1200" :size="50" :color="'#0066ff'" />              		
+            </div>
+            <v-alert v-show="!show_spinner" :value="true" color="error" icon="warning">
+              Sorry, there are no functions to display here :(
             </v-alert>
+            <!-- <v-alert  color="error" icon="warning" v-show >
+              Sorry, there are no files to display in this bucket :(
+            </v-alert> -->
           </template>
           <v-alert slot="no-results" :value="true" color="error" icon="warning">
             Your search for "{{ search }}" found no results.
@@ -193,12 +199,16 @@ import InputFile from '@/components/widgets/InputFile'
 import axios from 'axios'
 import moment from 'moment'
 import filesize from 'filesize'
+import { IntersectingCirclesSpinner } from 'epic-spinners'
 export default {
-  components: {InputFile},
+  components: {
+    InputFile,
+    IntersectingCirclesSpinner
+  },
   props: {
     bucketName: {
       type: String,
-      default: ''
+      default: '',
     },
     minioClient: {}
   },
@@ -208,6 +218,7 @@ export default {
       moment : moment,
       filesize : filesize,
       showBucketContent: false,
+      show_spinner: true,
       search: '',
       pagination: {
         sortBy: 'name'
@@ -329,14 +340,17 @@ export default {
       return new Promise((resolve, reject) => {
         let files = []       
         var params = {'name': name }
-        axios({ method: 'post', url: 'http://localhost:3000/listObjects', data: params})
+        axios({ method: 'post', url: 'http://$VUE_APP_BACKEND_HOST:31114/listObjects', data: params})
         .then((response) => {
-          // console.log(response)  
+          console.log(response.data)    
+          if (response.data.files.length == 0){
+            this.show_spinner = false;
+          }        
           if(response.data.err != ""){
             reject(err)   
           }
           if(response.data.files != ""){
-            files=response.data.files
+            files=response.data.files          
           }
           resolve(files)
         })                     
@@ -345,7 +359,7 @@ export default {
     bucketExists (name) {
       return new Promise((resolve, reject) => {
         var params = {'name': name }
-        axios({ method: 'post', url: 'http://localhost:3000/bucketExists', data: params})
+        axios({ method: 'post', url: 'http://$VUE_APP_BACKEND_HOST:31114/bucketExists', data: params})
         .then((response) => {
           resolve(response) 
         })
@@ -364,43 +378,63 @@ export default {
         return toDownload.push(sel.name)
       })
       console.log(toDownload)
-       var params = {'bucketName': this.bucketName, "fileName": toDownload }
-       axios({ 
+       var params = {'bucketName': this.bucketName, "fileName": toDownload, "select": this.selected.length }
+       if (this.selected.length == 1){
+         axios({ 
          method: 'post', 
-         url: 'http://localhost:3000/downloadFile', 
+         url: 'http://$VUE_APP_BACKEND_HOST:31114/downloadFile', 
          data: params,
          responseType: 'blob', // important
          })
         .then((response) => {
           console.log(response)
           console.log(response.data)
-          if (this.selected.length == 1){
-          const url = window.URL.createObjectURL(new Blob([response.data]));
-          const link = document.createElement('a');
-          link.href = url;
-          link.setAttribute('download', toDownload[0]);
-          document.body.appendChild(link);
-          link.click();
-          } else {          
-          const url = window.URL.createObjectURL(new Blob([response.data]));
-          const link = document.createElement('a');
-          link.href = url;
-          link.setAttribute('download', this.bucketName + '.zip');
-          document.body.appendChild(link);
-          link.click();
           
-          }
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', toDownload[0]);
+            document.body.appendChild(link);
+            link.click();   
+        
         })
         .catch((error) => {
           console.log(error)
           window.getApp.$emit('APP_SHOW_SNACKBAR', {
-          text: err.message,
+          text: error.message,
           color: 'error'
         })
-        }) 
-      
+        })   
+       }else {
+        axios({ 
+         method: 'post', 
+         url: 'http://$VUE_APP_BACKEND_HOST:31114/downloadFile', 
+         data: params,
+         responseType: 'arraybuffer', // important
+        
+         })
+        .then((response) => {
+          console.log(response)
+          console.log(response.data)                 
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', this.bucketName + '.zip');
+            document.body.appendChild(link);
+            link.click();          
+         })
+        .catch((error) => {
+          console.log(error)
+          window.getApp.$emit('APP_SHOW_SNACKBAR', {
+          text: error.message,
+          color: 'error'
+        })
+        })   
+       }
+           
     },
     removeSelectedFiles () {
+      this.show_spinner = false
       this.dialog.deleting = true
       let toRemove = []
       this.selected.map((sel) => {
@@ -443,7 +477,7 @@ export default {
     minioRemoveFile (fileName) {
       return new Promise((resolve, reject) => {
         var params = {'bucketName': this.bucketName, "fileName": fileName }
-        axios({ method: 'post', url: 'http://localhost:3000/removeFile', data: params})
+        axios({ method: 'post', url: 'http://$VUE_APP_BACKEND_HOST:31114/removeFile', data: params})
         .then((response) => {
           resolve(response)
         })
@@ -492,7 +526,7 @@ export default {
     minioCreateBucket (name) {
       return new Promise((resolve, reject) => {
         var params = {'name': name.replace(/[^A-Z0-9]+/ig, "")};
-        axios({ method: 'post', url: 'http://localhost:3000/makeBucket', data: params})
+        axios({ method: 'post', url: 'http://$VUE_APP_BACKEND_HOST:31114/makeBucket', data: params})
         .then((response) => {
           resolve(response)
         })
@@ -507,7 +541,7 @@ export default {
     removeBucket (name) {
       return new Promise((resolve, reject) => {
         var params = {'name': name}
-        axios({ method: 'post', url: 'http://localhost:3000/removeBucket', data: params})
+        axios({ method: 'post', url: 'http://$VUE_APP_BACKEND_HOST:31114/removeBucket', data: params})
         .then((response) => {
           window.getApp.$emit('APP_SHOW_SNACKBAR', {
           text: `Bucket ${name} has been successfully deleted`,
