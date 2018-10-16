@@ -161,6 +161,7 @@ export default {
           })          
           file[0].etag = response.data.etag                   
           window.getApp.$emit('FILE_UPLOADED', file[0])           
+          window.getApp.$emit('GET_BUCKET_LIST')           
 
         }).catch((response) => {                  
           window.getApp.$emit('APP_SHOW_SNACKBAR', {
