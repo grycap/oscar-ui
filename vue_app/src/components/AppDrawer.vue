@@ -158,6 +158,8 @@ export default {
         var params = {'name': name.replace(/[^A-Z0-9]+/ig, "")};
         axios({ method: 'post', url: 'http://$VUE_APP_BACKEND_HOST:31114/makeBucket', data: params})
         .then((response) => {
+          this.menucreate = false;
+          this.newBucketName = " ";
           resolve(response)
         })
         .catch((err) => {
