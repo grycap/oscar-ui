@@ -41,7 +41,7 @@
 
             <v-list-tile-content>
               <v-list-tile-title>{{ file.name }}</v-list-tile-title>
-              <v-list-tile-sub-title>{{ file.lastModified }}</v-list-tile-sub-title>
+              <v-list-tile-sub-title>{{ moment(file.lastModified).format("YYYY-MM-DD HH:mm") }}</v-list-tile-sub-title>
             </v-list-tile-content>
 
             <v-list-tile-action>
@@ -58,6 +58,8 @@
 
 <script>
 import AWS from 'aws-sdk'
+import axios from 'axios'
+import moment from 'moment'
 export default {
   name: 'InputFile',
   props: {
@@ -95,6 +97,7 @@ export default {
   },
   data () {
     return {
+      moment : moment,
       files: [],
       showUploading: false
     }
@@ -114,34 +117,77 @@ export default {
       /*
         Initialize the form data
       */
-      let formData = new FormData()
-
+      
       /*
         Iteate over any file sent over appending the files
         to the form data.
       */
       for (let i = 0; i < this.files.length; i++) {
-        let file = this.files[i]
-        formData.append('files[' + i + ']', file, file.name)
-        this.minioUpload(file).then((data) => {
-          this.files.find((f) => {
-            if (f.name === data.key) {
-              f.showUploading = false
+        let formData = new FormData()        
+        formData.append('file', this.files[i], this.files[i].name)
+        formData.append("bucketName",this.bucketName);
+        formData.append("key",i);
+        var _this = this;
+        // this.files[i].showUploading = true;
+        this.files.find((f) => {
+            if (f.name === this.files[i].name) {
+              f.showUploading = true
             }
           })
-          this.files.splice(file.name, 1)
-          window.getApp.$emit('APP_SHOW_SNACKBAR', {
-            text: `The ${file.name} file has been successfully uploaded`,
-            color: 'success'
+        axios({ 
+          headers: {'Content-Type': 'multipart/form-data'},
+          method: 'post', 
+          url: 'http://$VUE_APP_BACKEND_HOST:31114/minioUpload', 
+          data: formData
+        })
+        .then((response) => {   
+          // console.log(response)  
+          // _this.files[response.data.key].showUploading = false;
+          _this.files.find((f) => {
+            if (f.name === response.data.name) {
+              f.showUploading = false
+            }
+            
           })
-          window.getApp.$emit('FILE_UPLOADED', file)
-        }).catch((err) => {
+          for (var i in _this.files){
+            if (_this.files[i].name == response.data.name){
+              var file = _this.files.splice(i, 1) 
+              break;              
+            }            
+          }         
           window.getApp.$emit('APP_SHOW_SNACKBAR', {
-            text: `Error uploading file ${file.name}. ${err.message}`,
+            text: `The ${file[0].name} file has been successfully uploaded`,
+            color: 'success'
+          })          
+          file[0].etag = response.data.etag                   
+          window.getApp.$emit('FILE_UPLOADED', file[0])           
+
+        }).catch((response) => {                  
+          window.getApp.$emit('APP_SHOW_SNACKBAR', {
+            text: `Error uploading file ${response.data.name}. ${response.data.err.message}`,            
             color: 'error'
           })
         })
       }
+        // this.minioUpload(formData).then((data) => {
+        //   this.files.find((f) => {
+        //     if (f.name === data.key) {
+        //       f.showUploading = false
+        //     }
+        //   })
+        //   this.files.splice(file.name, 1)
+        //   window.getApp.$emit('APP_SHOW_SNACKBAR', {
+        //     text: `The ${file.name} file has been successfully uploaded`,
+        //     color: 'success'
+        //   })
+        //   window.getApp.$emit('FILE_UPLOADED', file)
+        // }).catch((err) => {
+        //   window.getApp.$emit('APP_SHOW_SNACKBAR', {
+        //     text: `Error uploading file ${file.name}. ${err.message}`,
+        //     color: 'error'
+        //   })
+        // })
+      
       /*
        * Make the request to the POST /select-files URL
        */
@@ -172,42 +218,7 @@ export default {
      * Upload file to minio server
      * @param file
      */
-    minioUpload (file) {
-      AWS.config.s3 = { s3BucketEndpoint: false }
-      let s3Client = new AWS.S3({
-        apiVersion: '2006-03-01',
-        params: {Bucket: this.bucketName},
-        endpoint: 'http://192.168.99.100:30001/',
-        accessKeyId: 'minio',
-        secretAccessKey: 'minio123',
-        s3ForcePathStyle: true,
-        signatureVersion: 'v4',
-        logger: window.console
-      })
-
-      /* s3Client.upload({
-        Bucket: this.bucketName,
-        Key: file.name,
-        Body: file
-      }, function (err, data) {
-        if (err) {
-          console.error(err)
-          return alert(err.message)
-        }
-        alert('Successfully uploaded photo.')
-      }) */
-      let params = {
-        Bucket: this.bucketName,
-        Key: file.name,
-        Body: file
-      }
-      this.files.find((f) => {
-        if (f.name === file.name) {
-          f.showUploading = true
-        }
-      })
-      return s3Client.putObject(params).promise()
-    },
+    
     successUploadCallback (data) {
       console.log(this.files)
     }

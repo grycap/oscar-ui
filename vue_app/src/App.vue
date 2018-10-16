@@ -50,8 +50,8 @@ export default {
     },
     breadcrumbList: {},
     minio: {
-      endpoint: '158.42.105.208',
-      port: 31852,
+      endpoint: 'http://minio-service.minio',
+      port: 9000,
       useSSL: false,
       accessKey: 'minio',
       secretKey: 'minio123',

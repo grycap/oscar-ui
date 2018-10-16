@@ -115,14 +115,8 @@ export default {
       this.editionMode = false
     },
     newFunction () {
-      var params = { 'type': 'new', 'url': this.openFaaS.endpoint, 'service': this.form.name, 'network': this.form.network, 'image': this.form.image, 'envProcess': this.form.process }
-      axios({ method: 'post', url: 'http://$VUE_APP_BACKEND_HOST:31114', data: params })
-      // {
-      //   service: this.form.name,
-      //   network: this.form.network,
-      //   image: this.form.image,
-      //   envProcess: this.form.process
-      // })
+      var params = {'url': this.openFaaS.endpoint, 'service': this.form.name, 'network': this.form.network, 'image': this.form.image, 'envProcess': this.form.process }
+      axios({ method: 'post', url: 'http://$VUE_APP_BACKEND_HOST:31114/newfaas', data: params })
         .then((response) => {
           // handle success
           window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${this.form.name} has been deployed`, color: 'success' })
@@ -138,13 +132,7 @@ export default {
     },
     editFunction () {
       var params = { 'url': this.openFaaS.endpoint, 'service': this.form.name, 'network': this.form.network, 'image': this.form.image, 'envProcess': this.form.process }
-      axios({ method: 'put', url: 'http://$VUE_APP_BACKEND_HOST:31114', data: params })
-      // , {
-      //   service: this.form.name,
-      //   network: this.form.network,
-      //   image: this.form.image,
-      //   envProcess: this.form.process
-      // })
+      axios({ method: 'put', url: 'http://$VUE_APP_BACKEND_HOST:31114/editfaas', data: params })
         .then((response) => {
         // handle success
           window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${this.form.name} has been updated`, color: 'success' })

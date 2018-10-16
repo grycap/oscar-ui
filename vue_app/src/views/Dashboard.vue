@@ -69,8 +69,8 @@ export default {
   methods: {
     // TODO: Refactor these methods to obtain the values of events between components
     functionsCount () {
-      var params = { 'type': 'load', 'url': this.openFaaS.endpoint }
-      axios({ method: 'post', url: 'http://$VUE_APP_BACKEND_HOST:31114', data: params })
+      var params = {'url': this.openFaaS.endpoint }
+      axios({ method: 'post', url: 'http://$VUE_APP_BACKEND_HOST:31114/loadfaas', data: params })
         .then((response) => {
           // handle success
           this.functions.count = response.data.length
@@ -81,15 +81,28 @@ export default {
         })
     },
     bucketsCount () {
-      this.minioClient.listBuckets((err, obtainedBuckets) => {
-        if (err) return window.getApp.$emit('APP_SHOW_SNACKBAR', { text: err.message, color: 'error' })
-        this.storage.bucketsCount = obtainedBuckets.length
-      })
+      // this.minioClient.listBuckets((err, obtainedBuckets) => {
+      //   if (err) return window.getApp.$emit('APP_SHOW_SNACKBAR', { text: err.message, color: 'error' })
+      //   this.storage.bucketsCount = obtainedBuckets.length
+      // })
+      // var params = {'url': this.openFaaS.endpoint }
+      axios({ method: 'post', url: 'http://$VUE_APP_BACKEND_HOST:31114/listbuckets'})
+        .then((response) => {
+          // handle success
+          this.storage.bucketsCount = response.data.length
+        })
+        .catch((error) => {
+          // handle error
+          window.getApp.$emit('APP_SHOW_SNACKBAR', { text: error.response.data, color: 'error' })
+        })
     }
   },
   created: function () {
     this.functionsCount()
     this.bucketsCount()
+     window.getApp.$on('BUCKETS_REFRESH_DASHBOARD', () => {
+      this.bucketsCount()
+    })
   }
 }
 </script>

@@ -56,7 +56,7 @@ export default {
   },
   methods: {
     handleDrawerToggle () {
-      window.getApp.$emit('APP_DRAWER_TOGGLED')
+      window.getApp.$emit('APP_DRAWER_TOGGLED')      
     },
     handleDrawerMini () {
       this.mini = !this.mini
