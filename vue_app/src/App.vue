@@ -50,7 +50,7 @@ export default {
     },
     breadcrumbList: {},
     minio: {
-      endpoint: 'http://minio-service.minio',
+      endpoint: 'minio-service.minio',
       port: 9000,
       useSSL: false,
       accessKey: 'minio',
