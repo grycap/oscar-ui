@@ -17,7 +17,7 @@ router.get('/', function(req, res, next) {
    res.render('index', { title: 'Express' });
 });
 
-outer.post('/newfaas', (req, res, next) => {  
+router.post('/newfaas', (req, res, next) => {  
 axios.post(req.body['url'], {service:req.body['service'], network:req.body['network'], image:req.body['image'], envProcess:req.body['envProcess']})
     .then((response) => {
     // handle success        
