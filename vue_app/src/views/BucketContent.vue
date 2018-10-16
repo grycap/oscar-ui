@@ -258,13 +258,10 @@ export default {
     window.getApp.$on('FILE_UPLOADED', (file) => {
       this.addFileToList(file)
     })
-    //  window.getApp.$on('NEW_BUCKET', () => {
-    //   this.addFileToList(file)
-    // })
-
-    window.getApp.$on('REMOVE_BUCKET', (bucketName) => {
-      this.removeBucket(bucketName)
-    })
+     window.getApp.$on('GET_BUCKET_LIST', () => {      
+      this.fetchData()
+    })  
+    
   },
   mounted: function () {
     this.bucketExists(this.bucketName)
