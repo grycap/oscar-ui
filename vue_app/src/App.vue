@@ -2,8 +2,9 @@
   <div id="app">
     <template v-if="!$route.meta.public">
       <v-app id="inspire" class="app">
-        <app-drawer :minioClient="minioClient" :minio="minio" :openFaaS="openFaaS" class="app--drawer"></app-drawer>
-        <app-toolbar class="app--toolbar"></app-toolbar>
+        <!-- <app-drawer :minioClient="minioClient" :minio="minio" :openFaaS="openFaaS" class="app--drawer"></app-drawer> -->
+        <!-- <app-drawer class="app--drawer"></app-drawer>
+        <app-toolbar class="app--toolbar"></app-toolbar> -->
         <v-content>
           <v-container fluid wrap grid-list-md align-start justify-space-between>
             <router-view :minioClient="minioClient" :minio="minio" :openFaaS="openFaaS"/>
@@ -44,6 +45,7 @@ export default {
     rightDrawer: false,
     snackbar: {
       showBucketContent: false,
+      auth: '',
       text: '',
       color: '', // ['success', 'info', 'error', 'cyan darken-2']
       timeout: 5000
@@ -58,14 +60,17 @@ export default {
       showSecretKey: false
     },
     openFaaS: {
-      endpoint: 'http://gateway.openfaas:8080/system/functions',
+      // endpoint: 'http://gateway.openfaas:8080/system/functions',
+      endpoint: 'http://158.42.105.208:31112/system/functions',
       port: null
     },
     minioClient: {}
   }),
   computed: {
   },
-  created () {
+  created () {    
+    this.auth = localStorage.getItem("authenticated")
+    console.log(this.auth)
     AppEvents.forEach(item => {
       this.$on(item.name, item.callback)
     })

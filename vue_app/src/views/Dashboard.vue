@@ -1,5 +1,7 @@
 <template>
   <v-layout row wrap>
+    <app-drawer class="app--drawer"></app-drawer>
+    <app-toolbar class="app--toolbar"></app-toolbar>
     <v-flex xs6>
       <v-card class="openFaas">
         <v-layout>
@@ -49,9 +51,15 @@
 
 <script>
 import axios from 'axios'
+import AppDrawer from '@/components/AppDrawer'
+import AppToolbar from '@/components/AppToolbar'
 /* eslint-disable */
 export default {
   name: 'dashboard',
+  components: {
+    AppDrawer,
+    AppToolbar,    
+  },
   props: {
     minioClient: {},
     openFaaS: {}

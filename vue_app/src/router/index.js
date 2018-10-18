@@ -13,10 +13,17 @@ const router = new Router({
 // router gards
 router.beforeEach((to, from, next) => {
   if (to.meta.public) {
-    next()
+     next()
   } else {
-    // next('/login')
-    next()
+    var auth = localStorage.getItem("authenticated");
+    console.log(auth)
+    if(typeof auth != 'undefined' && auth == "true"){
+      console.log("hello")
+      next()
+    }
+    else {
+      next('/login')
+    }
   }
 })
 
