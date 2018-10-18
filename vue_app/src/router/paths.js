@@ -55,7 +55,7 @@ export default [
       /* webpackChunkName: "routes" */
       /* webpackMode: "lazy" */
       `@/views/Login.vue`
-    )
+    ),    
   },
   {
     path: '/',
@@ -64,7 +64,7 @@ export default [
     },
     name: 'Root',
     redirect: {
-      name: 'Dashboard'
+      name: 'Login'
     }
   },
   {
@@ -116,5 +116,6 @@ export default [
       `@/views/BucketContent.vue`
     ),
     props: true
-  }
+  },
+  
 ]

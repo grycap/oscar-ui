@@ -1,56 +1,60 @@
 <template>
-  <v-layout row wrap>
-    <v-flex xs12>
-      <v-card id="functions">
-        <v-card-title>
-          <v-text-field
-            v-model="search"
-            append-icon="search"
-            label="Search"
-            single-line
-            hide-details
-          ></v-text-field>
-          <v-spacer></v-spacer>
-          <FunctionForm :openFaaS="openFaaS"></FunctionForm>
-        </v-card-title>
-        <v-data-table
-          :headers="headers"
-          :items="functions"
-          :loading="loading"
-          class="elevation-1"
-          item-key="name"
-          :search="search"
-        >
-          <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
-          <template slot="items" slot-scope="props">
-            <tr>
-              <td class="justify-center layout px-0">
-                <v-icon medium class="mr-2">{{props.item.ready ? 'check_circle_outline' : 'highlight_off'}}</v-icon>
-              </td>
-              <td class="text-xs-left">{{ props.item.name }}</td>
-              <td class="text-xs-center">{{ props.item.availableReplicas }}</td>
-              <td class="text-xs-center">{{ props.item.replicas }}</td>
-              <td class="text-xs-center">{{ props.item.invocationCount }}</td>
-              <td class="justify-center layout px-0">
-                <v-icon small class="mr-2" @click="editFunction(props.item)">edit</v-icon>
-                <v-icon small @click="deleteFunction(props.item)">delete</v-icon>
-              </td>
-            </tr>
-          </template>
-          <template slot="no-data">
-            <div v-show="show_spinner" style="position:fixed; left:50%;">	
-              <intersecting-circles-spinner :animation-duration="1200" :size="50" :color="'#0066ff'" />              		
-            </div>
-            <v-alert v-show="!show_spinner" :value="true" color="error" icon="warning">
-              Sorry, there are no functions to display here :(
+  <v-layout>
+    <app-drawer class="app--drawer"></app-drawer>
+    <app-toolbar class="app--toolbar"></app-toolbar>
+    <v-layout row wrap>      
+      <v-flex xs12>
+        <v-card id="functions">
+          <v-card-title>
+            <v-text-field
+              v-model="search"
+              append-icon="search"
+              label="Search"
+              single-line
+              hide-details
+            ></v-text-field>
+            <v-spacer></v-spacer>
+            <FunctionForm :openFaaS="openFaaS"></FunctionForm>
+          </v-card-title>
+          <v-data-table
+            :headers="headers"
+            :items="functions"
+            :loading="loading"
+            class="elevation-1"
+            item-key="name"
+            :search="search"
+          >
+            <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
+            <template slot="items" slot-scope="props">
+              <tr>
+                <td class="justify-center layout px-0">
+                  <v-icon medium class="mr-2">{{props.item.ready ? 'check_circle_outline' : 'highlight_off'}}</v-icon>
+                </td>
+                <td class="text-xs-left">{{ props.item.name }}</td>
+                <td class="text-xs-center">{{ props.item.availableReplicas }}</td>
+                <td class="text-xs-center">{{ props.item.replicas }}</td>
+                <td class="text-xs-center">{{ props.item.invocationCount }}</td>
+                <td class="justify-center layout px-0">
+                  <v-icon small class="mr-2" @click="editFunction(props.item)">edit</v-icon>
+                  <v-icon small @click="deleteFunction(props.item)">delete</v-icon>
+                </td>
+              </tr>
+            </template>
+            <template slot="no-data">
+              <div v-show="show_spinner" style="position:fixed; left:50%;">	
+                <intersecting-circles-spinner :animation-duration="1200" :size="50" :color="'#0066ff'" />              		
+              </div>
+              <v-alert v-show="!show_spinner" :value="true" color="error" icon="warning">
+                Sorry, there are no functions to display here :(
+              </v-alert>
+            </template>
+            <v-alert slot="no-results" :value="true" color="error" icon="warning">
+              Your search for "{{ search }}" found no results.
             </v-alert>
-          </template>
-          <v-alert slot="no-results" :value="true" color="error" icon="warning">
-            Your search for "{{ search }}" found no results.
-          </v-alert>
-        </v-data-table>
-      </v-card>
-    </v-flex>
+          </v-data-table>
+        </v-card>
+      </v-flex>
+    </v-layout>
   </v-layout>
 </template>
 <script>
@@ -58,14 +62,17 @@ import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import axios from 'axios'
 import FunctionForm from '@/components/forms/FunctionForm'
 import { IntersectingCirclesSpinner } from 'epic-spinners'
+import AppDrawer from '@/components/AppDrawer'
+import AppToolbar from '@/components/AppToolbar'
 /* eslint-disable */
 
 export default {
   components: {
     FunctionForm,
     VuePerfectScrollbar,
-    IntersectingCirclesSpinner
-    
+    IntersectingCirclesSpinner,
+    AppDrawer,
+    AppToolbar,    
   },
   props: {
     openFaaS: {}

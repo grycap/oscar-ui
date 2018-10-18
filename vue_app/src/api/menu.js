@@ -26,7 +26,13 @@ const Menu = [
     group: 'apps',
     icon: 'settings',
     name: 'Settings'
- }*/
+ },*/
+  {
+    title: 'Log Out',
+    group: 'apps',
+    icon: 'exit_to_app',
+    name: 'Login'
+ }
 ]
 // reorder menu
 Menu.forEach((item) => {

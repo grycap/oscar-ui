@@ -1,5 +1,7 @@
 <template>
-    <v-layout wrap v-if="showBucketContent" id="bucketContent">
+    <v-layout wrap v-if="showBucketContent" id="bucketContent">      
+    <app-drawer class="app--drawer"></app-drawer>
+    <app-toolbar class="app--toolbar"></app-toolbar>
       <v-flex xs12>
         <v-card>
           <v-card-title primary-title>
@@ -200,10 +202,14 @@ import axios from 'axios'
 import moment from 'moment'
 import filesize from 'filesize'
 import { IntersectingCirclesSpinner } from 'epic-spinners'
+import AppDrawer from '@/components/AppDrawer'
+import AppToolbar from '@/components/AppToolbar'
 export default {
   components: {
     InputFile,
-    IntersectingCirclesSpinner
+    IntersectingCirclesSpinner,
+    AppDrawer,
+    AppToolbar,
   },
   props: {
     bucketName: {

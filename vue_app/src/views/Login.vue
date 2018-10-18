@@ -28,7 +28,7 @@
                   <v-icon color="light-blue">fa fa-twitter fa-lg</v-icon>
                 </v-btn>
                 <v-spacer></v-spacer>
-                <v-btn block color="primary" @click="login" :loading="loading">Login</v-btn>
+                <v-btn block color="primary" @click.native="login()" :loading="loading">Login</v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -43,17 +43,28 @@ export default {
   data: () => ({
     loading: false,
     model: {
-      username: 'admin',
-      password: 'admin'
-    }
+      username: '',
+      password: ''
+    }, 
+    user: "admin",
+    pass: "admin",
+    
   }),
+  created(){
+    localStorage.setItem("authenticated", false);
+  },
 
   methods: {
     login () {
       this.loading = true
-      setTimeout(() => {
-        this.$router.push('/dashboard')
-      }, 500)
+      if (this.model.username == this.user && this.model.password == this.pass ){
+        var _this = this
+        localStorage.setItem("authenticated", true);
+        // window.location.href = "/dashboard"
+        this.$router.push({name: "Dashboard"})        
+      }else{
+        this.loading = false
+      }
     }
   }
 

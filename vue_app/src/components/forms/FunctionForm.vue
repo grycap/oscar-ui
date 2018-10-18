@@ -1,5 +1,5 @@
 <template>
-  <v-layout row justify-end>
+  <v-layout row justify-end>    
     <v-dialog v-model="dialog" persistent max-width="80%">
       <v-btn slot="activator" color="teal" dark class="mb-2">
         <v-icon left>add_box</v-icon>
