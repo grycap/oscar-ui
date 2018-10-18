@@ -60,8 +60,7 @@ export default {
       showSecretKey: false
     },
     openFaaS: {
-      // endpoint: 'http://gateway.openfaas:8080/system/functions',
-      endpoint: 'http://158.42.105.208:31112/system/functions',
+      endpoint: 'http://gateway.openfaas:8080/system/functions',      
       port: null
     },
     minioClient: {}
