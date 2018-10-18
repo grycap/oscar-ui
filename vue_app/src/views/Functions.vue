@@ -1,8 +1,7 @@
-<template>
-  <v-layout>
+<template> 
+    <v-layout row wrap>      
     <app-drawer class="app--drawer"></app-drawer>
     <app-toolbar class="app--toolbar"></app-toolbar>
-    <v-layout row wrap>      
       <v-flex xs12>
         <v-card id="functions">
           <v-card-title>
@@ -54,8 +53,7 @@
           </v-data-table>
         </v-card>
       </v-flex>
-    </v-layout>
-  </v-layout>
+    </v-layout>  
 </template>
 <script>
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
