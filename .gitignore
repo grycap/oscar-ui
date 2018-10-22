@@ -2,8 +2,10 @@
 /vue_app/node_modules
 /vue_app/dist
 /node_server/node_modules
+/vue_app/package-lock.json
+/node_server/package-lock.json
 
-/tests/e2e/reports/
+/vue_app/tests/e2e/reports/
 selenium-debug.log
 
 # local env files
