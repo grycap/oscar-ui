@@ -1,4 +1,7 @@
 <template>
+<v-layout row wrap>
+  <app-drawer class="app--drawer"></app-drawer>
+  <app-toolbar class="app--toolbar"></app-toolbar>
   <v-layout align-center justify-center row wrap fill-height>
     <v-flex xs12>
       <v-card>
@@ -88,11 +91,17 @@
       </v-card>
     </v-flex>
   </v-layout>
+</v-layout>
 </template>
 
 <script>
-
+import AppDrawer from '@/components/AppDrawer'
+import AppToolbar from '@/components/AppToolbar'
 export default {
+  components: {
+    AppDrawer,
+    AppToolbar,    
+  },
   props: {
     minio: {},
     openFaaS: {}
