@@ -21,12 +21,12 @@ const Menu = [
     icon: 'functions',
     name: 'Functions'
   },
- /* {
+  {
     title: 'Settings',
     group: 'apps',
     icon: 'settings',
     name: 'Settings'
- },*/
+ },
   {
     title: 'Log Out',
     group: 'apps',
