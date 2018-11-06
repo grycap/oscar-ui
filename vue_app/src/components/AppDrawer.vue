@@ -157,7 +157,7 @@ export default {
     minioCreateBucket (name) {
       return new Promise((resolve, reject) => {
         var params = {'name': name.replace(/[^A-Z0-9]+/ig, "")};
-        axios({ method: 'post', url: 'http://$VUE_APP_BACKEND_HOST:31114/makeBucket', data: params})
+        axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST:31114/makeBucket', data: params})
         .then((response) => {
           this.menucreate = false;
           this.newBucketName = " ";
@@ -184,7 +184,7 @@ export default {
       return {name: subItem.name}
     },
     getBucketsList () {
-       axios({ method: 'post', url: 'http://$VUE_APP_BACKEND_HOST:31114/listbuckets'})
+       axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST:31114/listbuckets'})
         .then((response) => {
           // handle success          
           this.buckets = response.data.map((bucket) => {

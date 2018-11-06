@@ -60,7 +60,7 @@ export default {
       showSecretKey: false
     },
     openFaaS: {
-      endpoint: 'http://gateway.openfaas:8080/system/functions',      
+      endpoint: 'http://oscar.oscar:8080/functions',      
       port: null
     },
     minioClient: {}
@@ -68,8 +68,7 @@ export default {
   computed: {
   },
   created () {    
-    this.auth = localStorage.getItem("authenticated")
-    console.log(this.auth)
+    this.auth = localStorage.getItem("authenticated")    
     AppEvents.forEach(item => {
       this.$on(item.name, item.callback)
     })

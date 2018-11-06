@@ -106,7 +106,8 @@ export default {
     /**
      * Adds a file
      */
-    addFiles () {
+    addFiles () {    
+      console.log(this.$refs.files)  
       this.$refs.files.click()
     },
 
@@ -122,6 +123,7 @@ export default {
         Iteate over any file sent over appending the files
         to the form data.
       */
+     
       for (let i = 0; i < this.files.length; i++) {
         let formData = new FormData()        
         formData.append('file', this.files[i], this.files[i].name)
@@ -137,11 +139,10 @@ export default {
         axios({ 
           headers: {'Content-Type': 'multipart/form-data'},
           method: 'post', 
-          url: 'http://$VUE_APP_BACKEND_HOST:31114/minioUpload', 
+          url: 'https://$VUE_APP_BACKEND_HOST:31114/minioUpload', 
           data: formData
         })
-        .then((response) => {   
-          // console.log(response)  
+        .then((response) => {            
           // _this.files[response.data.key].showUploading = false;
           _this.files.find((f) => {
             if (f.name === response.data.name) {
@@ -199,7 +200,8 @@ export default {
      */
     handleFilesUpload () {
       let uploadedFiles = this.$refs.files.files
-
+      console.log(this.files)
+      console.log(this.$refs.files.files)
       /*
         Adds the uploaded file to the files array
       */
@@ -207,6 +209,7 @@ export default {
         uploadedFiles[i]['showUploading'] = false
         this.files.push(uploadedFiles[i])
       }
+     
     },
     /**
      * Removes a select file the user has uploaded

@@ -78,7 +78,7 @@ export default {
     // TODO: Refactor these methods to obtain the values of events between components
     functionsCount () {
       var params = {'url': this.openFaaS.endpoint }
-      axios({ method: 'post', url: 'http://$VUE_APP_BACKEND_HOST:31114/loadfaas', data: params })
+      axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST:31114/loadfaas', data: params })
         .then((response) => {
           // handle success
           this.functions.count = response.data.length
@@ -94,7 +94,7 @@ export default {
       //   this.storage.bucketsCount = obtainedBuckets.length
       // })
       // var params = {'url': this.openFaaS.endpoint }
-      axios({ method: 'post', url: 'http://$VUE_APP_BACKEND_HOST:31114/listbuckets'})
+      axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST:31114/listbuckets'})
         .then((response) => {
           // handle success
           this.storage.bucketsCount = response.data.length
