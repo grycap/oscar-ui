@@ -2,31 +2,83 @@ var express = require('express');
 var router = express.Router();
 const axios = require('axios');
 var Minio = require ('minio');
-var AWS = require ('aws-sdk');
 let multer = require('multer');
 let upload = multer();
 var fs = require ('fs');
 var archiver = require('archiver');
 var path = require('path');
+const download = require('download');
 
 var app = express();
 
 /************************OPENFAAS*******************************/
 /* GET home page. */
+
 router.get('/', function(req, res, next) {
    res.render('index', { title: 'Express' });
 });
 
+router.post('/chargeurl', function(req, res, next) { 
+
+var url = req.body["url"] 
+download(url).then(data => {
+    var filename = url.split("/");
+    fs.writeFileSync(path.join(__dirname,filename[filename.length-1]), data);
+    fs.readFile(path.join(__dirname,filename[filename.length-1]), 'utf8', function(err, data) {  
+      if (err) throw err;      
+      res.write(data)
+      res.end()
+  });
+  fs.unlinkSync(path.join(__dirname,'/',filename[filename.length-1]), function(error){
+    if (error){
+    throw error;
+    }
+    console.log("Delete success")    
+  })
+}); 
+});
+
+
 router.post('/newfaas', (req, res, next) => {  
-axios.post(req.body['url'], {service:req.body['service'], network:req.body['network'], image:req.body['image'], envProcess:req.body['envProcess']})
+var params = {name:req.body['service'], 
+network:req.body['network'], 
+image:req.body['image'], 
+// envProcess:req.body['envProcess'], 
+script:req.body['script'],
+annotations: req.body['annotations'],
+constraints: req.body['constraints'],
+envVars: req.body['envVars'],
+limits: req.body['limits'],
+labels: req.body['labels'],
+registryAuth: req.body['registryAuth'],
+requests: req.body['requests'],
+secrets: req.body['secrets']
+}
+console.log(params)
+axios.post(
+  req.body['url'], 
+  {name:req.body['service'], 
+  network:req.body['network'], 
+  image:req.body['image'], 
+  // envProcess:req.body['envProcess'], 
+  script:req.body['script'],
+  annotations: req.body['annotations'],
+  constraints: req.body['constraints'],
+  envVars: req.body['envVars'],
+  limits: req.body['limits'],
+  labels: req.body['labels'],
+  registryAuth: req.body['registryAuth'],
+  requests: req.body['requests'],
+  secrets: req.body['secrets']
+})
     .then((response) => {
     // handle success        
     res.status(200).json(response.data);              
     })
-    .catch((error) => {
-     // handle error
-    console.log(error)
-    res.status(400).json(error.response)        
+    .catch((error) => {   
+    var err = error.response.data
+    console.log(err)
+    res.status(400).json(err)        
   }) 
 });
 
@@ -46,7 +98,7 @@ router.post('/loadfaas', (req, res, next) => {
 });
 router.delete('/deletefaas', (req, res, next) => {
   var funct = req.body['functionName']
-  axios.delete(req.body['url'], {data: {functionName: funct} })
+  axios.delete(req.body['url'], {data: {name: funct} })
   .then((response) => {
     // handle success    
     res.status(200).json(response.data);         
@@ -78,8 +130,8 @@ minioClient = "";
 console.log(minioClient)
 
 var minioClient = new Minio.Client({
-  endPoint: 'minio-service.minio',
-  port: 9000,
+  endPoint: 'minio-service.minio',  
+  port: 9000,  
   useSSL: false,
   accessKey: 'minio',
   secretKey: 'minio123'
@@ -103,12 +155,24 @@ router.post('/bucketExists', (req, res, next) => {
       })
   }); 
 
-router.post('/removeFile', (req, res, next) => {          
-      minioClient.removeObjects(req.body["bucketName"], req.body["fileName"], function(err, exists) {
-        if (err) return res.status(400).json(err)            
+router.post('/removeFile', (req, res, next) => { 
+      console.log(req.body["fileName"])     
+      console.log(req.body["bucketName"]) 
+       
+      var objectList = [];
+      objectList = req.body["fileName"]
+      console.log(objectList)
+      for  (var i=0; i < objectList.length; i++) {
+      minioClient.removeObject(req.body["bucketName"], objectList[i], function(err, exists) {
+        if (err){ 
+        console.log(err)
+        res.status(400).json(err)            
+        }else{
         res.status(200).json(exists);        
+        }
             
       })
+    }
   }); 
 
 router.post('/makeBucket', (req, res, next) => {          
@@ -159,40 +223,23 @@ router.post('/listObjects', (req, res, next) => {
 
 
 router.post('/minioUpload', upload.any(), (req, res, next) => {   
-  var file = req.files;
-  // AWS.config.s3 = { s3BucketEndpoint: false }
-      var s3Client = new AWS.S3({
-        // apiVersion: '2006-03-01',
-        // params: {Bucket: req.body["bucketName"]},
-        endpoint: 'http://minio-service.minio:9000/',
-        accessKeyId: 'minio',
-        secretAccessKey: 'minio123',
-        s3ForcePathStyle: true,
-        signatureVersion: 'v4',
-        // logger: window.console
-      })
-      
-    console.log(file[0].originalname) 
-    var params = {
-      Bucket:  req.body["bucketName"],
-      Key:  file[0].originalname,
-      Body:  file[0].buffer
-    }
+  var file = req.files; 
 
-    s3Client.putObject(params, function(err, data) {
+   minioClient.putObject(req.body["bucketName"],file[0].originalname,file[0].buffer, function(err, data) {
       if (err){
-      console.log(err)
-      res.status(400).json({key: req.body["key"], err : err, name : file[0].originalname})
-      }else{
+       console.log(err)
+       res.status(400).json({key: req.body["key"], err : err, name : file[0].originalname})
+      }else{   
       console.log(data)
-      console.log("Successfully uploaded data to testbucket/testobject");
-      res.status(200).json({
-        key: req.body["key"], 
-        etag: data.ETag.replace(/[^A-Z0-9]+/ig, ""), 
-        name : file[0].originalname
-      });
+       res.status(200).json({
+            key: req.body["key"], 
+            // etag: data.ETag.replace(/[^A-Z0-9]+/ig, ""), 
+            etag: data, 
+            name : file[0].originalname
+        });
       }
-    })
+});
+    
     
 });
 

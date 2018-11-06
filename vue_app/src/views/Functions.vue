@@ -29,7 +29,7 @@
                 <td class="justify-center layout px-0">
                   <v-icon medium class="mr-2">{{props.item.ready ? 'check_circle_outline' : 'highlight_off'}}</v-icon>
                 </td>
-                <td class="text-xs-left">{{ props.item.name }}</td>
+                <td class="text-xs-center">{{ props.item.name }}</td>
                 <td class="text-xs-center">{{ props.item.availableReplicas }}</td>
                 <td class="text-xs-center">{{ props.item.replicas }}</td>
                 <td class="text-xs-center">{{ props.item.invocationCount }}</td>
@@ -82,12 +82,12 @@ export default {
     functions: [],
     show_spinner: true,
     headers: [
-      { text: 'Ready', align: 'left', sortable: true, value: 'ready' },
-      { text: 'Name', align: 'left', sortable: true, value: 'name' },
-      { text: 'Available Replicas', value: 'availableReplicas' },
-      { text: 'Replicas', value: 'replicas' },
-      { text: 'Invocation Count', value: 'invocationCount' },
-      { text: 'Actions', value: 'actions' }
+      { text: 'Ready', align: 'center', sortable: true, value: 'ready' },
+      { text: 'Name', align: 'center', sortable: true, value: 'name' },
+      { text: 'Available Replicas', align: 'center',value: 'availableReplicas' },
+      { text: 'Replicas',align: 'center', value: 'replicas' },
+      { text: 'Invocation Count', align: 'center', value: 'invocationCount' },
+      { text: 'Actions',align: 'center', value: 'actions' }
     ],
     loading: true,
     search: ''
@@ -109,7 +109,7 @@ export default {
       const index = this.functions.indexOf(func)
       if (confirm('Are you sure you want to delete this function?')) {
         var parames = { 'url': this.openFaaS.endpoint, 'functionName': func.name }
-        axios({ method: 'delete', url: 'http://$VUE_APP_BACKEND_HOST:31114/deletefaas', data: parames })
+        axios({ method: 'delete', url: 'https://$VUE_APP_BACKEND_HOST:31114/deletefaas', data: parames })
           .then((response) => {
             // handle success
             this.functions.splice(index, 1)
@@ -126,7 +126,7 @@ export default {
     },
     loadFunctions () {
       var params = { 'url': this.openFaaS.endpoint }
-      axios({ method: 'post', url: 'http://$VUE_APP_BACKEND_HOST:31114/loadfaas', data: params })
+      axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST:31114/loadfaas', data: params })
         .then((response) => {
           // handle success
           if(response.data.length == 0){

@@ -15,10 +15,8 @@ router.beforeEach((to, from, next) => {
   if (to.meta.public) {
      next()
   } else {
-    var auth = localStorage.getItem("authenticated");
-    console.log(auth)
-    if(typeof auth != 'undefined' && auth == "true"){
-      console.log("hello")
+    var auth = localStorage.getItem("authenticated");    
+    if(typeof auth != 'undefined' && auth == "true"){      
       next()
     }
     else {
