@@ -824,7 +824,7 @@ export default {
 	},
 	computed: {
 		formTitle () {
-		return this.editionMode ? 'Edit Item' : 'New Item'
+		return this.editionMode ? 'Edit Function' : 'New Function'
 		},
 		formColor () {
 		return this.editionMode ? 'pink' : 'primary'
