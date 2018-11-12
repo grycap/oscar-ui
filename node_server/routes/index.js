@@ -130,10 +130,8 @@ minioClient = "";
 console.log(minioClient)
 
 var minioClient = new Minio.Client({
-  // endPoint: 'minio-service.minio',  
-  endPoint: '158.42.105.19',  
-  // port: 9000,  
-  port: 31852,  
+  endPoint: 'minio-service.minio',    
+  port: 9000,   
   useSSL: false,
   accessKey: "$MINIO_ACCESS_KEY",
   secretKey: "$MINIO_SECRET_KEY"
