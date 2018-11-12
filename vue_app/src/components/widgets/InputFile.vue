@@ -1,6 +1,6 @@
 <template>
   <v-layout xs12 align-center row>
-    <v-flex xs4 row>
+    <v-flex xs4 >
       <v-btn
         color="primary"
         class="white--text"
@@ -9,6 +9,7 @@
         Select files
         <v-icon right dark>note_add</v-icon>
       </v-btn>
+      
       <v-btn
         :loading="showUploading"
         :disabled="showUploading"
@@ -35,12 +36,12 @@
               <v-progress-circular
                 indeterminate
                 color="teal"
-                v-show="file.showUploading"
+                v-show="show"
               >
               </v-progress-circular>
-
+            
             <v-list-tile-content>
-              <v-list-tile-title>{{ file.name }}</v-list-tile-title>
+              <v-list-tile-title>{{file.name}}</v-list-tile-title>
               <v-list-tile-sub-title>{{ moment(file.lastModified).format("YYYY-MM-DD HH:mm") }}</v-list-tile-sub-title>
             </v-list-tile-content>
 
@@ -60,8 +61,9 @@
 import AWS from 'aws-sdk'
 import axios from 'axios'
 import moment from 'moment'
+
 export default {
-  name: 'InputFile',
+  name: 'InputFile',  
   props: {
     accept: {
       type: String,
@@ -99,15 +101,15 @@ export default {
     return {
       moment : moment,
       files: [],
-      showUploading: false
+      showUploading: false,
+      show: false
     }
   },
   methods: {
     /**
      * Adds a file
      */
-    addFiles () {    
-      console.log(this.$refs.files)  
+    addFiles () {     
       this.$refs.files.click()
     },
 
@@ -130,12 +132,17 @@ export default {
         formData.append("bucketName",this.bucketName);
         formData.append("key",i);
         var _this = this;
-        // this.files[i].showUploading = true;
-        this.files.find((f) => {
-            if (f.name === this.files[i].name) {
-              f.showUploading = true
-            }
-          })
+        this.show = true;
+        // this.files.find((f) => {
+          //     if (f.name === _this.files[i].name) {
+            //     //  f.show = true       
+        //      _this.$set(f, 'show', true)      
+        //     }            
+            
+        //   console.log(f)
+        //   })
+      //  this.$set(this.files[i],'show', true)
+        
         axios({ 
           headers: {'Content-Type': 'multipart/form-data'},
           method: 'post', 
@@ -143,27 +150,34 @@ export default {
           data: formData
         })
         .then((response) => {            
-          // _this.files[response.data.key].showUploading = false;
-          _this.files.find((f) => {
-            if (f.name === response.data.name) {
-              f.showUploading = false
-            }
-            
-          })
+          // _this.files[response.data.key].show = false;
+          
+          //  _this.files.find((f) => {            
+          //   if (f.name === response.data.name) {
+          //     // f.show = false
+          //     _this.$set(f, 'show', false)                 
+          //   }            
+          // })
           for (var i in _this.files){
             if (_this.files[i].name == response.data.name){
               var file = _this.files.splice(i, 1) 
               break;              
             }            
-          }         
+          }     
+          // var file = _this.files.splice(response.data.key, 1) 
+          if (_this.files.length == 0) {
+            _this.show = false
+          }
+
           window.getApp.$emit('APP_SHOW_SNACKBAR', {
             text: `The ${file[0].name} file has been successfully uploaded`,
             color: 'success'
           })          
           file[0].etag = response.data.etag                   
           window.getApp.$emit('FILE_UPLOADED', file[0])           
-          window.getApp.$emit('GET_BUCKET_LIST')           
-
+          window.getApp.$emit('GET_BUCKET_LIST') 
+          this.$refs.files.value = null
+       
         }).catch((response) => {                  
           window.getApp.$emit('APP_SHOW_SNACKBAR', {
             text: `Error uploading file ${response.data.name}. ${response.data.err.message}`,            
@@ -199,14 +213,12 @@ export default {
      * Handles the uploading of files
      */
     handleFilesUpload () {
-      let uploadedFiles = this.$refs.files.files
-      console.log(this.files)
-      console.log(this.$refs.files.files)
+      let uploadedFiles = this.$refs.files.files      
       /*
         Adds the uploaded file to the files array
       */
       for (let i = 0; i < uploadedFiles.length; i++) {
-        uploadedFiles[i]['showUploading'] = false
+        uploadedFiles[i]['show'] = false
         this.files.push(uploadedFiles[i])
       }
      
