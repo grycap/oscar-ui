@@ -695,7 +695,7 @@ export default {
 					_this.base64String = window.btoa(binaryData);
 					//showing file converted to base64
 					// document.getElementById('base64').value = base64String;
-					console.log(_this.base64String)
+					// console.log(_this.base64String)
 					// alert('File converted to base64 successfuly!\nCheck in Textarea');
 				};
 				})(f);
@@ -786,7 +786,7 @@ export default {
 				'memory': this.form.request_memory}
 				,
 				'secrets': this.secrets }			
-			console.log(params)
+			
 			axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST:31114/newfaas', data: params })
 				.then((response) => {
 				// handle success

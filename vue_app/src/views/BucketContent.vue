@@ -38,7 +38,7 @@
 					<v-card>
 						<v-card-title class="headline">
 						<v-flex>
-							<v-icon color="warning">warning</v-icon>
+							<v-icon color="warning">warning</v-icon>{name: "Dashboard"}
 							Are you sure you want to delete?
 						</v-flex>
 						</v-card-title>
@@ -121,7 +121,7 @@
 						<intersecting-circles-spinner :animation-duration="1200" :size="50" :color="'#0066ff'" />              		
 					</div>
 					<v-alert v-show="!show_spinner" :value="true" color="error" icon="warning">
-						Sorry, there are no functions to display here :(
+						Sorry, there are no files to display in this bucket :(
 					</v-alert>
 					<!-- <v-alert  color="error" icon="warning" v-show >
 					Sorry, there are no files to display in this bucket :(
@@ -450,6 +450,7 @@ export default {
           text: err.message,
           color: 'error'
         })
+        this.getBucketFiles(this.bucketName)
       })
     },
     removeFile (file) {
@@ -466,6 +467,7 @@ export default {
             text: err.message,
             color: 'error'
           })
+          this.getBucketFiles(this.bucketName)
         })
       }
     },

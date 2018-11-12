@@ -11,6 +11,7 @@ const Menu = [
     group: 'apps',
     icon: 'cloud',
     name: 'Storage',
+    active: false,
     items: [
       // { name: 'post', title: 'Post', component: 'components/widget-post' },
     ]

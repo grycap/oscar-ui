@@ -50,5 +50,18 @@ do
   envsubst '$VUE_APP_BACKEND_HOST' < $file.tmpl.js.map > $file
 done
 
+for file in  /usr/src/node_server/routes/index.js;
+do
+  echo "Processing $file ...";
+
+  # Use the existing JS file as template
+  if [ ! -f $file.tmpl.js.map ]; then
+    cp $file $file.tmpl.js.map
+  fi
+
+  envsubst '$MINIO_ACCESS_KEY' < $file.tmpl.js.map > $file
+  envsubst '$MINIO_SECRET_KEY' < $file.tmpl.js.map > $file
+done
+
 echo "Finish"
 
