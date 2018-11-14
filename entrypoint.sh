@@ -59,8 +59,7 @@ do
     cp $file $file.tmpl.js.map
   fi
 
-  envsubst '$MINIO_ACCESS_KEY' < $file.tmpl.js.map > $file
-  envsubst '$MINIO_SECRET_KEY' < $file.tmpl.js.map > $file
+  envsubst '\$MINIO_ACCESS_KEY \$MINIO_SECRET_KEY' < $file.tmpl.js.map > $file  
 done
 
 echo "Finish"
