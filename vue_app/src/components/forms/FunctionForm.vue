@@ -531,7 +531,7 @@ export default {
 				image: '',
 				imageRules: [
 				v => !!v || 'Docker image is required',
-				v => (v && v.includes('/')) || 'The Docker image must comply with the nomenclature of Docker Hub images'
+				// v => (v && v.includes('/')) || 'The Docker image must comply with the nomenclature of Docker Hub images'
 				// && /.+:.+/.test(v)
 				],
 				name: '',

@@ -38,7 +38,7 @@
 					<v-card>
 						<v-card-title class="headline">
 						<v-flex>
-							<v-icon color="warning">warning</v-icon>{name: "Dashboard"}
+							<v-icon color="warning">warning</v-icon>
 							Are you sure you want to delete?
 						</v-flex>
 						</v-card-title>
