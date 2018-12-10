@@ -60,7 +60,7 @@ export default {
       showSecretKey: false
     },
     openFaaS: {
-      endpoint: 'http://oscar.oscar:8080/functions',      
+      endpoint: 'http://oscar-manager.oscar:8080/functions',      
       port: null
     },
     minioClient: {}
