@@ -14,7 +14,7 @@
                   <v-text-field append-icon="person" name="login" label="Login" type="text"
                                 v-model="model.username"></v-text-field>
                   <v-text-field append-icon="lock" name="password" label="Password" id="password" type="password"
-                                v-model="model.password"></v-text-field>
+                                v-model="model.password" v-on:keyup="bindLogin()"></v-text-field>
                 </v-form>
               </v-card-text>
               <v-card-actions>
@@ -55,6 +55,12 @@ export default {
   },
 
   methods: {
+    bindLogin(){
+      event.preventDefault();
+      if (event.keyCode === 13) {
+        this.login()
+      } 
+    },
     login () {
       this.loading = true
       if (this.model.username == this.user && this.model.password == this.pass ){
@@ -64,6 +70,7 @@ export default {
         this.$router.push({name: "Dashboard"})        
       }else{
         this.loading = false
+         window.getApp.$emit('APP_SHOW_SNACKBAR', { text: "Username or password is incorrect", color: 'error' })
       }
     }
   }

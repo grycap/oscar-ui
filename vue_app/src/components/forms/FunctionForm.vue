@@ -1,5 +1,8 @@
 <template>
 	<v-layout row justify-end>    
+		<v-btn flat icon color="blue" @click="handleUpdate()">
+      		<v-icon>autorenew</v-icon>
+    	</v-btn>
 		<v-dialog v-model="dialog" persistent max-width="80%">
 			<v-btn slot="activator" color="teal" dark class="mb-2">
 				<v-icon left>add_box</v-icon>
@@ -561,6 +564,12 @@ export default {
 		}
 	},
 	methods: {
+		handleUpdate(){
+			this.$emit("SHOWSPINNER",true)			 
+      		window.getApp.$emit('REFRESH_BUCKETS_LIST')
+      		window.getApp.$emit('BUCKETS_REFRESH_DASHBOARD')
+      		window.getApp.$emit('FUNC_GET_FUNCTIONS_LIST')
+    	},
 		cleanfield(){
 			this.url=""
 		},
@@ -790,7 +799,7 @@ export default {
 			axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST:31114/newfaas', data: params })
 				.then((response) => {
 				// handle success
-				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${this.form.name} has been deployed`, color: 'success' })
+				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${this.form.name} is in process of being deployed, wait until it is displayed.`, color: 'success', timeout: 12000 })
 				this.dialog = false
 				this.clear()
 				this.updateFunctionsGrid()
