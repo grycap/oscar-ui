@@ -48,7 +48,7 @@ export default {
       auth: '',
       text: '',
       color: '', // ['success', 'info', 'error', 'cyan darken-2']
-      timeout: 5000
+      timeout: 6000
     },
     breadcrumbList: {},
     minio: {
@@ -60,7 +60,7 @@ export default {
       showSecretKey: false
     },
     openFaaS: {
-      endpoint: 'http://oscar.oscar:8080/functions',      
+      endpoint: 'http://oscar-manager.oscar:8080/functions',                  
       port: null
     },
     minioClient: {}
@@ -89,6 +89,7 @@ export default {
     onShowSnackbar (data) {
       this.snackbar.text = data.text
       this.snackbar.color = data.color
+      this.snackbar.timeout = data.timeout
       this.snackbar.showBucketContent = true
     },
     createMinioClient () {

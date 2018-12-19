@@ -12,16 +12,18 @@
               single-line
               hide-details
             ></v-text-field>
-            <v-spacer></v-spacer>
-            <FunctionForm :openFaaS="openFaaS"></FunctionForm>
+            <v-spacer></v-spacer>            
+            <FunctionForm :openFaaS="openFaaS" @SHOWSPINNER="handleSHOW()"></FunctionForm>
           </v-card-title>
-          <v-data-table
+          
+          <v-data-table 
             :headers="headers"
             :items="functions"
             :loading="loading"
             class="elevation-1"
             item-key="name"
             :search="search"
+            v-show="!show_spinner"
           >
             <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
             <template slot="items" slot-scope="props">
@@ -40,20 +42,21 @@
               </tr>
             </template>
             <template slot="no-data">
-              <div v-show="show_spinner" style="position:fixed; left:50%;">	
-                <intersecting-circles-spinner :animation-duration="1200" :size="50" :color="'#0066ff'" />              		
-              </div>
-              <v-alert v-show="!show_spinner" :value="true" color="error" icon="warning">
+                            
+              <v-alert v-show="show_alert" :value="true" color="error" icon="warning">
                 Sorry, there are no functions to display here :(
               </v-alert>
             </template>
             <v-alert slot="no-results" :value="true" color="error" icon="warning">
               Your search for "{{ search }}" found no results.
             </v-alert>
-          </v-data-table>
+          </v-data-table> 
+          <div v-show="show_spinner" style="position:fixed; left:50%;">	
+                <intersecting-circles-spinner :animation-duration="1200" :size="50" :color="'#0066ff'" />              		
+              </div>  
         </v-card>
       </v-flex>
-    </v-layout>  
+    </v-layout>
 </template>
 <script>
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
@@ -81,6 +84,7 @@ export default {
     selectedFunction: '',
     functions: [],
     show_spinner: true,
+    show_alert: false,
     headers: [
       { text: 'Ready', align: 'center', sortable: true, value: 'ready' },
       { text: 'Name', align: 'center', sortable: true, value: 'name' },
@@ -93,6 +97,9 @@ export default {
     search: ''
   }),
   methods: {
+    handleSHOW(){
+      this.show_spinner = true      
+    },
     editFunction (func) {
       const index = this.functions.indexOf(func)
       let funcInfo = {
@@ -124,13 +131,15 @@ export default {
           })
       }
     },
-    loadFunctions () {
+    loadFunctions () {            
       var params = { 'url': this.openFaaS.endpoint }
       axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST:31114/loadfaas', data: params })
         .then((response) => {
           // handle success
-          if(response.data.length == 0){
             this.show_spinner = false;
+            
+          if(response.data.length == 0){
+            this.show_alert = true;
           }         
           this.functions = response.data.map((func) => {
             return {
@@ -148,7 +157,7 @@ export default {
         .catch((error) => {
           // handle error
           window.getApp.$emit('APP_SHOW_SNACKBAR', { text: error.response.data, color: 'error' })
-        })
+        })        
     }
   },
   created: function () {
