@@ -111,8 +111,7 @@ export default {
       }
       window.getApp.$emit('FUNC_OPEN_MANAGEMENT_DIALOG', funcInfo)
     },    
-    deleteFunction (func) {
-      this.show_spinner = false
+    deleteFunction (func) {      
       const index = this.functions.indexOf(func)
       if (confirm('Are you sure you want to delete this function?')) {
         var parames = { 'url': this.openFaaS.endpoint, 'functionName': func.name }
@@ -140,6 +139,8 @@ export default {
             
           if(response.data.length == 0){
             this.show_alert = true;
+          }else{
+            this.show_alert = false;
           }         
           this.functions = response.data.map((func) => {
             return {
