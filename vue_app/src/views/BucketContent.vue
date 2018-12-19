@@ -18,7 +18,7 @@
 				></v-text-field>
 				</v-flex>
 			</v-card-title>
-			<input-file :bucketName="bucketName"></input-file>
+			<input-file :bucketName="bucketName" @SHOWSPINNER="handleSHOW()"></input-file>
 			</v-card>
 		</v-flex>
 		<v-flex row xs12>
@@ -76,6 +76,7 @@
 			:search="search"
 			:pagination.sync="pagination"
 			select-all
+      v-show="!show_spinner"
 			>
 				<template slot="items" slot-scope="props">
 					<tr>
@@ -117,10 +118,8 @@
 					</tr>
 				</template>
 				<template slot="no-data">
-					<div v-show="show_spinner" style="position:fixed; left:50%;">	
-						<intersecting-circles-spinner :animation-duration="1200" :size="50" :color="'#0066ff'" />              		
-					</div>
-					<v-alert v-show="!show_spinner" :value="true" color="error" icon="warning">
+					
+					<v-alert v-show="show_alert" :value="true" color="error" icon="warning">
 						Sorry, there are no files to display in this bucket :(
 					</v-alert>
 					<!-- <v-alert  color="error" icon="warning" v-show >
@@ -131,6 +130,9 @@
 					Your search for "{{ search }}" found no results.
 				</v-alert>
 			</v-data-table>
+      <div v-show="show_spinner" style="position:fixed; left:50%;">	
+						<intersecting-circles-spinner :animation-duration="1200" :size="50" :color="'#0066ff'" />              		
+				</div>
 		</v-flex>
 		<v-layout xs12 align-end justify-end row id="create">
 			<v-speed-dial
@@ -225,6 +227,7 @@ export default {
       filesize : filesize,
       showBucketContent: false,
       show_spinner: true,
+      show_alert: false,
       search: '',
       pagination: {
         sortBy: 'name'
@@ -294,6 +297,9 @@ export default {
     $route: 'fetchData'
   },
   methods: {
+    handleSHOW(){
+      this.show_spinner = true      
+    },
     /**
      * Add file received from inputFile component
      * @param file
@@ -343,8 +349,11 @@ export default {
         var params = {'name': name }
         axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST:31114/listObjects', data: params})
         .then((response) => {         
+          this.show_spinner = false;
           if (response.data.files.length == 0){
-            this.show_spinner = false;
+            this.show_alert = true;
+          }else{
+            this.show_alert = false;
           }        
           if(response.data.err != ""){
             reject(err)   
@@ -426,8 +435,7 @@ export default {
        }
            
     },
-    removeSelectedFiles () {
-      this.show_spinner = false
+    removeSelectedFiles () {      
       this.dialog.deleting = true
       let toRemove = []
       this.selected.map((sel) => {
@@ -445,12 +453,12 @@ export default {
         this.dialog.deleting = false
         this.dialog.visible = false
         this.closeActionsBar()
+        this.getBucketFiles(this.bucketName)
       }).catch((err) => {
         window.getApp.$emit('APP_SHOW_SNACKBAR', {
           text: err.message,
           color: 'error'
         })
-        this.getBucketFiles(this.bucketName)
       })
     },
     removeFile (file) {
@@ -462,12 +470,12 @@ export default {
             text: `File ${file.name} deleted correctly`,
             color: 'success'
           })          
+          this.getBucketFiles(this.bucketName)
         }).catch((err) => {
           window.getApp.$emit('APP_SHOW_SNACKBAR', {
             text: err.message,
             color: 'error'
           })
-          this.getBucketFiles(this.bucketName)
         })
       }
     },

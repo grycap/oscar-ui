@@ -20,6 +20,9 @@
         Upload
         <v-icon right dark>cloud_upload</v-icon>
       </v-btn>
+      <v-btn flat icon color="blue" @click="updateFile()">
+      		<v-icon>autorenew</v-icon>
+    	</v-btn>
     </v-flex>
     <v-flex xs8 row v-show="showSelectedFiles" id="selectedList">
       <v-flex xs12>
@@ -106,6 +109,10 @@ export default {
     }
   },
   methods: {
+    updateFile(){
+      this.$emit("SHOWSPINNER",true)
+      window.getApp.$emit('GET_BUCKET_LIST')
+    },
     /**
      * Adds a file
      */
