@@ -112,7 +112,21 @@ router.delete('/deletefaas', (req, res, next) => {
 
 router.put('/editfaas', (req, res, next) => {  
   
-  axios.put(req.body['url'], {service:req.body['service'], network:req.body['network'], image:req.body['image'], envProcess:req.body['envProcess']})
+  axios.put(req.body['url'], 
+  {name:req.body['service'], 
+  network:req.body['network'], 
+  image:req.body['image'], 
+  // envProcess:req.body['envProcess'], 
+  script:req.body['script'],
+  annotations: req.body['annotations'],
+  constraints: req.body['constraints'],
+  envVars: req.body['envVars'],
+  limits: req.body['limits'],
+  labels: req.body['labels'],
+  registryAuth: req.body['registryAuth'],
+  requests: req.body['requests'],
+  secrets: req.body['secrets']
+})
   .then((response) => {
     // handle success    
     res.status(200).json(response.data);              

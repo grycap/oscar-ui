@@ -751,7 +751,10 @@ export default {
 				this.filerequire = true
 			}else{
 				this.filerequire = false
-			}
+			}			
+			if(this.editionMode == true ){				
+				this.filerequire = false
+			}			
 		},
 		clear () {
 			this.files = []
@@ -812,7 +815,27 @@ export default {
 				})
 		},
 		editFunction () {
-			var params = { 'url': this.openFaaS.endpoint, 'service': this.form.name, 'network': this.form.network, 'image': this.form.image, 'envProcess': this.form.process }
+			var params = {
+				'url': this.openFaaS.endpoint, 
+				'service': this.form.name, 
+				'network': this.form.network, 
+				'image': this.form.image, 
+				// 'envProcess': this.form.process, 
+				'script': this.base64String,
+				'annotations': this.anns,
+				'constraints': this.consts,
+				'envVars':this.envVars,
+				'labels': this.labels,
+				'limits': 
+				{'cpu': this.form.limits_cpu,
+				'memory': this.form.limits_memory}
+				,
+				'registryAuth': this.form.regAuth,
+				'requests': 
+				{'cpu': this.form.request_cpu,
+				'memory': this.form.request_memory}
+				,
+				'secrets': this.secrets }	
 			axios({ method: 'put', url: 'https://$VUE_APP_BACKEND_HOST:31114/editfaas', data: params })
 				.then((response) => {
 				// handle success
