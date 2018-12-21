@@ -66,7 +66,7 @@
 				<v-flex row xs12 >				
 					<v-btn id="btn_dash" style="justify-content:left"  depressed round flat block small @click.native="collapse('btn_dash')" >		
 						<v-icon left style="padding-right:12px" >dashboard</v-icon>
-						Dashboard						
+						<span v-show="this.mini==false">Dashboard</span> 						
 					</v-btn>                    
 				</v-flex>				  
 				
@@ -74,9 +74,9 @@
 				<v-flex row xs12 >				
 					<v-btn id="btn_storage"	 depressed round flat block small @click.native="collapse('btn_storage')" >		
 						<v-icon id="icloud" left style="padding-right:12px" >cloud</v-icon>
-						Storage
+						<span v-show="this.mini==false">Storage</span> 
 						<v-spacer></v-spacer>
-						<v-icon id="expand_sto" right >{{expand_sto}}</v-icon>
+						<v-icon v-show="this.mini==false" id="expand_sto" right >{{expand_sto}}</v-icon>
 					</v-btn>                    
 				</v-flex>	
 								
@@ -122,21 +122,21 @@
 				<v-flex row xs12 >				
 					<v-btn id="btn_funct"  depressed round flat block small @click.native="collapse('btn_funct')" >		
 						<v-icon left style="padding-right:12px">functions</v-icon>
-						Functions						
+						<span v-show="this.mini==false">Functions</span>						
 					</v-btn>                    
 				</v-flex>
 
 				<v-flex row xs12 >				
 					<v-btn id="btn_sett"  depressed round flat block small @click.native="collapse('btn_sett')" >		
 						<v-icon left style="padding-right:12px">settings</v-icon>
-						Settings						
+						<span v-show="this.mini==false">Settings</span>						
 					</v-btn>                    
 				</v-flex>
 
 				<v-flex row xs12 >				
 					<v-btn id="btn_logout" depressed round flat block small @click.native="collapse('btn_logout')" >		
 						<v-icon  left style="padding-right:12px">exit_to_app</v-icon>
-						Log Out						
+						<span v-show="this.mini==false">Log Out</span>						
 					</v-btn>                    
 				</v-flex>
 
@@ -186,11 +186,13 @@ export default {
   },
   created () {
     window.getApp.$on('APP_DRAWER_TOGGLED', () => {
+			console.log(this.mini)
       this.drawer = (!this.drawer)
       this.menucreate = false;
 
     })
     window.getApp.$on('APP_DRAWER_MINI', () => {
+			console.log(this.mini)
       this.mini = (!this.mini)
       this.menucreate = false;
     })
