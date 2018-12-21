@@ -186,13 +186,11 @@ export default {
   },
   created () {
     window.getApp.$on('APP_DRAWER_TOGGLED', () => {
-			console.log(this.mini)
-      this.drawer = (!this.drawer)
+			this.drawer = (!this.drawer)
       this.menucreate = false;
 
     })
-    window.getApp.$on('APP_DRAWER_MINI', () => {
-			console.log(this.mini)
+    window.getApp.$on('APP_DRAWER_MINI', () => {			
       this.mini = (!this.mini)
       this.menucreate = false;
     })
