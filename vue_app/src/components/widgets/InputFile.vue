@@ -153,7 +153,7 @@ export default {
         axios({ 
           headers: {'Content-Type': 'multipart/form-data'},
           method: 'post', 
-          url: 'https://$VUE_APP_BACKEND_HOST:31114/minioUpload', 
+          url: 'https://$VUE_APP_BACKEND_HOST/minioUpload', 
           data: formData
         })
         .then((response) => {            

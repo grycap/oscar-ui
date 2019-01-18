@@ -347,7 +347,7 @@ export default {
       return new Promise((resolve, reject) => {
         let files = []       
         var params = {'name': name }
-        axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST:31114/listObjects', data: params})
+        axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST/listObjects', data: params})
         .then((response) => {         
           this.show_spinner = false;
           if (response.data.files.length == 0){
@@ -368,7 +368,7 @@ export default {
     bucketExists (name) {
       return new Promise((resolve, reject) => {
         var params = {'name': name }
-        axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST:31114/bucketExists', data: params})
+        axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST/bucketExists', data: params})
         .then((response) => {
           resolve(response) 
         })
@@ -390,7 +390,7 @@ export default {
        if (this.selected.length == 1){
          axios({ 
          method: 'post', 
-         url: 'https://$VUE_APP_BACKEND_HOST:31114/downloadFile', 
+         url: 'https://$VUE_APP_BACKEND_HOST/downloadFile', 
          data: params,
          responseType: 'blob', // important
          })
@@ -413,7 +413,7 @@ export default {
        }else {
         axios({ 
          method: 'post', 
-         url: 'https://$VUE_APP_BACKEND_HOST:31114/downloadFile', 
+         url: 'https://$VUE_APP_BACKEND_HOST/downloadFile', 
          data: params,
          responseType: 'arraybuffer', // important
         
@@ -482,7 +482,7 @@ export default {
     minioRemoveFile (fileName) {      
       return new Promise((resolve, reject) => {
         var params = {'bucketName': this.bucketName, "fileName": fileName }
-        axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST:31114/removeFile', data: params})
+        axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST/removeFile', data: params})
         .then((response) => {
           resolve(response)
         })
@@ -525,7 +525,7 @@ export default {
     minioCreateBucket (name) {
       return new Promise((resolve, reject) => {
         var params = {'name': name.replace(/[^A-Z0-9]+/ig, "")};
-        axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST:31114/makeBucket', data: params})
+        axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST/makeBucket', data: params})
         .then((response) => {
           resolve(response)
         })
@@ -540,7 +540,7 @@ export default {
     removeBucket (name) {
       return new Promise((resolve, reject) => {
         var params = {'name': name}
-        axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST:31114/removeBucket', data: params})
+        axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST/removeBucket', data: params})
         .then((response) => {
           window.getApp.$emit('APP_SHOW_SNACKBAR', {
           text: `Bucket ${name} has been successfully deleted`,
