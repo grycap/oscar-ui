@@ -726,7 +726,7 @@ export default {
 				'url': this.url				
 			}
 			var _this = this;
-			axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST:31114/chargeurl', data: params})
+			axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST/chargeurl', data: params})
 				.then((response) => {
 				// handle success          
 				_this.base64String = window.btoa(response.data);          
@@ -799,7 +799,7 @@ export default {
 				,
 				'secrets': this.secrets }			
 			
-			axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST:31114/newfaas', data: params })
+			axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST/newfaas', data: params })
 				.then((response) => {
 				// handle success
 				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${this.form.name} is in process of being deployed, wait until it is displayed.`, color: 'success', timeout: 12000 })
@@ -836,7 +836,7 @@ export default {
 				'memory': this.form.request_memory}
 				,
 				'secrets': this.secrets }	
-			axios({ method: 'put', url: 'https://$VUE_APP_BACKEND_HOST:31114/editfaas', data: params })
+			axios({ method: 'put', url: 'https://$VUE_APP_BACKEND_HOST/editfaas', data: params })
 				.then((response) => {
 				// handle success
 				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${this.form.name} has been updated`, color: 'success' })
