@@ -3,486 +3,557 @@
 		<v-btn flat icon color="blue" @click="handleUpdate()">
       		<v-icon>autorenew</v-icon>
     	</v-btn>
-		<v-dialog v-model="dialog" persistent max-width="80%">
+		<v-dialog v-model="dialog" persistent max-width="50%">
 			<v-btn slot="activator" color="teal" dark class="mb-2">
 				<v-icon left>add_box</v-icon>
 				Deploy new function
 			</v-btn>
 			<v-card >
 				<v-form ref="form" v-model="form.valid" lazy-validation>
-					<v-toolbar flat :color="formColor" class="white--text">
-						<span class="headline">{{ formTitle }}</span>
+					<v-toolbar flat color="#11BBC9" class="white--text">
+						<span class="headline" style="width:100%;text-align:center">Deploy New Function</span>
 					</v-toolbar>
-				
+					
+					<ul class="nav nav-pills nav-fill" id="myTab" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active" id="home-tab" @click="show('home')" role="tab" aria-controls="home" aria-selected="true">New Function</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="profile-tab" @click="show('profile')" role="tab" aria-controls="profile" aria-selected="false">Storage</a>
+						</li>  
+					</ul>
+					 
 					<v-progress-linear :active="progress.active" :indeterminate="true"></v-progress-linear>
-					<v-card-text>
-						<v-container grid-list-md>
-							<v-layout wrap>
-								<v-flex xs12>
-									<v-text-field
-										v-model="form.image"
-										:rules="form.imageRules"
-										:counter="200"
-										label="Docker image:"
-										required
-									></v-text-field>
-								</v-flex>
-
-								<v-flex xs12>
-									<v-text-field
-										v-model="form.name"
-										:rules="form.nameRules"
-										:counter="200"
-										label="Function name"
-										required
-										:disabled="this.editionMode"
-									></v-text-field>
-								</v-flex>               
-								
-								<v-flex xs12 sm12 md5 text-xs-center>
-									<v-btn color="primary" class="white--text" @click.native="addFiles()"> Select a file<v-icon right dark>note_add</v-icon></v-btn>
-								</v-flex>
-
-								<v-flex xs12 sm12 md2 class="text-xs-center">
-									<v-chip>or</v-chip>
-								</v-flex>
-
-								<v-flex xs12 sm12 md5>
-									<div style="margin:10px" class="form-group">                     
-									<div class="input-group">
-										<input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                     
-										
-										<div class="input-group-append mr-2">                        
-										<button class="" @click="readurl()" type="button"><v-icon left color="green">check_circle</v-icon></button>
-										<button class="" @click="cleanfield()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
-										</div>
-									</div>            
-									</div> 
-								</v-flex>
-
-								<v-flex xs12 text-xs-center>
-									<span v-show="filerequire" style="color: #cc3300; font-size: 12px;"><b>Select a file or enter a URL</b></span>                   									
-								</v-flex>
-								
-								<v-flex xs12 sm6 offset-sm3 v-show="showSelectedFiles"  id="selectedList" class="text-xs-center">
-									<!-- <v-flex xs12> -->
-										<input type="file" id="files" ref="files" hidden=true  v-on:change="handleFilesUpload()"/>								                  									
-									
-										<v-list subheader dense >
-											<v-subheader inset>File</v-subheader>
-											<v-list-tile
-											v-for="(file, key) in files"
-											:key="key"
-											avatar
-											@click.stop=""
-											>                                    
-													<v-progress-circular
-													indeterminate
-													color="teal"
-													v-show="showUploading"
-													>
-													</v-progress-circular>
-
-													<v-list-tile-content>
-														<v-list-tile-title>{{ filename }}</v-list-tile-title>														
-													</v-list-tile-content>
-
-													<v-list-tile-action>
-														<v-btn icon ripple @click="removeFile(key)">
-														<v-icon color="red lighten-1">remove_circle_outline</v-icon>
-														</v-btn>
-													</v-list-tile-action>
-											</v-list-tile>
-										</v-list>
-										
-									<!-- </v-flex> -->
-								</v-flex>					
-							
-							
-								<v-flex xs12>
-										<v-btn
-										outline color="indigo"
-										round
-										small
-										@click.native="collapse()"
-									>
-										More Options
-										<v-icon right dark>{{expand}}</v-icon>
-									</v-btn>                    
-								</v-flex>
-							
-								<v-flex xs12 id="panel">  								
-									<v-container>
-										<v-layout row wrap>
-											<!-- <v-flex xs12 >
-												<v-text-field
-													v-model="form.process"
-													:counter="200"
-													label="Function process (Optional)"
-												></v-text-field>
-											</v-flex> -->																	
-
-											<v-flex xs12 >
-												<div style="margin:10px" class="form-group">                     
-												<div class="input-group">
-													<!-- <input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                      -->
-													<v-flex xs12 sm5 >
-														<v-text-field
-															v-model="form.annkey"
-															:counter="200"
-															label="Annotations (key)"											
-														></v-text-field>
-													</v-flex>	
-													<v-flex xs12 sm5>
-														<v-text-field
-															v-model="form.annvalue"
-															:counter="200"
-															label="Annotations (value)"											
-														></v-text-field>
-													</v-flex>	
-													 
-													<div  class="input-group-append mr-2">  														                    
-														<button class="" @click="includeAnn()" type="button"><v-icon left color="green">check_circle</v-icon></button>
-														<button class="" @click="cleanfieldann()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
-													</div>
-													
-													<!-- <span style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>                    -->
-												</div>            
-												</div> 
-											</v-flex>
-
-											<v-flex xs12 sm6 offset-sm3 v-show="showselectAnn">
-												<!-- <v-flex xs12> -->
-													<input type="file" id="envs" hidden="true" multiple />
-													<v-list subheader dense>
-														<v-subheader inset>Annotations</v-subheader>
-														<v-list-tile
-														v-for="(ann,key) in anns"
-														:key="key"
-														avatar
-														@click.stop=""
-														>                                    
-																<!-- <v-progress-circular
-																indeterminate
-																color="teal"
-																v-show="showUploading"
-																>
-																</v-progress-circular> -->
-
-																<v-list-tile-content>
-																	<v-list-tile-title>{{key}}:{{anns[key]}}</v-list-tile-title>
-																	<!-- <v-list-tile-sub-title>{{ moment(file.lastModified).format("YYYY-MM-DD HH:mm") }}</v-list-tile-sub-title> -->
-																</v-list-tile-content>
-
-																<v-list-tile-action>
-																	<v-btn icon ripple @click="removeAnn(key)">
-																	<v-icon color="red lighten-1">remove_circle_outline</v-icon>
-																	</v-btn>
-																</v-list-tile-action>
-														</v-list-tile>
-													</v-list>
-												<!-- </v-flex> -->
-											</v-flex>										
-											
-											<v-flex xs12 >
-												<div style="margin:10px" class="form-group">                     
-												<div class="input-group">
-													<!-- <input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                      -->
-													<v-flex xs12 sm5 >
-														<v-text-field
-															v-model="form.envVarskey"
-															:counter="200"
-															label="Environment variables (key)"											
-														></v-text-field>
-													</v-flex>	
-													<v-flex xs12 sm5>
-														<v-text-field
-															v-model="form.envVarsValue"
-															:counter="200"
-															label="Environment variables (value)"											
-														></v-text-field>
-													</v-flex>	
-													 
-													<div  class="input-group-append mr-2">  														                    
-														<button class="" @click="includeEnv()" type="button"><v-icon left color="green">check_circle</v-icon></button>
-														<button class="" @click="cleanfieldenv()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
-													</div>
-													
-													<!-- <span style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>                    -->
-												</div>            
-												</div> 
-											</v-flex>
-
-											<v-flex xs12 sm6 offset-sm3 v-show="showselectEnv">
-												<!-- <v-flex xs12> -->
-													<input type="file" id="envs" hidden="true" multiple />
-													<v-list subheader dense>
-														<v-subheader inset>Env Vars</v-subheader>
-														<v-list-tile
-														v-for="(enVar,key) in envVars"
-														:key="key"
-														avatar
-														@click.stop=""
-														>                                    
-																<!-- <v-progress-circular
-																indeterminate
-																color="teal"
-																v-show="showUploading"
-																>
-																</v-progress-circular> -->
-
-																<v-list-tile-content>
-																	<v-list-tile-title>{{key}}:{{envVars[key]}}</v-list-tile-title>
-																	<!-- <v-list-tile-sub-title>{{ moment(file.lastModified).format("YYYY-MM-DD HH:mm") }}</v-list-tile-sub-title> -->
-																</v-list-tile-content>
-
-																<v-list-tile-action>
-																	<v-btn icon ripple @click="removeEnv(key)">
-																	<v-icon color="red lighten-1">remove_circle_outline</v-icon>
-																	</v-btn>
-																</v-list-tile-action>
-														</v-list-tile>
-													</v-list>
-												<!-- </v-flex> -->
-											</v-flex>
-											
-											<v-flex xs12 >
-												<div style="margin:10px" class="form-group">                     
-												<div class="input-group">
-													<!-- <input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                      -->
-													<v-flex xs12 sm5 >
-														<v-text-field
-															v-model="form.labelkey"
-															:counter="200"
-															label="Labels (key)"											
-														></v-text-field>
-													</v-flex>	
-													<v-flex xs12 sm5>
-														<v-text-field
-															v-model="form.labelvalue"
-															:counter="200"
-															label="Labels (value)"											
-														></v-text-field>
-													</v-flex>	
-													 
-													<div  class="input-group-append mr-2">  														                    
-														<button class="" @click="includeLab()" type="button"><v-icon left color="green">check_circle</v-icon></button>
-														<button class="" @click="cleanfieldLab()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
-													</div>
-													
-													<!-- <span style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>                    -->
-												</div>            
-												</div> 
-											</v-flex>
-
-											<v-flex xs12 sm6 offset-sm3 v-show="showselectLab">
-												<!-- <v-flex xs12> -->
-													<input type="file" id="envs" hidden="true" multiple />
-													<v-list subheader dense>
-														<v-subheader inset>Labels</v-subheader>
-														<v-list-tile
-														v-for="(lab,key) in labels"
-														:key="key"
-														avatar
-														@click.stop=""
-														>                                    
-																<!-- <v-progress-circular
-																indeterminate
-																color="teal"
-																v-show="showUploading"
-																>
-																</v-progress-circular> -->
-
-																<v-list-tile-content>
-																	<v-list-tile-title>{{key}}:{{labels[key]}}</v-list-tile-title>
-																	<!-- <v-list-tile-sub-title>{{ moment(file.lastModified).format("YYYY-MM-DD HH:mm") }}</v-list-tile-sub-title> -->
-																</v-list-tile-content>
-
-																<v-list-tile-action>
-																	<v-btn icon ripple @click="removeLab(key)">
-																	<v-icon color="red lighten-1">remove_circle_outline</v-icon>
-																	</v-btn>
-																</v-list-tile-action>
-														</v-list-tile>
-													</v-list>
-												<!-- </v-flex> -->
-											</v-flex>
-											<v-flex xs12 >
-												<div style="margin:10px" class="form-group">                     
-												<div class="input-group">
-													<!-- <input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                      -->
-													<v-flex xs10>
-														<v-text-field
-															v-model="form.constraints"
-															:counter="200"
-															label="Constraints"											
-														></v-text-field>
-													</v-flex>	
-													
-													 
-													<div  class="input-group-append mr-2">  														                    
-														<button class="" @click="includeConst()" type="button"><v-icon left color="green">check_circle</v-icon></button>
-														<button class="" @click="cleanfieldConst()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
-													</div>
-													
-													<!-- <span style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>                    -->
-												</div>            
-												</div> 
-											</v-flex>
-
-											<v-flex xs12 sm6 offset-sm3 v-show="showselectConsts">
-												<!-- <v-flex xs12> -->
-													<input type="file" hidden="true" multiple />
-													<v-list subheader dense>
-														<v-subheader inset>Constraints</v-subheader>
-														<v-list-tile
-														v-for="(constra, key) in consts"
-														:key="key"
-														avatar
-														@click.stop=""
-														>                                    
-																<!-- <v-progress-circular
-																indeterminate
-																color="teal"
-																v-show="showUploading"
-																>
-																</v-progress-circular> -->
-
-																<v-list-tile-content>
-																	<v-list-tile-title>{{constra}}</v-list-tile-title>
-																	<!-- <v-list-tile-sub-title>{{ moment(file.lastModified).format("YYYY-MM-DD HH:mm") }}</v-list-tile-sub-title> -->
-																</v-list-tile-content>
-
-																<v-list-tile-action>
-																	<v-btn icon ripple @click="removeConst(key)">
-																	<v-icon color="red lighten-1">remove_circle_outline</v-icon>
-																	</v-btn>
-																</v-list-tile-action>
-														</v-list-tile>
-													</v-list>
-												<!-- </v-flex> -->
-											</v-flex>
-
-
-											<v-flex xs12 >
-												<div style="margin:10px" class="form-group">                     
-												<div class="input-group">
-													<!-- <input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                      -->
-																											
-													<v-flex xs10 >
-														<v-text-field
-															v-model="form.secrets"
-															:counter="200"
-															label="Secrets"											
-														></v-text-field>
-													</v-flex>	
-													 
-													<div  class="input-group-append mr-2">  														                    
-														<button class="" @click="includeSec()" type="button"><v-icon left color="green">check_circle</v-icon></button>
-														<button class="" @click="cleanfieldSec()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
-													</div>
-													
-													<!-- <span style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>                    -->
-												</div>            
-												</div> 
-											</v-flex>
-
-											<v-flex xs12 sm6 offset-sm3 v-show="showselectSec">
-												<!-- <v-flex xs12> -->
-													<input type="file" hidden="true" multiple />
-													<v-list subheader dense>
-														<v-subheader inset>Secrets</v-subheader>
-														<v-list-tile
-														v-for="(sec, key) in secrets"
-														:key="key"
-														avatar
-														@click.stop=""
-														>                                    
-																<!-- <v-progress-circular
-																indeterminate
-																color="teal"
-																v-show="showUploading"
-																>
-																</v-progress-circular> -->
-
-																<v-list-tile-content>
-																	<v-list-tile-title>{{sec}}</v-list-tile-title>
-																	<!-- <v-list-tile-sub-title>{{ moment(file.lastModified).format("YYYY-MM-DD HH:mm") }}</v-list-tile-sub-title> -->
-																</v-list-tile-content>
-
-																<v-list-tile-action>
-																	<v-btn icon ripple @click="removeSec(key)">
-																	<v-icon color="red lighten-1">remove_circle_outline</v-icon>
-																	</v-btn>
-																</v-list-tile-action>
-														</v-list-tile>
-													</v-list>
-												<!-- </v-flex> -->
-											</v-flex>
-											<!-- <v-flex xs12 sm6 md6>
-												<v-text-field
-													v-model="form.secrets"
-													:counter="200"
-													label="Secrets"											
-												></v-text-field>											
-											</v-flex>  -->
-
+					 
+					<div class="tab-content" id="myTabContent">
+						<div class="tab-pane fade show active"  id="home" role="tabpanel" aria-labelledby="home-tab">
+							<v-card-text>
+								<!-- <v-container grid-list-md> -->
+									<v-layout wrap>
+										<div style="width:100%;padding: 0px 10px;">
 											<v-flex xs12>
 												<v-text-field
-													v-model="form.network"
+													v-model="form.image"
+													:rules="form.imageRules"
 													:counter="200"
-													label="Network (Swarm)"
+													label="Docker image:"
 													required
 												></v-text-field>
 											</v-flex>
 
-											<v-flex xs12 sm6 md6>
-												<v-text-field
-													v-model="form.limits_cpu"
-													:counter="200"
-													label="Limits CPU"											
-												></v-text-field>											
-											</v-flex>
-
-											<v-flex xs12 sm6 md6>
-												<v-text-field
-													v-model="form.limits_memory"
-													:counter="200"
-													label="Limits Memory"											
-												></v-text-field>											
-											</v-flex>  
-
 											<v-flex xs12>
 												<v-text-field
-													v-model="form.regAuth"
+													v-model="form.name"
+													:rules="form.nameRules"
 													:counter="200"
-													label="Registry Authentication"											
+													label="Function name"
+													required
+													:disabled="this.editionMode"
 												></v-text-field>
+											</v-flex>               
+										</div>
+										<div class="row" style="width:100%;padding: 0px 10px;"> 	
+											<v-flex xs12  md4 text-xs-center>
+												<v-btn color="primary" class="white--text" @click.native="addFiles()"> Select a file<v-icon right dark>note_add</v-icon></v-btn>
 											</v-flex>
 
-											<v-flex xs12 sm6 md6>
-												<v-text-field
-													v-model="form.request_cpu"
-													:counter="200"
-													label="Request CPU"											
-												></v-text-field>
+											<v-flex xs12  md4 class="text-xs-center">
+												<v-chip>or</v-chip>
 											</v-flex>
 
-											<v-flex xs12 sm6 md6>
-												<v-text-field
-													v-model="form.request_memory"
-													:counter="200"
-													label="Request Memory"											
-												></v-text-field>											
-											</v-flex>  
+											<v-flex xs12  md4>
+												<div style="margin:10px" class="form-group">                     
+												<div class="input-group">
+													<input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                     
+													
+													<div class="input-group-append mr-2">                        
+													<button class="" @click="readurl()" type="button"><v-icon left color="green">check_circle</v-icon></button>
+													<button class="" @click="cleanfield()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
+													</div>
+												</div>            
+												</div> 
+											</v-flex>
 
-											 
-										</v-layout>
-									</v-container>								
-								</v-flex> 						
-							</v-layout>
-						</v-container>
-					</v-card-text>				
+											<v-flex xs12 text-xs-center>
+												<span v-show="filerequire" style="color: #cc3300; font-size: 12px;"><b>Select a file or enter a URL</b></span>                   									
+											</v-flex>
+											
+											<v-flex xs12 sm6 offset-sm3 v-show="showSelectedFiles"  id="selectedList" class="text-xs-center">
+												<!-- <v-flex xs12> -->
+													<input type="file" id="files" ref="files" hidden=true  v-on:change="handleFilesUpload()"/>								                  									
+												
+													<v-list subheader dense >
+														<v-subheader inset>File</v-subheader>
+														<v-list-tile
+														v-for="(file, key) in files"
+														:key="key"
+														avatar
+														@click.stop=""
+														>                                    
+																<v-progress-circular
+																indeterminate
+																color="teal"
+																v-show="showUploading"
+																>
+																</v-progress-circular>
+
+																<v-list-tile-content>
+																	<v-list-tile-title>{{ filename }}</v-list-tile-title>														
+																</v-list-tile-content>
+
+																<v-list-tile-action>
+																	<v-btn icon ripple @click="removeFile(key)">
+																	<v-icon color="red lighten-1">remove_circle_outline</v-icon>
+																	</v-btn>
+																</v-list-tile-action>
+														</v-list-tile>
+													</v-list>
+													
+												<!-- </v-flex> -->
+											</v-flex>					
+									
+									
+											<v-flex xs12>
+													<v-btn
+													outline color="indigo"
+													round
+													small
+													@click.native="collapse()"
+												>
+													More Options
+													<v-icon right dark>{{expand}}</v-icon>
+												</v-btn>                    
+											</v-flex>
+										</div>
+									
+										<v-flex xs12 id="panel">  								
+											<v-container>
+												<v-layout row wrap>
+													<!-- <v-flex xs12 >
+														<v-text-field
+															v-model="form.process"
+															:counter="200"
+															label="Function process (Optional)"
+														></v-text-field>
+													</v-flex> -->																	
+
+													<v-flex xs12 >
+														<div style="margin:10px" class="form-group">                     
+														<div class="input-group">
+															<!-- <input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                      -->
+															<v-flex xs12 sm5 >
+																<v-text-field
+																	v-model="form.annkey"
+																	:counter="200"
+																	label="Annotations (key)"											
+																></v-text-field>
+															</v-flex>	
+															<v-flex xs12 sm5>
+																<v-text-field
+																	v-model="form.annvalue"
+																	:counter="200"
+																	label="Annotations (value)"											
+																></v-text-field>
+															</v-flex>	
+															
+															<div  class="input-group-append mr-2">  														                    
+																<button class="" @click="includeAnn()" type="button"><v-icon left color="green">check_circle</v-icon></button>
+																<button class="" @click="cleanfieldann()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
+															</div>
+															
+															<!-- <span style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>                    -->
+														</div>            
+														</div> 
+													</v-flex>
+
+													<v-flex xs12 sm6 offset-sm3 v-show="showselectAnn">
+														<!-- <v-flex xs12> -->
+															<input type="file" id="envs" hidden="true" multiple />
+															<v-list subheader dense>
+																<v-subheader inset>Annotations</v-subheader>
+																<v-list-tile
+																v-for="(ann,key) in anns"
+																:key="key"
+																avatar
+																@click.stop=""
+																>                                    
+																		<!-- <v-progress-circular
+																		indeterminate
+																		color="teal"
+																		v-show="showUploading"
+																		>
+																		</v-progress-circular> -->
+
+																		<v-list-tile-content>
+																			<v-list-tile-title>{{key}}:{{anns[key]}}</v-list-tile-title>
+																			<!-- <v-list-tile-sub-title>{{ moment(file.lastModified).format("YYYY-MM-DD HH:mm") }}</v-list-tile-sub-title> -->
+																		</v-list-tile-content>
+
+																		<v-list-tile-action>
+																			<v-btn icon ripple @click="removeAnn(key)">
+																			<v-icon color="red lighten-1">remove_circle_outline</v-icon>
+																			</v-btn>
+																		</v-list-tile-action>
+																</v-list-tile>
+															</v-list>
+														<!-- </v-flex> -->
+													</v-flex>										
+													
+													<v-flex xs12 >
+														<div style="margin:10px" class="form-group">                     
+														<div class="input-group">
+															<!-- <input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                      -->
+															<v-flex xs12 sm5 >
+																<v-text-field
+																	v-model="form.envVarskey"
+																	:counter="200"
+																	label="Environment variables (key)"											
+																></v-text-field>
+															</v-flex>	
+															<v-flex xs12 sm5>
+																<v-text-field
+																	v-model="form.envVarsValue"
+																	:counter="200"
+																	label="Environment variables (value)"											
+																></v-text-field>
+															</v-flex>	
+															
+															<div  class="input-group-append mr-2">  														                    
+																<button class="" @click="includeEnv()" type="button"><v-icon left color="green">check_circle</v-icon></button>
+																<button class="" @click="cleanfieldenv()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
+															</div>
+															
+															<!-- <span style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>                    -->
+														</div>            
+														</div> 
+													</v-flex>
+
+													<v-flex xs12 sm6 offset-sm3 v-show="showselectEnv">
+														<!-- <v-flex xs12> -->
+															<input type="file" id="envs" hidden="true" multiple />
+															<v-list subheader dense>
+																<v-subheader inset>Env Vars</v-subheader>
+																<v-list-tile
+																v-for="(enVar,key) in envVars"
+																:key="key"
+																avatar
+																@click.stop=""
+																>                                    
+																		<!-- <v-progress-circular
+																		indeterminate
+																		color="teal"
+																		v-show="showUploading"
+																		>
+																		</v-progress-circular> -->
+
+																		<v-list-tile-content>
+																			<v-list-tile-title>{{key}}:{{envVars[key]}}</v-list-tile-title>
+																			<!-- <v-list-tile-sub-title>{{ moment(file.lastModified).format("YYYY-MM-DD HH:mm") }}</v-list-tile-sub-title> -->
+																		</v-list-tile-content>
+
+																		<v-list-tile-action>
+																			<v-btn icon ripple @click="removeEnv(key)">
+																			<v-icon color="red lighten-1">remove_circle_outline</v-icon>
+																			</v-btn>
+																		</v-list-tile-action>
+																</v-list-tile>
+															</v-list>
+														<!-- </v-flex> -->
+													</v-flex>
+													
+													<v-flex xs12 >
+														<div style="margin:10px" class="form-group">                     
+														<div class="input-group">
+															<!-- <input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                      -->
+															<v-flex xs12 sm5 >
+																<v-text-field
+																	v-model="form.labelkey"
+																	:counter="200"
+																	label="Labels (key)"											
+																></v-text-field>
+															</v-flex>	
+															<v-flex xs12 sm5>
+																<v-text-field
+																	v-model="form.labelvalue"
+																	:counter="200"
+																	label="Labels (value)"											
+																></v-text-field>
+															</v-flex>	
+															
+															<div  class="input-group-append mr-2">  														                    
+																<button class="" @click="includeLab()" type="button"><v-icon left color="green">check_circle</v-icon></button>
+																<button class="" @click="cleanfieldLab()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
+															</div>
+															
+															<!-- <span style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>                    -->
+														</div>            
+														</div> 
+													</v-flex>
+
+													<v-flex xs12 sm6 offset-sm3 v-show="showselectLab">
+														<!-- <v-flex xs12> -->
+															<input type="file" id="envs" hidden="true" multiple />
+															<v-list subheader dense>
+																<v-subheader inset>Labels</v-subheader>
+																<v-list-tile
+																v-for="(lab,key) in labels"
+																:key="key"
+																avatar
+																@click.stop=""
+																>                                    
+																		<!-- <v-progress-circular
+																		indeterminate
+																		color="teal"
+																		v-show="showUploading"
+																		>
+																		</v-progress-circular> -->
+
+																		<v-list-tile-content>
+																			<v-list-tile-title>{{key}}:{{labels[key]}}</v-list-tile-title>
+																			<!-- <v-list-tile-sub-title>{{ moment(file.lastModified).format("YYYY-MM-DD HH:mm") }}</v-list-tile-sub-title> -->
+																		</v-list-tile-content>
+
+																		<v-list-tile-action>
+																			<v-btn icon ripple @click="removeLab(key)">
+																			<v-icon color="red lighten-1">remove_circle_outline</v-icon>
+																			</v-btn>
+																		</v-list-tile-action>
+																</v-list-tile>
+															</v-list>
+														<!-- </v-flex> -->
+													</v-flex>
+													<v-flex xs12 >
+														<div class="form-group">                     
+														<div class="input-group">
+															<!-- <input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                      -->
+															<v-flex>
+																<v-text-field
+																	v-model="form.constraints"
+																	:counter="200"
+																	label="Constraints"											
+																></v-text-field>
+															</v-flex>	
+															
+															
+															<div  class="input-group-append mr-2">  														                    
+																<button class="" @click="includeConst()" type="button"><v-icon left color="green">check_circle</v-icon></button>
+																<button class="" @click="cleanfieldConst()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
+															</div>
+															
+															<!-- <span style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>                    -->
+														</div>            
+														</div> 
+													</v-flex>
+
+													<v-flex xs12 sm6 offset-sm3 v-show="showselectConsts">
+														<!-- <v-flex xs12> -->
+															<input type="file" hidden="true" multiple />
+															<v-list subheader dense>
+																<v-subheader inset>Constraints</v-subheader>
+																<v-list-tile
+																v-for="(constra, key) in consts"
+																:key="key"
+																avatar
+																@click.stop=""
+																>                                    
+																		<!-- <v-progress-circular
+																		indeterminate
+																		color="teal"
+																		v-show="showUploading"
+																		>
+																		</v-progress-circular> -->
+
+																		<v-list-tile-content>
+																			<v-list-tile-title>{{constra}}</v-list-tile-title>
+																			<!-- <v-list-tile-sub-title>{{ moment(file.lastModified).format("YYYY-MM-DD HH:mm") }}</v-list-tile-sub-title> -->
+																		</v-list-tile-content>
+
+																		<v-list-tile-action>
+																			<v-btn icon ripple @click="removeConst(key)">
+																			<v-icon color="red lighten-1">remove_circle_outline</v-icon>
+																			</v-btn>
+																		</v-list-tile-action>
+																</v-list-tile>
+															</v-list>
+														<!-- </v-flex> -->
+													</v-flex>
+
+
+													<v-flex xs12 >
+														<div class="form-group" >                     
+														<div class="input-group">
+															<!-- <input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                      -->
+																													
+															<v-flex >
+																<v-text-field
+																	v-model="form.secrets"
+																	:counter="200"
+																	label="Secrets"											
+																></v-text-field>
+															</v-flex>	
+															
+															<div class="input-group-append mr-2">  														                    
+																<button class="" @click="includeSec()" type="button"><v-icon left color="green">check_circle</v-icon></button>
+																<button class="" @click="cleanfieldSec()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
+															</div>
+															
+															<!-- <span style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>                    -->
+														</div>            
+														</div> 
+													</v-flex>
+
+													<v-flex xs12 sm6 offset-sm3 v-show="showselectSec">
+														<!-- <v-flex xs12> -->
+															<input type="file" hidden="true" multiple />
+															<v-list subheader dense>
+																<v-subheader inset>Secrets</v-subheader>
+																<v-list-tile
+																v-for="(sec, key) in secrets"
+																:key="key"
+																avatar
+																@click.stop=""
+																>                                    
+																		<!-- <v-progress-circular
+																		indeterminate
+																		color="teal"
+																		v-show="showUploading"
+																		>
+																		</v-progress-circular> -->
+
+																		<v-list-tile-content>
+																			<v-list-tile-title>{{sec}}</v-list-tile-title>
+																			<!-- <v-list-tile-sub-title>{{ moment(file.lastModified).format("YYYY-MM-DD HH:mm") }}</v-list-tile-sub-title> -->
+																		</v-list-tile-content>
+
+																		<v-list-tile-action>
+																			<v-btn icon ripple @click="removeSec(key)">
+																			<v-icon color="red lighten-1">remove_circle_outline</v-icon>
+																			</v-btn>
+																		</v-list-tile-action>
+																</v-list-tile>
+															</v-list>
+														<!-- </v-flex> -->
+													</v-flex>
+													<!-- <v-flex xs12 sm6 md6>
+														<v-text-field
+															v-model="form.secrets"
+															:counter="200"
+															label="Secrets"											
+														></v-text-field>											
+													</v-flex>  -->
+
+													<v-flex xs12>
+														<v-text-field
+															v-model="form.network"
+															:counter="200"
+															label="Network (Swarm)"
+															required
+														></v-text-field>
+													</v-flex>
+
+													<v-flex xs12 sm6 md6>
+														<v-text-field
+															v-model="form.limits_cpu"
+															:counter="200"
+															label="Limits CPU"											
+														></v-text-field>											
+													</v-flex>
+
+													<v-flex xs12 sm6 md6>
+														<v-text-field
+															v-model="form.limits_memory"
+															:counter="200"
+															label="Limits Memory"											
+														></v-text-field>											
+													</v-flex>  
+
+													<v-flex xs12>
+														<v-text-field
+															v-model="form.regAuth"
+															:counter="200"
+															label="Registry Authentication"											
+														></v-text-field>
+													</v-flex>
+
+													<v-flex xs12 sm6 md6>
+														<v-text-field
+															v-model="form.request_cpu"
+															:counter="200"
+															label="Request CPU"											
+														></v-text-field>
+													</v-flex>
+
+													<v-flex xs12 sm6 md6>
+														<v-text-field
+															v-model="form.request_memory"
+															:counter="200"
+															label="Request Memory"											
+														></v-text-field>											
+													</v-flex>  
+
+													
+												</v-layout>
+											</v-container>								
+										</v-flex> 						
+									</v-layout>
+								<!-- </v-container> -->
+							</v-card-text>
+						</div>
+						<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">	
+							<v-container>
+								
+								<v-layout row style="padding:0px,10px;justify-content: center;">										
+									<img src="../../img/logo_one_data.jpg" alt=""> 
+									<!-- <v-img :src=require'@/img/logo_one_data.jpg'> </v-img> -->
+								</v-layout>
+								<br>
+								<br>
+
+
+
+								<v-layout row style="padding:0px,10px;" >										
+									<!-- <v-flex xs12 >
+										<v-subheader>ONEPROVIDER_HOST:</v-subheader>
+									</v-flex> -->
+									<v-flex xs12 sm6 offset-sm3>
+										<v-text-field
+											v-model="form.envOneDataHost"
+											:counter="20"		
+											label="ONEPROVIDER_HOST:"																
+										></v-text-field>
+									</v-flex>									
+								</v-layout>
+
+
+
+
+								<v-layout row style="padding:0px,10px;">
+									<!-- <v-flex xs12> 
+										<v-subheader>ONEDATA_ACCESS_TOKEN:</v-subheader>
+									</v-flex> -->
+									<v-flex xs12 sm6 offset-sm3>
+										<v-text-field 
+											v-model="form.envOneDataToken"
+											:counter="20"
+											label="ONEDATA_ACCESS_TOKEN:"						
+										></v-text-field>
+									</v-flex>
+								</v-layout>
+								<v-layout row style="padding:0px,10px;">
+									<!-- <v-flex xs12>
+										<v-subheader>ONEDATA_SPACE:</v-subheader>
+									</v-flex> -->
+									<v-flex xs12 sm6 offset-sm3>
+										<v-text-field 
+											v-model="form.envOneDataSpace"
+											:counter="20"
+											label="NEDATA_SPACE:"
+										></v-text-field>
+									</v-flex>										
+								</v-layout>
+							</v-container>							
+						</div>  
+					</div>									
 					<v-card-actions >
 						<v-btn @click="closeWithoutSave" flat color="error">Cancel</v-btn>
 						<v-btn @click="clear" flat color="warning">Clear</v-btn>
@@ -524,6 +595,8 @@ export default {
 			showselectSec: false,
 			filerequire : false,
 			envVars:{},
+			envVarsOneData:{},			
+			envVarsAll:{},
 			anns:{},
 			labels:{},
 			consts: [],
@@ -547,7 +620,12 @@ export default {
 				annvalue: '',
 				constraints: '',
 				envVarskey: "",
-				envVarsValue: "",					
+				envVarsValue: "",	
+				// envVarskeyOneData: "",
+				// envVarsValueOneData:"",						
+				envOneDataHost: "",		
+				envOneDataToken: "",		
+				envOneDataSpace: "",		
 				labelkey: '',
 				labelvalue: '',
 				limits_cpu: '',
@@ -564,6 +642,12 @@ export default {
 		}
 	},
 	methods: {
+		show(id){
+			$(".tab-pane").removeClass("show active")
+			$(".nav-link").removeClass("show active")
+			$("#"+id).addClass("show active")
+			$("#"+id+"-tab").addClass("show active")
+		},
 		handleUpdate(){
 			this.$emit("SHOWSPINNER",true)			 
       		window.getApp.$emit('REFRESH_BUCKETS_LIST')
@@ -576,7 +660,7 @@ export default {
 		cleanfieldenv(){
 			this.form.envVarskey=""
 			this.form.envVarsValue=""
-		},
+		},		
 		cleanfieldann(){
 			this.form.annkey=""
 			this.form.annvalue=""
@@ -597,7 +681,7 @@ export default {
 			var value = this.form.envVarsValue.replace(" ", "")
 			this.envVars[key]=value
 			this.cleanfieldenv()						
-		},
+		},		
 		includeAnn(){
 			this.showselectAnn=true
 			var key= this.form.annkey.replace(" ", "")
@@ -641,7 +725,7 @@ export default {
 			if (this.isEmpty(this.envVars)) {
 				this.showselectEnv = false
 			}		
-		},
+		},		
 		removeLab(key) {     
 			this.$delete(this.labels,key)				
 			if (this.isEmpty(this.labels)) {
@@ -741,12 +825,19 @@ export default {
 			this.dialog = false            
 			this.clear()      
 		},
-		submit () {
-			if (this.$refs.form.validate()) {
+		extend(obj, src) {
+				for (var key in src) {
+					if (src.hasOwnProperty(key)) obj[key] = src[key];
+				}
+				return obj;
+		},
+		submit () {		
+			
+			if (this.$refs.form.validate() && this.files.length != 0) {
 				// Native form submission is not yet supported
 				this.progress.active = true
 				this.editionMode ? this.editFunction() : this.newFunction()
-			}
+			}			
 			if (this.files.length == 0){
 				this.filerequire = true
 			}else{
@@ -771,12 +862,22 @@ export default {
 			this.showselectConsts = false
 			this.showselectSec = false
 			this.envVars = {}
+			this.envVarsOneData = {}
 			this.anns = {}
 			this.labels = {}
 			this.expand = "expand_more"
 			$("#panel").slideUp("slow");
+			$("#home-tab").addClass("show active")
+			$("#home").addClass("show active")
+			$("#profile-tab").removeClass("show active")
+			$("#profile").removeClass("show active")
+			// $("#"+id+"-tab").addClass("show active")
 		},
-		newFunction () {			
+		newFunction () {	
+			this.envVarsOneData = {"ONEPROVIDER_HOST":this.form.envOneDataHost,"ONEDATA_ACCESS_TOKEN":this.form.envOneDataToken,"ONEDATA_SPACE":this.form.envOneDataSpace}
+			console.log(this.envVarsOneData)			
+			this.envVarsAll = this.extend (this.envVars, this.envVarsOneData);
+			console.log(this.envVarsAll)		
 			var params = {
 				'url': this.openFaaS.endpoint, 
 				'service': this.form.name, 
@@ -786,7 +887,7 @@ export default {
 				'script': this.base64String,
 				'annotations': this.anns,
 				'constraints': this.consts,
-				'envVars':this.envVars,
+				'envVars':this.envVarsAll,
 				'labels': this.labels,
 				'limits': 
 				{'cpu': this.form.limits_cpu,
@@ -901,4 +1002,5 @@ export default {
     background: transparent !important;
     box-shadow: none;
 }
+
 </style>
