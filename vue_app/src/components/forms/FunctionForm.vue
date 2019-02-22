@@ -1,9 +1,11 @@
 <template>
-	<v-layout row justify-end>    
+	<v-layout row wrap justify-end>    
+		<!-- <div style="width:100%;justify-content:end;"> -->
+			
 		<v-btn flat icon color="blue" @click="handleUpdate()">
       		<v-icon>autorenew</v-icon>
     	</v-btn>
-		<v-dialog v-model="dialog" persistent max-width="50%">
+		<v-dialog id="vdiag" lazy="" v-model="dialog" persistent :fullscreen="$vuetify.breakpoint.xs" max-width="50%">
 			<v-btn slot="activator" color="teal" dark class="mb-2">
 				<v-icon left>add_box</v-icon>
 				Deploy new function
@@ -128,7 +130,7 @@
 									
 										<v-flex xs12 id="panel">  								
 											<v-container>
-												<v-layout row wrap>
+												<!-- <v-layout wrap> -->
 													<!-- <v-flex xs12 >
 														<v-text-field
 															v-model="form.process"
@@ -137,18 +139,18 @@
 														></v-text-field>
 													</v-flex> -->																	
 
-													<v-flex xs12 >
-														<div style="margin:10px" class="form-group">                     
+													<v-layout row wrap >
+														<div style="width:100%" class="form-group">                     
 														<div class="input-group">
 															<!-- <input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                      -->
-															<v-flex xs12 sm5 >
+															<v-flex>
 																<v-text-field
 																	v-model="form.annkey"
 																	:counter="200"
 																	label="Annotations (key)"											
 																></v-text-field>
 															</v-flex>	
-															<v-flex xs12 sm5>
+															<v-flex >
 																<v-text-field
 																	v-model="form.annvalue"
 																	:counter="200"
@@ -164,7 +166,7 @@
 															<!-- <span style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>                    -->
 														</div>            
 														</div> 
-													</v-flex>
+													</v-layout>
 
 													<v-flex xs12 sm6 offset-sm3 v-show="showselectAnn">
 														<!-- <v-flex xs12> -->
@@ -199,18 +201,18 @@
 														<!-- </v-flex> -->
 													</v-flex>										
 													
-													<v-flex xs12 >
-														<div style="margin:10px" class="form-group">                     
+													<v-layout row wrap>
+														<div class="form-group" style="width:100%">                     
 														<div class="input-group">
 															<!-- <input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                      -->
-															<v-flex xs12 sm5 >
+															<v-flex>
 																<v-text-field
 																	v-model="form.envVarskey"
 																	:counter="200"
 																	label="Environment variables (key)"											
 																></v-text-field>
 															</v-flex>	
-															<v-flex xs12 sm5>
+															<v-flex>
 																<v-text-field
 																	v-model="form.envVarsValue"
 																	:counter="200"
@@ -226,7 +228,7 @@
 															<!-- <span style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>                    -->
 														</div>            
 														</div> 
-													</v-flex>
+													</v-layout>
 
 													<v-flex xs12 sm6 offset-sm3 v-show="showselectEnv">
 														<!-- <v-flex xs12> -->
@@ -261,34 +263,36 @@
 														<!-- </v-flex> -->
 													</v-flex>
 													
-													<v-flex xs12 >
-														<div style="margin:10px" class="form-group">                     
-														<div class="input-group">
-															<!-- <input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                      -->
-															<v-flex xs12 sm5 >
-																<v-text-field
-																	v-model="form.labelkey"
-																	:counter="200"
-																	label="Labels (key)"											
-																></v-text-field>
-															</v-flex>	
-															<v-flex xs12 sm5>
-																<v-text-field
-																	v-model="form.labelvalue"
-																	:counter="200"
-																	label="Labels (value)"											
-																></v-text-field>
-															</v-flex>	
-															
-															<div  class="input-group-append mr-2">  														                    
-																<button class="" @click="includeLab()" type="button"><v-icon left color="green">check_circle</v-icon></button>
-																<button class="" @click="cleanfieldLab()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
-															</div>
-															
-															<!-- <span style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>                    -->
-														</div>            
+													<v-layout row wrap >
+														<!-- <v-flex xs12>														 -->
+														<div class="form-group" style="width:100%">                     
+															<div class="input-group">
+																<!-- <input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                      -->
+																<v-flex >
+																	<v-text-field
+																		v-model="form.labelkey"
+																		:counter="200"
+																		label="Labels (key)"											
+																	></v-text-field>																																		
+																</v-flex>
+																<v-flex>
+																	<v-text-field
+																		v-model="form.labelvalue"
+																		:counter="200"
+																		label="Labels (value)"											
+																	></v-text-field>
+																</v-flex>	
+																
+																<div class="input-group-append mr-2">  														                    
+																	<button class="" @click="includeLab()" type="button"><v-icon left color="green">check_circle</v-icon></button>
+																	<button class="" @click="cleanfieldLab()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
+																</div>
+																
+																<!-- <span style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>                    -->
+															</div>            
 														</div> 
-													</v-flex>
+														<!-- </v-flex> -->
+													</v-layout>
 
 													<v-flex xs12 sm6 offset-sm3 v-show="showselectLab">
 														<!-- <v-flex xs12> -->
@@ -322,29 +326,30 @@
 															</v-list>
 														<!-- </v-flex> -->
 													</v-flex>
-													<v-flex xs12 >
-														<div class="form-group">                     
-														<div class="input-group">
-															<!-- <input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                      -->
-															<v-flex>
-																<v-text-field
-																	v-model="form.constraints"
-																	:counter="200"
-																	label="Constraints"											
-																></v-text-field>
-															</v-flex>	
-															
-															
-															<div  class="input-group-append mr-2">  														                    
-																<button class="" @click="includeConst()" type="button"><v-icon left color="green">check_circle</v-icon></button>
-																<button class="" @click="cleanfieldConst()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
-															</div>
-															
-															<!-- <span style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>                    -->
-														</div>            
-														</div> 
-													</v-flex>
 
+													<v-layout row wrap>
+														<v-flex xs12 >
+															<div class="form-group">                     
+															<div class="input-group">
+																<!-- <input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                      -->
+																<v-flex>
+																	<v-text-field
+																		v-model="form.constraints"
+																		:counter="200"
+																		label="Constraints"											
+																	></v-text-field>
+																</v-flex>																	
+																
+																<div  class="input-group-append mr-2">  														                    
+																	<button class="" @click="includeConst()" type="button"><v-icon left color="green">check_circle</v-icon></button>
+																	<button class="" @click="cleanfieldConst()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
+																</div>
+																
+																<!-- <span style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>                    -->
+															</div>            
+															</div> 
+														</v-flex>
+													</v-layout >
 													<v-flex xs12 sm6 offset-sm3 v-show="showselectConsts">
 														<!-- <v-flex xs12> -->
 															<input type="file" hidden="true" multiple />
@@ -378,30 +383,30 @@
 														<!-- </v-flex> -->
 													</v-flex>
 
-
-													<v-flex xs12 >
-														<div class="form-group" >                     
-														<div class="input-group">
-															<!-- <input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                      -->
-																													
-															<v-flex >
-																<v-text-field
-																	v-model="form.secrets"
-																	:counter="200"
-																	label="Secrets"											
-																></v-text-field>
-															</v-flex>	
-															
-															<div class="input-group-append mr-2">  														                    
-																<button class="" @click="includeSec()" type="button"><v-icon left color="green">check_circle</v-icon></button>
-																<button class="" @click="cleanfieldSec()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
-															</div>
-															
-															<!-- <span style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>                    -->
-														</div>            
-														</div> 
-													</v-flex>
-
+													<v-layout row wrap>
+														<v-flex xs12 >
+															<div class="form-group" >                     
+															<div class="input-group">
+																<!-- <input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                      -->
+																														
+																<v-flex >
+																	<v-text-field
+																		v-model="form.secrets"
+																		:counter="200"
+																		label="Secrets"											
+																	></v-text-field>
+																</v-flex>	
+																
+																<div class="input-group-append mr-2">  														                    
+																	<button class="" @click="includeSec()" type="button"><v-icon left color="green">check_circle</v-icon></button>
+																	<button class="" @click="cleanfieldSec()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
+																</div>
+																
+																<!-- <span style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>                    -->
+															</div>            
+															</div> 
+														</v-flex>
+													</v-layout>
 													<v-flex xs12 sm6 offset-sm3 v-show="showselectSec">
 														<!-- <v-flex xs12> -->
 															<input type="file" hidden="true" multiple />
@@ -441,40 +446,44 @@
 															label="Secrets"											
 														></v-text-field>											
 													</v-flex>  -->
+													<v-layout row wrap>
+														<v-flex xs12>
+															<v-text-field
+																v-model="form.network"
+																:counter="200"
+																label="Network (Swarm)"
+																required
+															></v-text-field>
+														</v-flex>
+													</v-layout>
+													<v-layout row wrap>
+														<v-flex xs12 sm6 md6>
+															<v-text-field
+																v-model="form.limits_cpu"
+																:counter="200"
+																label="Limits CPU"											
+															></v-text-field>											
+														</v-flex>
 
-													<v-flex xs12>
-														<v-text-field
-															v-model="form.network"
-															:counter="200"
-															label="Network (Swarm)"
-															required
-														></v-text-field>
-													</v-flex>
+														<v-flex xs12 sm6 md6>
+															<v-text-field
+																v-model="form.limits_memory"
+																:counter="200"
+																label="Limits Memory"											
+															></v-text-field>											
+														</v-flex>  
+													</v-layout>
+													<v-layout row wrap>
+														<v-flex xs12>
+															<v-text-field
+																v-model="form.regAuth"
+																:counter="200"
+																label="Registry Authentication"											
+															></v-text-field>
+														</v-flex>
+													</v-layout>
 
-													<v-flex xs12 sm6 md6>
-														<v-text-field
-															v-model="form.limits_cpu"
-															:counter="200"
-															label="Limits CPU"											
-														></v-text-field>											
-													</v-flex>
-
-													<v-flex xs12 sm6 md6>
-														<v-text-field
-															v-model="form.limits_memory"
-															:counter="200"
-															label="Limits Memory"											
-														></v-text-field>											
-													</v-flex>  
-
-													<v-flex xs12>
-														<v-text-field
-															v-model="form.regAuth"
-															:counter="200"
-															label="Registry Authentication"											
-														></v-text-field>
-													</v-flex>
-
+													<v-layout row wrap>
 													<v-flex xs12 sm6 md6>
 														<v-text-field
 															v-model="form.request_cpu"
@@ -490,9 +499,9 @@
 															label="Request Memory"											
 														></v-text-field>											
 													</v-flex>  
-
+													</v-layout>
 													
-												</v-layout>
+												<!-- </v-layout> -->
 											</v-container>								
 										</v-flex> 						
 									</v-layout>
@@ -518,8 +527,8 @@
 									<v-flex xs12 sm6 offset-sm3>
 										<v-text-field
 											v-model="form.envOneDataHost"
-											:counter="20"		
-											label="ONEPROVIDER_HOST:"																
+											:counter="200"		
+											label="ONEPROVIDER HOST:"																
 										></v-text-field>
 									</v-flex>									
 								</v-layout>
@@ -534,8 +543,8 @@
 									<v-flex xs12 sm6 offset-sm3>
 										<v-text-field 
 											v-model="form.envOneDataToken"
-											:counter="20"
-											label="ONEDATA_ACCESS_TOKEN:"						
+											:counter="200"
+											label="ACCESS TOKEN:"						
 										></v-text-field>
 									</v-flex>
 								</v-layout>
@@ -546,8 +555,8 @@
 									<v-flex xs12 sm6 offset-sm3>
 										<v-text-field 
 											v-model="form.envOneDataSpace"
-											:counter="20"
-											label="NEDATA_SPACE:"
+											:counter="200"
+											label="SPACE:"
 										></v-text-field>
 									</v-flex>										
 								</v-layout>
@@ -563,6 +572,7 @@
 				</v-form>			
 			</v-card>			
 		</v-dialog>    
+		<!-- </div> -->
 	</v-layout>
 </template>
 
@@ -1002,5 +1012,31 @@ export default {
     background: transparent !important;
     box-shadow: none;
 }
+
+ /* Medium devices (tablets, 768px and up) */
+    @media (min-width: 576px) { 
+      #test{
+		 
+	  	}
+      }
+    /* @media (min-width: 768px) { 
+		#vdiag{
+		  max-width:70%;
+	  }
+      } */
+
+    /* Large devices (desktops, 992px and up) */
+    @media (min-width: 576px) { 
+		/* #test{
+		  justify-content: end;
+	  	} */
+      }
+
+      /* @media (max-width: 575.98px) { 
+		  #vdiag{
+		  max-width:50%;
+	  } 
+
+	  }*/
 
 </style>
