@@ -533,7 +533,9 @@
 									</v-flex>									
 								</v-layout>
 
-
+								<v-flex xs12 text-xs-center>
+									<span v-show="envrequirehost" style="color: #cc3300; font-size: 12px;"><b>ONEPROVIDER HOST is required</b></span>                   									
+								</v-flex>
 
 
 								<v-layout row style="padding:0px,10px;">
@@ -548,6 +550,11 @@
 										></v-text-field>
 									</v-flex>
 								</v-layout>
+
+								<v-flex xs12 text-xs-center>
+									<span v-show="envrequiretoken" style="color: #cc3300; font-size: 12px;"><b>ACCESS TOKEN is required</b></span>                   									
+								</v-flex>
+
 								<v-layout row style="padding:0px,10px;">
 									<!-- <v-flex xs12>
 										<v-subheader>ONEDATA_SPACE:</v-subheader>
@@ -560,6 +567,11 @@
 										></v-text-field>
 									</v-flex>										
 								</v-layout>
+								
+								<v-flex xs12 text-xs-center>
+									<span v-show="envrequirespace" style="color: #cc3300; font-size: 12px;"><b>SPACE is required</b></span>                   									
+								</v-flex>
+
 							</v-container>							
 						</div>  
 					</div>									
@@ -604,6 +616,9 @@ export default {
 			showselectConsts: false,
 			showselectSec: false,
 			filerequire : false,
+			envrequirehost: false,
+			envrequiretoken : false,
+			envrequirespace : false,
 			envVars:{},
 			envVarsOneData:{},			
 			envVarsAll:{},
@@ -842,11 +857,30 @@ export default {
 				return obj;
 		},
 		submit () {		
+			this.envrequirehost = false
+			this.envrequiretoken = false
+			this.envrequirespace = false
 			
 			if (this.$refs.form.validate() && this.files.length != 0) {
 				// Native form submission is not yet supported
+				if((this.form.envOneDataHost != "" || this.form.envOneDataToken != "" || this.form.envOneDataSpace != "" ) && (this.form.envOneDataHost == "" || this.form.envOneDataToken == "" || this.form.envOneDataSpace == "")){
+					if (this.form.envOneDataHost == ""){
+						this.envrequirehost = true;
+					}
+					if (this.form.envOneDataToken == ""){
+						this.envrequiretoken = true;
+					}
+					if (this.form.envOneDataSpace == ""){
+						this.envrequirespace = true;
+					}
+				}else {
 				this.progress.active = true
-				this.editionMode ? this.editFunction() : this.newFunction()
+				this.editionMode ? this.editFunction() : this.newFunction()				
+				this.envrequirehost = false
+				this.envrequiretoken = false
+				this.envrequirespace = false
+				}
+				
 			}			
 			if (this.files.length == 0){
 				this.filerequire = true
@@ -885,8 +919,12 @@ export default {
 		},
 		newFunction () {	
 			this.envVarsOneData = {"ONEPROVIDER_HOST":this.form.envOneDataHost,"ONEDATA_ACCESS_TOKEN":this.form.envOneDataToken,"ONEDATA_SPACE":this.form.envOneDataSpace}
-			console.log(this.envVarsOneData)			
-			this.envVarsAll = this.extend (this.envVars, this.envVarsOneData);
+			console.log(this.envVarsOneData)	
+			if (this.form.envOneDataHost == "" || this.form.envOneDataToken == "" || this.form.envOneDataSpace == "" ){
+				this.envVarsAll = this.envVars;
+			}else{
+				this.envVarsAll = this.extend (this.envVars, this.envVarsOneData);
+			}		
 			console.log(this.envVarsAll)		
 			var params = {
 				'url': this.openFaaS.endpoint, 
