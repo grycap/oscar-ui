@@ -545,8 +545,11 @@
 									<v-flex xs12 sm6 offset-sm3>
 										<v-text-field 
 											v-model="form.envOneDataToken"
+											:append-icon="showOneDataToken ? 'visibility_off' : 'visibility'"
+											:type="showOneDataToken ? 'text' : 'password'"
 											:counter="200"
-											label="ACCESS TOKEN:"						
+											label="ACCESS TOKEN:"
+											@click:append="showOneDataToken = !showOneDataToken"
 										></v-text-field>
 									</v-flex>
 								</v-layout>
@@ -615,6 +618,7 @@ export default {
 			showselectLab: false,
 			showselectConsts: false,
 			showselectSec: false,
+			showOneDataToken: false,
 			filerequire : false,
 			envrequirehost: false,
 			envrequiretoken : false,
