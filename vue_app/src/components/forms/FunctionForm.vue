@@ -611,7 +611,7 @@ export default {
 			editionMode: false,
 			base64String : "",    
 			filename: "",  
-			files: [],      
+			files: [],    
 			showUploading: false,
 			showselectEnv: false,
 			showselectAnn: false,
@@ -624,7 +624,8 @@ export default {
 			envrequiretoken : false,
 			envrequirespace : false,
 			envVars:{},
-			envVarsOneData:{},			
+			envVarsOneData:{},	
+			envVarsOneData2:{},		
 			envVarsAll:{},
 			anns:{},
 			labels:{},
@@ -922,12 +923,12 @@ export default {
 			// $("#"+id+"-tab").addClass("show active")
 		},
 		newFunction () {
-			var min = 1; 
-   			var max = 1001;  
-    		var random = Math.floor(Math.random()*(max-min)) + min;		
-			this.envVarsOneData = {"STORAGE_AUTH_ONEDATA_"+random+"_HOST":this.form.envOneDataHost,
-								   "STORAGE_AUTH_ONEDATA_"+random+"_TOKEN":this.form.envOneDataToken,
-								   "STORAGE_AUTH_ONEDATA_"+random+"_SPACE":this.form.envOneDataSpace}
+			var min = 1
+			var max = 1001
+			var random = Math.floor(Math.random()*(max-min)) + min;			
+			this.envVarsOneData["STORAGE_AUTH_ONEDATA_"+random+"_HOST"] = this.form.envOneDataHost
+			this.envVarsOneData["STORAGE_AUTH_ONEDATA_"+random+"_TOKEN"] = this.form.envOneDataToken
+			this.envVarsOneData["STORAGE_AUTH_ONEDATA_"+random+"_SPACE"] = this.form.envOneDataSpace
 			console.log(this.envVarsOneData)	
 			if (this.form.envOneDataHost == "" || this.form.envOneDataToken == "" || this.form.envOneDataSpace == "" ){
 				this.envVarsAll = this.envVars;
