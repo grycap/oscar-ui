@@ -921,8 +921,13 @@ export default {
 			$("#profile").removeClass("show active")
 			// $("#"+id+"-tab").addClass("show active")
 		},
-		newFunction () {	
-			this.envVarsOneData = {"ONEPROVIDER_HOST":this.form.envOneDataHost,"ONEDATA_ACCESS_TOKEN":this.form.envOneDataToken,"ONEDATA_SPACE":this.form.envOneDataSpace}
+		newFunction () {
+			var min = 1; 
+   			var max = 1001;  
+    		var random = Math.floor(Math.random()*(max-min)) + min;		
+			this.envVarsOneData = {"STORAGE_AUTH_ONEDATA_"+random+"_HOST":this.form.envOneDataHost,
+								   "STORAGE_AUTH_ONEDATA_"+random+"_TOKEN":this.form.envOneDataToken,
+								   "STORAGE_AUTH_ONEDATA_"+random+"_SPACE":this.form.envOneDataSpace}
 			console.log(this.envVarsOneData)	
 			if (this.form.envOneDataHost == "" || this.form.envOneDataToken == "" || this.form.envOneDataSpace == "" ){
 				this.envVarsAll = this.envVars;
