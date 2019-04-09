@@ -147,14 +147,16 @@
 																<v-text-field
 																	v-model="form.annkey"
 																	:counter="200"
-																	label="Annotations (key)"											
+																	label="Annotations (key)"	
+																	style="padding-right: 5px;"										
 																></v-text-field>
 															</v-flex>	
 															<v-flex >
 																<v-text-field
 																	v-model="form.annvalue"
 																	:counter="200"
-																	label="Annotations (value)"											
+																	label="Annotations (value)"		
+																	style="padding-right: 5px;"									
 																></v-text-field>
 															</v-flex>	
 															
@@ -209,14 +211,16 @@
 																<v-text-field
 																	v-model="form.envVarskey"
 																	:counter="200"
-																	label="Environment variables (key)"											
+																	label="Environment variables (key)"		
+																	style="padding-right: 5px;"									
 																></v-text-field>
 															</v-flex>	
 															<v-flex>
 																<v-text-field
 																	v-model="form.envVarsValue"
 																	:counter="200"
-																	label="Environment variables (value)"											
+																	label="Environment variables (value)"		
+																	style="padding-right: 5px;"									
 																></v-text-field>
 															</v-flex>	
 															
@@ -272,14 +276,16 @@
 																	<v-text-field
 																		v-model="form.labelkey"
 																		:counter="200"
-																		label="Labels (key)"											
+																		label="Labels (key)"	
+																		style="padding-right: 5px;"										
 																	></v-text-field>																																		
 																</v-flex>
 																<v-flex>
 																	<v-text-field
 																		v-model="form.labelvalue"
 																		:counter="200"
-																		label="Labels (value)"											
+																		label="Labels (value)"
+																		style="padding-right: 5px;"											
 																	></v-text-field>
 																</v-flex>	
 																
@@ -456,23 +462,7 @@
 															></v-text-field>
 														</v-flex>
 													</v-layout>
-													<v-layout row wrap>
-														<v-flex xs12 sm6 md6>
-															<v-text-field
-																v-model="form.limits_cpu"
-																:counter="200"
-																label="Limits CPU"											
-															></v-text-field>											
-														</v-flex>
-
-														<v-flex xs12 sm6 md6>
-															<v-text-field
-																v-model="form.limits_memory"
-																:counter="200"
-																label="Limits Memory"											
-															></v-text-field>											
-														</v-flex>  
-													</v-layout>
+													
 													<v-layout row wrap>
 														<v-flex xs12>
 															<v-text-field
@@ -482,24 +472,86 @@
 															></v-text-field>
 														</v-flex>
 													</v-layout>
-
+													
 													<v-layout row wrap>
-													<v-flex xs12 sm6 md6>
-														<v-text-field
-															v-model="form.request_cpu"
-															:counter="200"
-															label="Request CPU"											
-														></v-text-field>
-													</v-flex>
+														<v-flex xs12 sm2 md2>
+															<v-text-field
+																v-model="form.limits_cpu"
+																:counter="10"
+																label="Limits CPU"
+																style="padding-right: 5px;"											
+															></v-text-field>											
+														</v-flex>
 
-													<v-flex xs12 sm6 md6>
-														<v-text-field
-															v-model="form.request_memory"
-															:counter="200"
-															label="Request Memory"											
-														></v-text-field>											
-													</v-flex>  
+														<v-flex xs12 sm2 md2>
+															<v-text-field
+																v-model="form.limits_memory"
+																:counter="10"
+																label="Limits Memory"
+																style="padding-right: 5px;"																											
+															></v-text-field>																						
+														</v-flex>  
+														<v-flex xs12 sm2 md2 style="padding-top:10px;">
+															<select id="classmemory" class="custom-select" >
+																<option style="display:none" selected></option>															
+																<option value="1">MBi</option>
+																<option value="2">GBi</option>															
+															</select>
+														</v-flex>	
+
+														
+													<v-flex xs12 sm2 md2>
+															<v-text-field
+																v-model="form.request_cpu"
+																:counter="10"
+																label="Request CPU"	
+																style="padding-right: 5px;"										
+															></v-text-field>
+														</v-flex>
+
+														<v-flex xs12 sm2 md2>
+															<v-text-field
+																v-model="form.request_memory"
+																:counter="10"
+																label="Request Memory"																		
+																style="padding-right: 5px;"																									
+															></v-text-field>											
+														</v-flex> 
+														<v-flex xs12 sm2 md2 style="padding-top:10px;"> 
+															<select id="classmemory2" class="custom-select" >
+																<option style="display:none" selected></option>															
+																<option value="1">MBi</option>
+																<option value="2">GBi</option>															
+															</select>
+														</v-flex> 
+
+													
 													</v-layout>
+
+													<!-- <v-layout row wrap>
+														<v-flex xs12 sm6 md6>
+															<v-text-field
+																v-model="form.request_cpu"
+																:counter="10"
+																label="Request CPU"											
+															></v-text-field>
+														</v-flex>
+
+														<v-flex xs12 sm4 md4>
+															<v-text-field
+																v-model="form.request_memory"
+																:counter="10"
+																label="Request Memory"											
+															></v-text-field>											
+														</v-flex> 
+														<v-flex sm2 md2> 
+															<select id="classmemory2" class="custom-select" >
+																<option style="display:none" selected></option>															
+																<option value="1">MBi</option>
+																<option value="2">GBi</option>															
+															</select>
+														</v-flex> 
+													</v-layout> -->
 													
 												<!-- </v-layout> -->
 											</v-container>								
@@ -599,7 +651,7 @@ export default {
 	},
    
 	data () {
-		return {
+		return {			
 			dialog: false,        
 			drawer: false,    
 			url: "", 
@@ -925,6 +977,10 @@ export default {
 			}else{
 				this.envVarsAll = this.extend (this.envVars, this.envVarsOneData);
 			}		
+			
+			var value = $("#classmemory option:selected").text();			
+			var value2 = $("#classmemory2 option:selected").text();			
+			console.log(this.form.limits_memory + value)
 			console.log(this.envVarsAll)		
 			var params = {
 				'url': this.openFaaS.endpoint, 
@@ -939,12 +995,12 @@ export default {
 				'labels': this.labels,
 				'limits': 
 				{'cpu': this.form.limits_cpu,
-				'memory': this.form.limits_memory}
+				'memory': this.form.limits_memory + value}
 				,
 				'registryAuth': this.form.regAuth,
 				'requests': 
 				{'cpu': this.form.request_cpu,
-				'memory': this.form.request_memory}
+				'memory': this.form.request_memory + value2}
 				,
 				'secrets': this.secrets }			
 			
@@ -1051,30 +1107,44 @@ export default {
     box-shadow: none;
 }
 
- /* Medium devices (tablets, 768px and up) */
-    @media (min-width: 576px) { 
-      #test{
-		 
-	  	}
-      }
-    /* @media (min-width: 768px) { 
-		#vdiag{
-		  max-width:70%;
-	  }
-      } */
+/* .v-input__control {
+    padding-right: 5px;
+} */
+ 
+	 		/* Small devices (landscape phones, 576px and up)*/
+		@media (min-width: 576px) { 
+			 .custom-select{
+				height: calc(2.25rem + 3px);
+				width: 100%
+			}
+		 }
 
-    /* Large devices (desktops, 992px and up) */
-    @media (min-width: 576px) { 
-		/* #test{
-		  justify-content: end;
-	  	} */
-      }
+		/*Medium devices (tablets, 768px and up)*/
+		@media (min-width: 768px) { 
+			.custom-select{
+				height: calc(2.25rem + 3px);
+				width: 100%
+			}
+		 }
 
-      /* @media (max-width: 575.98px) { 
-		  #vdiag{
-		  max-width:50%;
-	  } 
+		/*Large devices (desktops, 992px and up)*/
+		@media (min-width: 992px) { 
+			.custom-select{
+				height: calc(2.25rem + 3px);
+				width: 100%
+			}
+		 }
 
-	  }*/
+		/* Extra large devices (large desktops, 1200px and up)*/
+		@media (min-width: 1200px) { 
+			.custom-select{
+				height: calc(2.25rem + 3px);
+				width: 75%
+			}
+		 }
+
+
+	  
+
 
 </style>
