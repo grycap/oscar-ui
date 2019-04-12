@@ -492,9 +492,8 @@
 															></v-text-field>																						
 														</v-flex>  
 														<v-flex xs12 sm2 md2 style="padding-top:10px;">
-															<select id="classmemory" class="custom-select" >
-																<option style="display:none" selected></option>															
-																<option value="1">Mi</option>
+															<select id="classmemory" class="custom-select" >																										
+																<option selected value="1">Mi</option>
 																<option value="2">Gi</option>															
 															</select>
 														</v-flex>	
@@ -518,9 +517,8 @@
 															></v-text-field>											
 														</v-flex> 
 														<v-flex xs12 sm2 md2 style="padding-top:10px;"> 
-															<select id="classmemory2" class="custom-select" >
-																<option style="display:none" selected></option>															
-																<option value="1">Mi</option>
+															<select id="classmemory2" class="custom-select" >																															
+																<option selected value="1">Mi</option>
 																<option value="2">Gi</option>															
 															</select>
 														</v-flex> 
@@ -678,6 +676,8 @@ export default {
 			labels:{},
 			consts: [],
 			secrets: [],
+			limits_mem: '',
+			request_mem: '',
 
 			form: {
 				valid: false,
@@ -978,14 +978,24 @@ export default {
 				this.envVarsAll = this.extend (this.envVars, this.envVarsOneData);
 			}		
 			
+
 			var value = $("#classmemory option:selected").text();			
 			var value2 = $("#classmemory2 option:selected").text();				
-			console.log(this.envVarsAll)	
+				
 
-			var limits_mem = this.form.limits_memory + value;
-			var request_mem= this.form.request_memory + value2;
+			if (this.form.limits_memory == ""){
+				this.limits_mem = ''
+			}else{
+				this.limits_mem = this.form.limits_memory + value;
+			}
 
-			console.log(limits_mem,request_mem)
+			if (this.form.request_memory == ""){
+				this.request_mem = ''
+			}else{
+				this.request_mem= this.form.request_memory + value2;
+			}			
+
+			// console.log(this.limits_mem,this.request_mem)
 			
 			var params = {
 				'url': this.openFaaS.endpoint, 
@@ -1000,12 +1010,12 @@ export default {
 				'labels': this.labels,
 				'limits': 
 				{'cpu': this.form.limits_cpu,
-				'memory': limits_mem}
+				'memory': this.limits_mem}
 				,
 				'registryAuth': this.form.regAuth,
 				'requests': 
 				{'cpu': this.form.request_cpu,
-				'memory': request_mem}
+				'memory': this.request_mem}
 				,
 				'secrets': this.secrets }			
 			
