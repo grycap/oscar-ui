@@ -494,8 +494,8 @@
 														<v-flex xs12 sm2 md2 style="padding-top:10px;">
 															<select id="classmemory" class="custom-select" >
 																<option style="display:none" selected></option>															
-																<option value="1">MBi</option>
-																<option value="2">GBi</option>															
+																<option value="1">Mi</option>
+																<option value="2">Gi</option>															
 															</select>
 														</v-flex>	
 
@@ -520,8 +520,8 @@
 														<v-flex xs12 sm2 md2 style="padding-top:10px;"> 
 															<select id="classmemory2" class="custom-select" >
 																<option style="display:none" selected></option>															
-																<option value="1">MBi</option>
-																<option value="2">GBi</option>															
+																<option value="1">Mi</option>
+																<option value="2">Gi</option>															
 															</select>
 														</v-flex> 
 
@@ -979,9 +979,14 @@ export default {
 			}		
 			
 			var value = $("#classmemory option:selected").text();			
-			var value2 = $("#classmemory2 option:selected").text();			
-			console.log(this.form.limits_memory + value)
-			console.log(this.envVarsAll)		
+			var value2 = $("#classmemory2 option:selected").text();				
+			console.log(this.envVarsAll)	
+
+			var limits_mem = this.form.limits_memory + value;
+			var request_mem= this.form.request_memory + value2;
+
+			console.log(limits_mem,request_mem)
+			
 			var params = {
 				'url': this.openFaaS.endpoint, 
 				'service': this.form.name, 
@@ -995,12 +1000,12 @@ export default {
 				'labels': this.labels,
 				'limits': 
 				{'cpu': this.form.limits_cpu,
-				'memory': this.form.limits_memory + value}
+				'memory': limits_mem}
 				,
 				'registryAuth': this.form.regAuth,
 				'requests': 
 				{'cpu': this.form.request_cpu,
-				'memory': this.form.request_memory + value2}
+				'memory': request_mem}
 				,
 				'secrets': this.secrets }			
 			
