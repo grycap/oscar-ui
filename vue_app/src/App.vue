@@ -54,7 +54,7 @@ export default {
     minio: {
       endpoint: 'minio-service.minio',
       port: 9000,
-      useSSL: false,
+      useSSL: true,
       accessKey: 'minio',
       secretKey: 'minio123',
       showSecretKey: false
