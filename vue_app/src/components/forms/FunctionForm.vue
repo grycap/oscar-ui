@@ -1,26 +1,27 @@
 <template>
 	<v-layout row wrap justify-end>    
-		<!-- <div style="width:100%;justify-content:end;"> -->
-			
 		<v-btn flat icon color="blue" @click="handleUpdate()">
       		<v-icon>autorenew</v-icon>
     	</v-btn>
-		<v-dialog id="vdiag" lazy="" v-model="dialog" persistent :fullscreen="$vuetify.breakpoint.xs" max-width="50%">
+		<v-dialog id="vdiag" lazy v-model="dialog" persistent :fullscreen="$vuetify.breakpoint.xs" max-width="50%">
 			<v-btn slot="activator" color="teal" dark class="mb-2">
 				<v-icon left>add_box</v-icon>
-				Deploy new function
+				Deploy New Service
 			</v-btn>
 			<v-card >
 				<v-form ref="form" v-model="form.valid" lazy-validation>
-					<v-toolbar flat color="#11BBC9" class="white--text">
-						<span class="headline" style="width:100%;text-align:center">Deploy New Function</span>
+					<v-toolbar flat :color="formColor" class="white--text" style="margin-bottom:10px;">
+						<span class="headline" style="width:100%;text-align:center">{{ formTitle }}</span>
 					</v-toolbar>
 					
-					<ul class="nav nav-pills nav-fill" id="myTab" role="tablist">
-						<li class="nav-item">
+					<ul class="nav nav-pills nav-fill" id="myTab" role="tablist" style="padding-right:5px; padding-left:5px;">
+						<li class="nav-item" style="margin-rigth:10px;margin-left:10px;">
 							<a class="nav-link active" id="home-tab" @click="show('home')" role="tab" aria-controls="home" aria-selected="true">New Function</a>
 						</li>
-						<li class="nav-item">
+						<li class="nav-item" style="margin-rigth:10px;margin-left:10px;">
+							<a class="nav-link " id="input_output-tab" @click="show('input_output')" role="tab" aria-controls="input_output" aria-selected="false">Input/Output</a>
+						</li>
+						<li class="nav-item" style="margin-rigth:10px;margin-left:10px;">
 							<a class="nav-link" id="profile-tab" @click="show('profile')" role="tab" aria-controls="profile" aria-selected="false">Storage</a>
 						</li>  
 					</ul>
@@ -28,9 +29,8 @@
 					<v-progress-linear :active="progress.active" :indeterminate="true"></v-progress-linear>
 					 
 					<div class="tab-content" id="myTabContent">
-						<div class="tab-pane fade show active"  id="home" role="tabpanel" aria-labelledby="home-tab">
+						<div class="tab-pane tab-pane-content fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
 							<v-card-text>
-								<!-- <v-container grid-list-md> -->
 									<v-layout wrap>
 										<div style="width:100%;padding: 0px 10px;">
 											<v-flex xs12>
@@ -55,15 +55,15 @@
 											</v-flex>               
 										</div>
 										<div class="row" style="width:100%;padding: 0px 10px;"> 	
-											<v-flex xs12  md4 text-xs-center>
+											<v-flex xs12  md5 text-xs-center>
 												<v-btn color="primary" class="white--text" @click.native="addFiles()"> Select a file<v-icon right dark>note_add</v-icon></v-btn>
 											</v-flex>
 
-											<v-flex xs12  md4 class="text-xs-center">
+											<v-flex xs12  md2 class="text-xs-center">
 												<v-chip>or</v-chip>
 											</v-flex>
 
-											<v-flex xs12  md4>
+											<v-flex xs12  md5>
 												<div style="margin:10px" class="form-group">                     
 												<div class="input-group">
 													<input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                     
@@ -80,10 +80,8 @@
 												<span v-show="filerequire" style="color: #cc3300; font-size: 12px;"><b>Select a file or enter a URL</b></span>                   									
 											</v-flex>
 											
-											<v-flex xs12 sm6 offset-sm3 v-show="showSelectedFiles"  id="selectedList" class="text-xs-center">
-												<!-- <v-flex xs12> -->
+											<v-flex xs12 sm8 offset-sm2 v-show="showSelectedFiles"  id="selectedList" class="text-xs-center">
 													<input type="file" id="files" ref="files" hidden=true  v-on:change="handleFilesUpload()"/>								                  									
-												
 													<v-list subheader dense >
 														<v-subheader inset>File</v-subheader>
 														<v-list-tile
@@ -110,8 +108,6 @@
 																</v-list-tile-action>
 														</v-list-tile>
 													</v-list>
-													
-												<!-- </v-flex> -->
 											</v-flex>					
 									
 									
@@ -130,527 +126,645 @@
 									
 										<v-flex xs12 id="panel">  								
 											<v-container>
-												<!-- <v-layout wrap> -->
-													<!-- <v-flex xs12 >
-														<v-text-field
-															v-model="form.process"
-															:counter="200"
-															label="Function process (Optional)"
-														></v-text-field>
-													</v-flex> -->																	
-
-													<v-layout row wrap >
-														<div style="width:100%" class="form-group">                     
-														<div class="input-group">
-															<!-- <input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                      -->
-															<v-flex>
-																<v-text-field
-																	v-model="form.annkey"
-																	:counter="200"
-																	label="Annotations (key)"	
-																	style="padding-right: 5px;"										
-																></v-text-field>
-															</v-flex>	
-															<v-flex >
-																<v-text-field
-																	v-model="form.annvalue"
-																	:counter="200"
-																	label="Annotations (value)"		
-																	style="padding-right: 5px;"									
-																></v-text-field>
-															</v-flex>	
-															
-															<div  class="input-group-append mr-2">  														                    
-																<button class="" @click="includeAnn()" type="button"><v-icon left color="green">check_circle</v-icon></button>
-																<button class="" @click="cleanfieldann()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
-															</div>
-															
-															<!-- <span style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>                    -->
-														</div>            
-														</div> 
-													</v-layout>
-
-													<v-flex xs12 sm6 offset-sm3 v-show="showselectAnn">
-														<!-- <v-flex xs12> -->
-															<input type="file" id="envs" hidden="true" multiple />
-															<v-list subheader dense>
-																<v-subheader inset>Annotations</v-subheader>
-																<v-list-tile
-																v-for="(ann,key) in anns"
-																:key="key"
-																avatar
-																@click.stop=""
-																>                                    
-																		<!-- <v-progress-circular
-																		indeterminate
-																		color="teal"
-																		v-show="showUploading"
-																		>
-																		</v-progress-circular> -->
-
-																		<v-list-tile-content>
-																			<v-list-tile-title>{{key}}:{{anns[key]}}</v-list-tile-title>
-																			<!-- <v-list-tile-sub-title>{{ moment(file.lastModified).format("YYYY-MM-DD HH:mm") }}</v-list-tile-sub-title> -->
-																		</v-list-tile-content>
-
-																		<v-list-tile-action>
-																			<v-btn icon ripple @click="removeAnn(key)">
-																			<v-icon color="red lighten-1">remove_circle_outline</v-icon>
-																			</v-btn>
-																		</v-list-tile-action>
-																</v-list-tile>
-															</v-list>
-														<!-- </v-flex> -->
-													</v-flex>										
-													
-													<v-layout row wrap>
-														<div class="form-group" style="width:100%">                     
-														<div class="input-group">
-															<!-- <input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                      -->
-															<v-flex>
-																<v-text-field
-																	v-model="form.envVarskey"
-																	:counter="200"
-																	label="Environment variables (key)"		
-																	style="padding-right: 5px;"									
-																></v-text-field>
-															</v-flex>	
-															<v-flex>
-																<v-text-field
-																	v-model="form.envVarsValue"
-																	:counter="200"
-																	label="Environment variables (value)"		
-																	style="padding-right: 5px;"									
-																></v-text-field>
-															</v-flex>	
-															
+												<v-layout row wrap>
+													<div class="form-group" style="width:100%">                     
+													<div class="input-group">
+														<v-flex xs12 sm5>
+															<v-text-field
+																v-model="form.envVarskey"
+																:counter="200"
+																label="Environment variables (key)"		
+																style="padding-right: 5px;"									
+															></v-text-field>
+														</v-flex>	
+														<v-flex xs10 sm5>
+															<v-text-field
+																v-model="form.envVarsValue"
+																:counter="200"
+																label="Environment variables (value)"		
+																style="padding-right: 5px;"									
+															></v-text-field>
+														</v-flex>	
+														
+														<v-flex xs2 sm2 style="padding-top:20px;" >
 															<div  class="input-group-append mr-2">  														                    
 																<button class="" @click="includeEnv()" type="button"><v-icon left color="green">check_circle</v-icon></button>
 																<button class="" @click="cleanfieldenv()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
 															</div>
-															
-															<!-- <span style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>                    -->
-														</div>            
-														</div> 
-													</v-layout>
-
-													<v-flex xs12 sm6 offset-sm3 v-show="showselectEnv">
-														<!-- <v-flex xs12> -->
-															<input type="file" id="envs" hidden="true" multiple />
-															<v-list subheader dense>
-																<v-subheader inset>Env Vars</v-subheader>
-																<v-list-tile
-																v-for="(enVar,key) in envVars"
-																:key="key"
-																avatar
-																@click.stop=""
-																>                                    
-																		<!-- <v-progress-circular
-																		indeterminate
-																		color="teal"
-																		v-show="showUploading"
-																		>
-																		</v-progress-circular> -->
-
-																		<v-list-tile-content>
-																			<v-list-tile-title>{{key}}:{{envVars[key]}}</v-list-tile-title>
-																			<!-- <v-list-tile-sub-title>{{ moment(file.lastModified).format("YYYY-MM-DD HH:mm") }}</v-list-tile-sub-title> -->
-																		</v-list-tile-content>
-
-																		<v-list-tile-action>
-																			<v-btn icon ripple @click="removeEnv(key)">
-																			<v-icon color="red lighten-1">remove_circle_outline</v-icon>
-																			</v-btn>
-																		</v-list-tile-action>
-																</v-list-tile>
-															</v-list>
-														<!-- </v-flex> -->
-													</v-flex>
-													
-													<v-layout row wrap >
-														<!-- <v-flex xs12>														 -->
-														<div class="form-group" style="width:100%">                     
-															<div class="input-group">
-																<!-- <input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                      -->
-																<v-flex >
-																	<v-text-field
-																		v-model="form.labelkey"
-																		:counter="200"
-																		label="Labels (key)"	
-																		style="padding-right: 5px;"										
-																	></v-text-field>																																		
-																</v-flex>
-																<v-flex>
-																	<v-text-field
-																		v-model="form.labelvalue"
-																		:counter="200"
-																		label="Labels (value)"
-																		style="padding-right: 5px;"											
-																	></v-text-field>
-																</v-flex>	
-																
-																<div class="input-group-append mr-2">  														                    
-																	<button class="" @click="includeLab()" type="button"><v-icon left color="green">check_circle</v-icon></button>
-																	<button class="" @click="cleanfieldLab()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
-																</div>
-																
-																<!-- <span style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>                    -->
-															</div>            
-														</div> 
-														<!-- </v-flex> -->
-													</v-layout>
-
-													<v-flex xs12 sm6 offset-sm3 v-show="showselectLab">
-														<!-- <v-flex xs12> -->
-															<input type="file" id="envs" hidden="true" multiple />
-															<v-list subheader dense>
-																<v-subheader inset>Labels</v-subheader>
-																<v-list-tile
-																v-for="(lab,key) in labels"
-																:key="key"
-																avatar
-																@click.stop=""
-																>                                    
-																		<!-- <v-progress-circular
-																		indeterminate
-																		color="teal"
-																		v-show="showUploading"
-																		>
-																		</v-progress-circular> -->
-
-																		<v-list-tile-content>
-																			<v-list-tile-title>{{key}}:{{labels[key]}}</v-list-tile-title>
-																			<!-- <v-list-tile-sub-title>{{ moment(file.lastModified).format("YYYY-MM-DD HH:mm") }}</v-list-tile-sub-title> -->
-																		</v-list-tile-content>
-
-																		<v-list-tile-action>
-																			<v-btn icon ripple @click="removeLab(key)">
-																			<v-icon color="red lighten-1">remove_circle_outline</v-icon>
-																			</v-btn>
-																		</v-list-tile-action>
-																</v-list-tile>
-															</v-list>
-														<!-- </v-flex> -->
-													</v-flex>
-
-													<v-layout row wrap>
-														<v-flex xs12 >
-															<div class="form-group">                     
-															<div class="input-group">
-																<!-- <input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                      -->
-																<v-flex>
-																	<v-text-field
-																		v-model="form.constraints"
-																		:counter="200"
-																		label="Constraints"											
-																	></v-text-field>
-																</v-flex>																	
-																
-																<div  class="input-group-append mr-2">  														                    
-																	<button class="" @click="includeConst()" type="button"><v-icon left color="green">check_circle</v-icon></button>
-																	<button class="" @click="cleanfieldConst()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
-																</div>
-																
-																<!-- <span style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>                    -->
-															</div>            
-															</div> 
 														</v-flex>
-													</v-layout >
-													<v-flex xs12 sm6 offset-sm3 v-show="showselectConsts">
-														<!-- <v-flex xs12> -->
-															<input type="file" hidden="true" multiple />
-															<v-list subheader dense>
-																<v-subheader inset>Constraints</v-subheader>
-																<v-list-tile
-																v-for="(constra, key) in consts"
-																:key="key"
-																avatar
-																@click.stop=""
-																>                                    
-																		<!-- <v-progress-circular
-																		indeterminate
-																		color="teal"
-																		v-show="showUploading"
-																		>
-																		</v-progress-circular> -->
+													</div>            
+													</div> 
+												</v-layout>
 
-																		<v-list-tile-content>
-																			<v-list-tile-title>{{constra}}</v-list-tile-title>
-																			<!-- <v-list-tile-sub-title>{{ moment(file.lastModified).format("YYYY-MM-DD HH:mm") }}</v-list-tile-sub-title> -->
-																		</v-list-tile-content>
+												<v-flex xs12 sm6 offset-sm3 v-show="showselectEnv">
+													<input type="file" id="envs" hidden="true" multiple />
+													<v-list subheader dense>
+														<v-subheader inset>Env Vars</v-subheader>
+														<v-list-tile
+														v-for="(enVar,key) in envVars"
+														:key="key"
+														avatar
+														@click.stop=""
+														>       
 
-																		<v-list-tile-action>
-																			<v-btn icon ripple @click="removeConst(key)">
-																			<v-icon color="red lighten-1">remove_circle_outline</v-icon>
-																			</v-btn>
-																		</v-list-tile-action>
-																</v-list-tile>
-															</v-list>
-														<!-- </v-flex> -->
-													</v-flex>
+																<v-list-tile-content>
+																	<v-list-tile-title>{{key}}:{{envVars[key]}}</v-list-tile-title>
+																</v-list-tile-content>
 
-													<v-layout row wrap>
-														<v-flex xs12 >
-															<div class="form-group" >                     
-															<div class="input-group">
-																<!-- <input type="text" class="form-control" id="bucketname" v-model="url"   placeholder="URL" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                      -->
-																														
-																<v-flex >
-																	<v-text-field
-																		v-model="form.secrets"
-																		:counter="200"
-																		label="Secrets"											
-																	></v-text-field>
-																</v-flex>	
-																
-																<div class="input-group-append mr-2">  														                    
-																	<button class="" @click="includeSec()" type="button"><v-icon left color="green">check_circle</v-icon></button>
-																	<button class="" @click="cleanfieldSec()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
-																</div>
-																
-																<!-- <span style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>                    -->
-															</div>            
-															</div> 
-														</v-flex>
-													</v-layout>
-													<v-flex xs12 sm6 offset-sm3 v-show="showselectSec">
-														<!-- <v-flex xs12> -->
-															<input type="file" hidden="true" multiple />
-															<v-list subheader dense>
-																<v-subheader inset>Secrets</v-subheader>
-																<v-list-tile
-																v-for="(sec, key) in secrets"
-																:key="key"
-																avatar
-																@click.stop=""
-																>                                    
-																		<!-- <v-progress-circular
-																		indeterminate
-																		color="teal"
-																		v-show="showUploading"
-																		>
-																		</v-progress-circular> -->
-
-																		<v-list-tile-content>
-																			<v-list-tile-title>{{sec}}</v-list-tile-title>
-																			<!-- <v-list-tile-sub-title>{{ moment(file.lastModified).format("YYYY-MM-DD HH:mm") }}</v-list-tile-sub-title> -->
-																		</v-list-tile-content>
-
-																		<v-list-tile-action>
-																			<v-btn icon ripple @click="removeSec(key)">
-																			<v-icon color="red lighten-1">remove_circle_outline</v-icon>
-																			</v-btn>
-																		</v-list-tile-action>
-																</v-list-tile>
-															</v-list>
-														<!-- </v-flex> -->
-													</v-flex>
-													<!-- <v-flex xs12 sm6 md6>
+																<v-list-tile-action>
+																	<v-btn icon ripple @click="removeEnv(key)">
+																	<v-icon color="red lighten-1">remove_circle_outline</v-icon>
+																	</v-btn>
+																</v-list-tile-action>
+														</v-list-tile>
+													</v-list>
+												</v-flex>
+												
+												<v-layout row wrap>
+													<v-flex xs12 sm5>
 														<v-text-field
-															v-model="form.secrets"
-															:counter="200"
-															label="Secrets"											
+															v-model="form.limits_cpu"
+															:counter="10"
+															label="CPU"
+															style="padding-right: 5px;"											
 														></v-text-field>											
-													</v-flex>  -->
-													<v-layout row wrap>
-														<v-flex xs12>
-															<v-text-field
-																v-model="form.network"
-																:counter="200"
-																label="Network (Swarm)"
-																required
-															></v-text-field>
-														</v-flex>
-													</v-layout>
+													</v-flex>
+
+													<v-flex xs10 sm5>
+														<v-text-field
+															v-model="form.limits_memory"
+															:counter="10"
+															label="Memory"
+															style="padding-right: 5px;"																											
+														></v-text-field>																						
+													</v-flex>  
+													<v-flex xs2 sm2 style="padding-top:10px;">
+														<select id="classmemory" class="custom-select" >																										
+															<option selected value="1">Mi</option>
+															<option value="2">Gi</option>															
+														</select>
+													</v-flex>	
+
+													<v-flex xs12 sm3 style="padding-top:10px;">
+														<v-select
+															:items="form.log_level"
+															label="LOG LEVEL"
+															v-model="select_logLevel"
+														></v-select>
+													</v-flex>	
 													
-													<v-layout row wrap>
-														<v-flex xs12>
-															<v-text-field
-																v-model="form.regAuth"
-																:counter="200"
-																label="Registry Authentication"											
-															></v-text-field>
-														</v-flex>
-													</v-layout>
-													
-													<v-layout row wrap>
-														<v-flex xs12 sm2 md2>
-															<v-text-field
-																v-model="form.limits_cpu"
-																:counter="10"
-																label="Limits CPU"
-																style="padding-right: 5px;"											
-															></v-text-field>											
-														</v-flex>
-
-														<v-flex xs12 sm2 md2>
-															<v-text-field
-																v-model="form.limits_memory"
-																:counter="10"
-																label="Limits Memory"
-																style="padding-right: 5px;"																											
-															></v-text-field>																						
-														</v-flex>  
-														<v-flex xs12 sm2 md2 style="padding-top:10px;">
-															<select id="classmemory" class="custom-select" >																										
-																<option selected value="1">Mi</option>
-																<option value="2">Gi</option>															
-															</select>
-														</v-flex>	
-
-														
-													<v-flex xs12 sm2 md2>
-															<v-text-field
-																v-model="form.request_cpu"
-																:counter="10"
-																label="Request CPU"	
-																style="padding-right: 5px;"										
-															></v-text-field>
-														</v-flex>
-
-														<v-flex xs12 sm2 md2>
-															<v-text-field
-																v-model="form.request_memory"
-																:counter="10"
-																label="Request Memory"																		
-																style="padding-right: 5px;"																									
-															></v-text-field>											
-														</v-flex> 
-														<v-flex xs12 sm2 md2 style="padding-top:10px;"> 
-															<select id="classmemory2" class="custom-select" >																															
-																<option selected value="1">Mi</option>
-																<option value="2">Gi</option>															
-															</select>
-														</v-flex> 
-
-													
-													</v-layout>
-
-													<!-- <v-layout row wrap>
-														<v-flex xs12 sm6 md6>
-															<v-text-field
-																v-model="form.request_cpu"
-																:counter="10"
-																label="Request CPU"											
-															></v-text-field>
-														</v-flex>
-
-														<v-flex xs12 sm4 md4>
-															<v-text-field
-																v-model="form.request_memory"
-																:counter="10"
-																label="Request Memory"											
-															></v-text-field>											
-														</v-flex> 
-														<v-flex sm2 md2> 
-															<select id="classmemory2" class="custom-select" >
-																<option style="display:none" selected></option>															
-																<option value="1">MBi</option>
-																<option value="2">GBi</option>															
-															</select>
-														</v-flex> 
-													</v-layout> -->
-													
-												<!-- </v-layout> -->
+												</v-layout>
 											</v-container>								
 										</v-flex> 						
 									</v-layout>
-								<!-- </v-container> -->
 							</v-card-text>
+							<v-card-actions >
+								<v-btn @click="closeWithoutSave" flat color="grey">Cancel</v-btn>
+								<v-btn @click="clear" flat color="red">Clear</v-btn>
+								<v-spacer></v-spacer>
+								<v-btn @click="show('input_output')" flat color="success">NEXT</v-btn>
+							</v-card-actions>
 						</div>
-						<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">	
-							<v-container>
-								
-								<v-layout row style="padding:0px,10px;justify-content: center;">										
-									<img src="../../img/logo_one_data.jpg" alt=""> 
-									<!-- <v-img :src=require'@/img/logo_one_data.jpg'> </v-img> -->
-								</v-layout>
-								<br>
-								<br>
+
+						<div class="tab-pane tab-pane-content fade" id="input_output" role="tabpanel" aria-labelledby="input_output-tab" style="padding-right:3rem; padding-left:3rem;">
+							
+							<ul class="nav nav-pills nav-fill" id="myTabInOut" role="tablist" style="padding-right:5px; padding-left:5px;">
+								<li class="nav-item" style="margin-rigth:10px;margin-left:10px;">
+									<a class="nav-link active" id="input-tab" @click="show_input('input')" role="tab" aria-controls="home" aria-selected="true">INPUTS</a>
+								</li>
+								<li class="nav-item" style="margin-rigth:10px;margin-left:10px;">
+									<a class="nav-link" id="output-tab" @click="show_input('output')" role="tab" aria-controls="input_output" aria-selected="false">OUTPUTS</a>
+								</li>
+							</ul>
+
+							<div class="tab-content" id="myTabContentInOut">
+								<div class="tab-pane tab-pane-inout fade show active"  id="input" role="tabpanel" aria-labelledby="input-tab" style="padding-right:3rem; padding-left:3rem;">
+										<v-layout row wrap>
+											<v-flex xs12>  								
+												<v-container>
+													<div class="form-group" style="width:100%">                     
+														<div class="input-group">
+															<v-flex>
+																<v-text-field
+																	v-model="form.path_in"
+																	:counter="200"
+																	label="Path"		
+																	style="padding-right: 5px;"									
+																></v-text-field>
+															</v-flex>	
+															<v-flex>
+																<v-text-field
+																	v-model="form.storage_provider_in"
+																	:counter="200"
+																	label="Storage Provider"		
+																	style="padding-right: 5px;"									
+																></v-text-field>
+															</v-flex>
+														</div>            
+													</div> 
+
+													<div class="form-group" style="width:100%">                     
+														<div class="input-group">
+															<v-flex>
+																<v-text-field
+																	v-model="form.prefix_in"
+																	:counter="200"
+																	label="Prefix"		
+																	style="padding-right: 5px;"									
+																></v-text-field>
+															</v-flex>	
+
+															<div  class="input-group-append mr-2">  														                    
+																<button class="" @click="includePrefixIn()" type="button"><v-icon left color="green">check_circle</v-icon></button>
+																<button class="" @click="cleanfieldPrefixIn()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
+															</div>
+														</div>            
+													</div> 
+
+													<v-flex xs12 sm6 offset-sm3 v-show="showselectPrefixIn">
+														<input type="file" id="prefixs" hidden="true" multiple />
+														<v-list subheader dense>
+															<v-subheader inset>Prefixs</v-subheader>
+															<v-list-tile
+															v-for="(prefix,key) in prefixs_in"
+															:key="key"
+															avatar
+															@click.stop=""
+															>                                    
+																	
+
+																	<v-list-tile-content>
+																		<v-list-tile-title>{{prefix}}</v-list-tile-title>
+																	</v-list-tile-content>
+
+																	<v-list-tile-action>
+																		<v-btn icon ripple @click="removePrefixIn(key)">
+																		<v-icon color="red lighten-1">remove_circle_outline</v-icon>
+																		</v-btn>
+																	</v-list-tile-action>
+															</v-list-tile>
+														</v-list>
+													</v-flex>
 
 
 
-								<v-layout row style="padding:0px,10px;" >										
-									<!-- <v-flex xs12 >
-										<v-subheader>ONEPROVIDER_HOST:</v-subheader>
-									</v-flex> -->
-									<v-flex xs12 sm6 offset-sm3>
-										<v-text-field
-											v-model="form.envOneDataHost"
-											:counter="200"		
-											label="ONEPROVIDER HOST:"																
-										></v-text-field>
-									</v-flex>									
-								</v-layout>
+													<div class="form-group" style="width:100%">                     
+														<div class="input-group">
+															<v-flex>
+																<v-text-field
+																	v-model="form.suffix_in"
+																	:counter="200"
+																	label="Suffix"		
+																	style="padding-right: 5px;"									
+																></v-text-field>
+															</v-flex>	
+															<div  class="input-group-append mr-2">  														                    
+																<button class="" @click="includeSuffixIn()" type="button"><v-icon left color="green">check_circle</v-icon></button>
+																<button class="" @click="cleanfieldSuffixIn()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
+															</div>
+														</div>            
+													</div> 
 
-								<v-flex xs12 text-xs-center>
-									<span v-show="envrequirehost" style="color: #cc3300; font-size: 12px;"><b>ONEPROVIDER HOST is required</b></span>                   									
-								</v-flex>
+													<v-flex xs12 sm6 offset-sm3 v-show="showselectSuffixIn">
+														<input type="file" id="suffix" hidden="true" multiple />
+														<v-list subheader dense>
+															<v-subheader inset>Suffixs</v-subheader>
+															<v-list-tile
+															v-for="(suffix,key) in suffixs_in"
+															:key="key"
+															avatar
+															@click.stop=""
+															>                                    
+
+																<v-list-tile-content>
+																	<v-list-tile-title>{{suffix}}</v-list-tile-title>
+																</v-list-tile-content>
+
+																<v-list-tile-action>
+																	<v-btn icon ripple @click="removeSuffixIn(key)">
+																	<v-icon color="red lighten-1">remove_circle_outline</v-icon>
+																	</v-btn>
+																</v-list-tile-action>
+															</v-list-tile>
+														</v-list>
+													</v-flex>
+												</v-container>
+											</v-flex>	
+										</v-layout>
+
+										<v-flex xs12 v-show="showselectInput">
+											<input type="file" id="inputs" hidden="true" multiple />
+											<v-list subheader dense three-line>
+												<v-subheader inset>Inputs</v-subheader>
+												<v-list-tile
+												v-for="(input,key) in inputs"
+												:key="key"
+												avatar
+												@click.stop=""
+												style="margin-bottom:10px;"
+												>                                    
+														<v-list-tile-content>
+															<v-list-tile-title style="padding-bottom:20px;">Path: {{input.path}}</v-list-tile-title>
+															<v-list-tile-title style="padding-bottom:20px;">Storage_provider: {{input.storage_provider}}</v-list-tile-title>
+															<v-list-tile-title style="padding-bottom:20px;">Prefix: {{input.prefix}}</v-list-tile-title>
+															<v-list-tile-title style="padding-bottom:25px;">Suffix: {{input.suffix}}</v-list-tile-title> 
+														</v-list-tile-content>
+
+														<v-list-tile-action>
+															<v-btn icon ripple @click="removeInput(key)">
+															<v-icon color="red lighten-1">remove_circle_outline</v-icon>
+															</v-btn>
+														</v-list-tile-action>
+												</v-list-tile>
+											</v-list>
+										</v-flex>
+
+										<v-card-actions class="text-md-center" >
+											<v-spacer></v-spacer>
+											<v-btn @click="includeInput()"  color="info">ADD INPUT</v-btn>
+											
+										</v-card-actions>
+								</div>
+
+								<div class="tab-pane tab-pane-inout fade"  id="output" role="tabpanel" aria-labelledby="output-tab" style="padding-right:3rem; padding-left:3rem;">
+									<v-layout row wrap>
+										<v-flex xs12>  								
+											<v-container>
+												<div class="form-group" style="width:100%">                     
+													<div class="input-group">
+														<v-flex>
+															<v-text-field
+																v-model="form.path_out"
+																:counter="200"
+																label="Path"		
+																style="padding-right: 5px;"									
+															></v-text-field>
+														</v-flex>	
+														<v-flex>
+															<v-text-field
+																v-model="form.storage_provider_out"
+																:counter="200"
+																label="Storage Provider"		
+																style="padding-right: 5px;"									
+															></v-text-field>
+														</v-flex>
+													</div>            
+												</div> 
+
+												<div class="form-group" style="width:100%">                     
+													<div class="input-group">
+														<v-flex>
+															<v-text-field
+																v-model="form.prefix_out"
+																:counter="200"
+																label="Prefix"		
+																style="padding-right: 5px;"									
+															></v-text-field>
+														</v-flex>	
+
+														<div  class="input-group-append mr-2">  														                    
+															<button class="" @click="includePrefixOut()" type="button"><v-icon left color="green">check_circle</v-icon></button>
+															<button class="" @click="cleanfieldPrefixOut()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
+														</div>
+													</div>            
+												</div> 
+
+												<v-flex xs12 sm6 offset-sm3 v-show="showselectPrefixOut">
+													<input type="file" id="prefixs" hidden="true" multiple />
+													<v-list subheader dense>
+														<v-subheader inset>Prefixs</v-subheader>
+														<v-list-tile
+														v-for="(prefix,key) in prefixs_out"
+														:key="key"
+														avatar
+														@click.stop=""
+														>                                    
+																
+
+																<v-list-tile-content>
+																	<v-list-tile-title>{{prefix}}</v-list-tile-title>
+																</v-list-tile-content>
+
+																<v-list-tile-action>
+																	<v-btn icon ripple @click="removePrefixOut(key)">
+																	<v-icon color="red lighten-1">remove_circle_outline</v-icon>
+																	</v-btn>
+																</v-list-tile-action>
+														</v-list-tile>
+													</v-list>
+												</v-flex>
 
 
-								<v-layout row style="padding:0px,10px;">
-									<!-- <v-flex xs12> 
-										<v-subheader>ONEDATA_ACCESS_TOKEN:</v-subheader>
-									</v-flex> -->
-									<v-flex xs12 sm6 offset-sm3>
-										<v-text-field 
-											v-model="form.envOneDataToken"
-											:append-icon="showOneDataToken ? 'visibility_off' : 'visibility'"
-											:type="showOneDataToken ? 'text' : 'password'"
-											:counter="200"
-											label="ACCESS TOKEN:"
-											@click:append="showOneDataToken = !showOneDataToken"
-										></v-text-field>
+
+												<div class="form-group" style="width:100%">                     
+													<div class="input-group">
+														<v-flex>
+															<v-text-field
+																v-model="form.suffix_out"
+																:counter="200"
+																label="Suffix"		
+																style="padding-right: 5px;"									
+															></v-text-field>
+														</v-flex>	
+														<div  class="input-group-append mr-2">  														                    
+															<button class="" @click="includeSuffixOut()" type="button"><v-icon left color="green">check_circle</v-icon></button>
+															<button class="" @click="cleanfieldSuffixOut()" type="button" ><v-icon left color="red">cancel</v-icon></button>                        
+														</div>
+													</div>            
+												</div> 
+
+
+
+												<v-flex xs12 sm6 offset-sm3 v-show="showselectSuffixOut">
+													<input type="file" id="suffix" hidden="true" multiple />
+													<v-list subheader dense>
+														<v-subheader inset>Suffixs</v-subheader>
+														<v-list-tile
+														v-for="(suffix,key) in suffixs_out"
+														:key="key"
+														avatar
+														@click.stop=""
+														>                                    
+
+															<v-list-tile-content>
+																<v-list-tile-title>{{suffix}}</v-list-tile-title>
+															</v-list-tile-content>
+
+															<v-list-tile-action>
+																<v-btn icon ripple @click="removeSuffixOut(key)">
+																<v-icon color="red lighten-1">remove_circle_outline</v-icon>
+																</v-btn>
+															</v-list-tile-action>
+														</v-list-tile>
+													</v-list>
+												</v-flex>
+											</v-container>
+										</v-flex>	
+									</v-layout>
+
+									<v-flex xs12 v-show="showselectOutput">
+										<input type="file" id="inputs" hidden="true" multiple />
+										<v-list subheader dense three-line>
+											<v-subheader inset>Outputs</v-subheader>
+											<v-list-tile
+											v-for="(output,key) in outputs"
+											:key="key"
+											avatar
+											@click.stop=""
+											style="margin-bottom:10px;"
+											>                                    
+													<v-list-tile-content>
+														<v-list-tile-title style="padding-bottom:20px;">Path: {{output.path}}</v-list-tile-title>
+														<v-list-tile-title style="padding-bottom:20px;">Storage_provider: {{output.storage_provider}}</v-list-tile-title>
+														<v-list-tile-title style="padding-bottom:20px;">Prefix: {{output.prefix}}</v-list-tile-title>
+														<v-list-tile-title style="padding-bottom:25px;">Suffix: {{output.suffix}}</v-list-tile-title> 
+													</v-list-tile-content>
+
+													<v-list-tile-action>
+														<v-btn icon ripple @click="removeOutput(key)">
+														<v-icon color="red lighten-1">remove_circle_outline</v-icon>
+														</v-btn>
+													</v-list-tile-action>
+											</v-list-tile>
+										</v-list>
 									</v-flex>
-								</v-layout>
 
-								<v-flex xs12 text-xs-center>
-									<span v-show="envrequiretoken" style="color: #cc3300; font-size: 12px;"><b>ACCESS TOKEN is required</b></span>                   									
-								</v-flex>
+									<v-card-actions class="text-md-center" >
+										<v-spacer></v-spacer>
+										<v-btn @click="includeOutput()"  color="info">ADD OUTPUT</v-btn>
+									</v-card-actions>
+								</div>
+								<v-card-actions >
+									<v-btn @click="closeWithoutSave" flat color="grey">Cancel</v-btn>
+									<v-btn @click="cleanfieldInput();cleanfieldOutput()" flat color="red">Clear</v-btn>
+									<v-spacer></v-spacer>
+									<v-btn @click="show('home')" flat color="blue">BACK</v-btn>
+									<v-btn @click="show('profile')" flat color="success">NEXT</v-btn>
+								</v-card-actions>
+							</div>		
+									
+						</div>
 
-								<v-layout row style="padding:0px,10px;">
-									<!-- <v-flex xs12>
-										<v-subheader>ONEDATA_SPACE:</v-subheader>
-									</v-flex> -->
-									<v-flex xs12 sm6 offset-sm3>
-										<v-text-field 
-											v-model="form.envOneDataSpace"
-											:counter="200"
-											label="SPACE:"
-										></v-text-field>
-									</v-flex>										
-								</v-layout>
-								
-								<v-flex xs12 text-xs-center>
-									<span v-show="envrequirespace" style="color: #cc3300; font-size: 12px;"><b>SPACE is required</b></span>                   									
-								</v-flex>
+						<div class="tab-pane tab-pane-content fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
 
-							</v-container>							
+							<div class=" div-list-content" >
+								<v-card style="padding:0 2rem 2rem 2rem;">
+
+									<v-tabs
+										fixed-tabs
+										v-model="model_create"
+										centered
+									>
+										<v-tab
+										:href="`#tab-minio`"
+										>
+											MINIO
+										</v-tab>
+										<v-tab
+										:href="`#tab-onedata`"
+										>
+											ONE DATA
+										</v-tab>
+										<v-tab
+										:href="`#tab-s3`"
+										>
+											S3
+										</v-tab>
+									</v-tabs>
+
+									<v-tabs-items v-model="model_create" >
+										<v-tab-item  :value="`tab-onedata`">
+											<v-container>
+									
+												<v-layout row style="padding:0px,10px;justify-content: center;">										
+													<img src="../../img/logo_one_data.jpg" alt=""> 
+												</v-layout>
+												<br>
+												<br>
+
+												<v-layout row style="padding:0px,10px;" >										
+													<v-flex xs12 sm8 offset-sm2>
+														<v-text-field
+															v-model="form.storage_provider.onedata.oneprovider_host"
+															:counter="200"		
+															label="ONEPROVIDER HOST:"																
+														></v-text-field>
+													</v-flex>									
+												</v-layout>
+
+												<v-flex xs12 text-xs-center>
+													<span v-show="envrequirehost" style="color: #cc3300; font-size: 12px;"><b>ONEPROVIDER HOST is required</b></span>                   									
+												</v-flex>
+
+												<v-layout row style="padding:0px,10px;">
+													<v-flex xs12 sm8 offset-sm2>
+														<v-text-field 
+															v-model="form.storage_provider.onedata.token"
+															:append-icon="showOneDataToken ? 'visibility_off' : 'visibility'"
+															:type="showOneDataToken ? 'text' : 'password'"
+															:counter="200"
+															label="ACCESS TOKEN:"
+															@click:append="showOneDataToken = !showOneDataToken"
+														></v-text-field>
+													</v-flex>
+												</v-layout>
+
+												<v-flex xs12 text-xs-center>
+													<span v-show="envrequiretoken" style="color: #cc3300; font-size: 12px;"><b>ACCESS TOKEN is required</b></span>                   									
+												</v-flex>
+
+												<v-layout row style="padding:0px,10px;">
+													<v-flex xs12 sm8 offset-sm2>
+														<v-text-field 
+															v-model="form.storage_provider.onedata.space"
+															:counter="200"
+															label="SPACE:"
+														></v-text-field>
+													</v-flex>										
+												</v-layout>
+											</v-container>	
+										</v-tab-item>
+
+										<v-tab-item  :value="`tab-minio`">
+											<v-container>
+									
+												<v-layout row style="padding:0px,10px;justify-content: center;">										
+													<img src="../../img/minio-storage.png" height="110px" alt=""> 
+												</v-layout>
+												<br>
+												<br>
+
+												<v-layout row style="padding:0px,10px;">
+													<v-flex xs12 sm8 offset-sm2>
+														<v-text-field 
+															v-model="minio.endpoint"
+															:counter="200"
+															label="ENDPOINT"
+														></v-text-field>
+													</v-flex>
+												</v-layout>
+
+												<v-layout row style="padding:0px,10px;">
+													<v-flex xs12 sm8 offset-sm2>
+														<v-text-field 
+															v-model="minio.region"
+															:counter="200"
+															label="REGION"
+														></v-text-field>
+													</v-flex>										
+												</v-layout>
+												<v-layout row style="padding:0px,10px;">
+													<v-flex xs12 sm8 offset-sm2>
+														<v-text-field 
+															v-model="minio.secret_key"
+															:append-icon="showMinioSecretKey ? 'visibility_off' : 'visibility'"
+															:type="showMinioSecretKey ? 'text' : 'password'"
+															:counter="200"
+															label="SECRET KEY"
+															@click:append="showMinioSecretKey = !showMinioSecretKey"
+														></v-text-field>
+													</v-flex>
+												</v-layout>
+
+												<v-layout row style="padding:0px,10px;">
+													<v-flex xs12 sm8 offset-sm2>
+														<v-text-field 
+															v-model="minio.access_key"
+															:append-icon="showMinioAccessKey ? 'visibility_off' : 'visibility'"
+															:type="showMinioAccessKey ? 'text' : 'password'"
+															:counter="200"
+															label="ACCESS KEY"
+															@click:append="showMinioAccessKey = !showMinioAccessKey"
+														></v-text-field>
+													</v-flex>
+												</v-layout>
+
+												<v-layout row style="padding:0px,10px;">
+													<v-flex row xs12 sm8 offset-sm2>
+															<span style="margin-top:16px;padding-top:4px;color:#605C5C;padding-right:10px;">VERIFY</span>
+															<v-switch
+																v-model="minio.verify"
+															></v-switch>
+													</v-flex>										
+												</v-layout>
+											</v-container>
+										</v-tab-item>
+
+										<v-tab-item  :value="`tab-s3`">
+											<v-container>
+									
+												<v-layout row style="padding:0px,10px;justify-content: center;">										
+													<img src="../../img/amazon-s3.png" height="110px" alt=""> 
+												</v-layout>
+												<br>
+												<br>
+
+												<v-layout row style="padding:0px,10px;">
+													<v-flex xs12 sm8 offset-sm2>
+														<v-text-field 
+															v-model="form.storage_provider.s3.access_key"
+															:append-icon="showS3AccessKey ? 'visibility_off' : 'visibility'"
+															:type="showS3AccessKey ? 'text' : 'password'"
+															:counter="200"
+															label="ACCESS KEY"
+															@click:append="showS3AccessKey = !showS3AccessKey"
+														></v-text-field>
+													</v-flex>
+												</v-layout>
+
+												<v-layout row style="padding:0px,10px;">
+													<v-flex xs12 sm8 offset-sm2>
+														<v-text-field 
+															v-model="form.storage_provider.s3.secret_key"
+															:append-icon="showS3SecretKey ? 'visibility_off' : 'visibility'"
+															:type="showS3SecretKey ? 'text' : 'password'"
+															:counter="200"
+															label="SECRET KEY"
+															@click:append="showS3SecretKey = !showS3SecretKey"
+														></v-text-field>
+													</v-flex>
+												</v-layout>
+
+												<v-flex xs12 text-xs-center>
+													<span v-show="envrequiretoken" style="color: #cc3300; font-size: 12px;"><b>ACCESS TOKEN is required</b></span>                   									
+												</v-flex>
+
+												<v-layout row style="padding:0px,10px;">
+													<v-flex xs12 sm8 offset-sm2>
+														<v-text-field 
+															v-model="form.storage_provider.s3.region"
+															:counter="200"
+															label="REGION"
+														></v-text-field>
+													</v-flex>										
+												</v-layout>
+											</v-container>
+										</v-tab-item>
+									</v-tabs-items>	
+								</v-card>
+							</div>
+							<v-card-actions >
+								<v-btn @click="closeWithoutSave" flat color="grey">Cancel</v-btn>
+								<v-btn @click="clear" flat color="red">Clear</v-btn>
+								<v-spacer></v-spacer>
+								<v-btn  @click="show('input_output')" flat color="primary">BACK</v-btn>
+								<v-btn :disabled="!form.valid" @click="submit" flat color="success">submit</v-btn>
+							</v-card-actions>						
 						</div>  
 					</div>									
-					<v-card-actions >
-						<v-btn @click="closeWithoutSave" flat color="error">Cancel</v-btn>
-						<v-btn @click="clear" flat color="warning">Clear</v-btn>
-						<v-spacer></v-spacer>
-						<v-btn :disabled="!form.valid" @click="submit" flat color="success">submit</v-btn>
-					</v-card-actions>
 				</v-form>			
 			</v-card>			
 		</v-dialog>    
-		<!-- </div> -->
 	</v-layout>
 </template>
 
 <script>
 import axios from 'axios'
-
+import Services from '../../components/services';
 /* eslint-disable */
 export default {   
+	mixins:[Services],
 	name: 'FunctionForm',
-	props: {
-		openFaaS: {}
-	},
-   
 	data () {
 		return {			
 			dialog: false,        
@@ -661,27 +775,43 @@ export default {
 			editionMode: false,
 			base64String : "",    
 			filename: "",  
-			files: [],      
+			files: [],    
+			inputs:[],  
+			prefixs_in:[],  
+			suffixs_in:[],  
+			outputs:[],  
+			prefixs_out:[],  
+			suffixs_out:[],  
 			showUploading: false,
 			showselectEnv: false,
+			showselectInput: false,
+			showselectPrefixIn: false,
+			showselectSuffixIn: false,
+			showselectOutput: false,
+			showselectPrefixOut: false,
+			showselectSuffixOut: false,
 			showselectAnn: false,
-			showselectLab: false,
-			showselectConsts: false,
-			showselectSec: false,
 			showOneDataToken: false,
+			showS3AccessKey: false,
+			showS3SecretKey: false,
+			showMinioAccessKey: false,
+			showMinioSecretKey: false,
 			filerequire : false,
 			envrequirehost: false,
 			envrequiretoken : false,
 			envrequirespace : false,
 			envVars:{},
-			envVarsOneData:{},			
 			envVarsAll:{},
-			anns:{},
-			labels:{},
-			consts: [],
-			secrets: [],
 			limits_mem: '',
 			request_mem: '',
+			select_logLevel: 'INFO',
+			 minio:{
+				endpoint: '' ,
+				region: '',
+				secret_key: '',
+				access_key: '',
+				verify: true
+			},
 
 			form: {
 				valid: false,
@@ -695,40 +825,64 @@ export default {
 				nameRules: [
 				v => !!v || 'Function name is required'
 				],
-				process: '',
-				network: '',
-				annkey: '',
-				annvalue: '',
-				constraints: '',
 				envVarskey: "",
 				envVarsValue: "",	
-				// envVarskeyOneData: "",
-				// envVarsValueOneData:"",						
-				envOneDataHost: "",		
-				envOneDataToken: "",		
-				envOneDataSpace: "",		
-				labelkey: '',
-				labelvalue: '',
+				path_in:"",
+				log_level:['CRITICAL','ERROR','WARNING','INFO','DEBUG','NOTSET'],
+				storage_provider_in:"",
+				prefix_in:"",
+				suffix_in:"",
+				path_out:"",
+				storage_provider_out:"",
+				prefix_out:"",
+				suffix_out:"",
+				storage_provider:{
+					s3:{
+						access_key: '',
+						secret_key: '',
+						region: ''
+					},
+					onedata:{
+						oneprovider_host: '',		
+						token: '',		
+						space: ''
+					},
+				},
 				limits_cpu: '',
 				limits_memory: '',
 				regAuth: '',
 				request_cpu: '',
 				request_memory: '',
-				secrets: ''
+				secrets: '',
+				
 				
 			},
 			progress: {
 				active: false
-			}
+			},
+			model_create: 'tab-minio',
+			tabs_in_out: 'tab-input',
+			showinput: true,
+			memory: '',
+			varsEnv: '',
+
+
 		}
 	},
 	methods: {
 		show(id){
-			$(".tab-pane").removeClass("show active")
-			$(".nav-link").removeClass("show active")
+			$("#myTabContent .tab-pane-content").removeClass("show active")
+			$("#myTab .nav-link").removeClass("show active")
 			$("#"+id).addClass("show active")
 			$("#"+id+"-tab").addClass("show active")
 		},
+		show_input(id){
+			$("#myTabContentInOut .tab-pane-inout").removeClass("show active")
+			$("#myTabInOut .nav-link").removeClass("show active")
+			$("#"+id).addClass("show active")
+			$("#"+id+"-tab").addClass("show active")
+		},
+		
 		handleUpdate(){
 			this.$emit("SHOWSPINNER",true)			 
       		window.getApp.$emit('REFRESH_BUCKETS_LIST')
@@ -742,19 +896,93 @@ export default {
 			this.form.envVarskey=""
 			this.form.envVarsValue=""
 		},		
-		cleanfieldann(){
-			this.form.annkey=""
-			this.form.annvalue=""
+		cleanfieldInput(){
+			this.form.path_in=""		
+			this.form.storage_provider_in=""	
+			this.cleanfieldPrefixIn()	
+			this.cleanfieldSuffixIn()	
 		},
-		cleanfieldlab(){
-			this.form.labelkey=""
-			this.form.labelvalue=""
+		cleanfieldPrefixIn(){
+			this.form.prefix_in=""		
 		},
-		cleanfieldConst(){
-			this.form.constraints=""		
+		cleanfieldSuffixIn(){
+			this.form.suffix_in=""		
 		},
-		cleanfieldSec(){
-			this.form.secrets=""		
+		includePrefixIn(){
+			this.showselectPrefixIn = true
+			this.prefixs_in.push(this.form.prefix_in)
+			this.cleanfieldPrefixIn()
+		},
+		includeSuffixIn(){
+			this.showselectSuffixIn = true
+			this.suffixs_in.push(this.form.suffix_in)
+			this.cleanfieldSuffixIn()
+		},
+		includeInput(){
+			this.showselectInput=true
+			var input = {
+				"path":this.form.path_in,
+				"storage_provider":this.form.storage_provider_in,
+				"prefix":this.prefixs_in,
+				"suffix":this.suffixs_in
+			}
+			this.inputs.push(input)
+			input = {}
+			this.prefixs_in=[]
+			this.suffixs_in=[]
+			this.cleanfieldInput()						
+			this.cleanfieldPrefixIn()						
+			this.cleanfieldSuffixIn()	
+			if (this.isEmpty(this.prefixs_in)) {
+				this.showselectPrefixIn = false
+			}
+			if (this.isEmpty(this.suffixs_in)) {
+				this.showselectSuffixIn = false
+			}					
+		},
+		cleanfieldOutput(){
+			this.form.path_out=""		
+			this.form.storage_provider_out=""	
+			this.cleanfieldPrefixOut()	
+			this.cleanfieldSuffixOut()	
+		},
+		cleanfieldPrefixOut(){
+			this.form.prefix_out=""		
+		},
+		cleanfieldSuffixOut(){
+			this.form.suffix_out=""		
+		},
+		includePrefixOut(){
+			this.showselectPrefixOut = true
+			this.prefixs_out.push(this.form.prefix_out)
+			this.cleanfieldPrefixOut()
+		},
+		includeSuffixOut(){
+			this.showselectSuffixOut = true
+			this.suffixs_out.push(this.form.suffix_out)
+			this.cleanfieldSuffixOut()
+		},
+		includeOutput(){
+			this.showselectOutput=true
+			var output = {
+				"path":this.form.path_out,
+				"storage_provider":this.form.storage_provider_out,
+				"prefix":this.prefixs_out,
+				"suffix":this.suffixs_out
+			}
+			this.outputs.push(output)
+			output = {}
+			this.prefixs_out=[]
+			this.suffixs_out=[]
+			this.cleanfieldOutput()						
+			this.cleanfieldPrefixOut()						
+			this.cleanfieldSuffixOut()	
+			if (this.isEmpty(this.prefixs_out)) {
+				this.showselectPrefixOut = false
+			}
+			if (this.isEmpty(this.suffixs_out)) {
+				this.showselectSuffixOut = false
+			}					
 		},
 		includeEnv(){
 			this.showselectEnv=true
@@ -763,31 +991,6 @@ export default {
 			this.envVars[key]=value
 			this.cleanfieldenv()						
 		},		
-		includeAnn(){
-			this.showselectAnn=true
-			var key= this.form.annkey.replace(" ", "")
-			var value = this.form.annvalue.replace(" ", "")
-			this.anns[key]=value
-			this.cleanfieldann()			
-		},
-		includeLab(){
-			this.showselectLab=true
-			var key= this.form.labelkey.replace(" ", "")
-			var value = this.form.labelvalue.replace(" ", "")
-			this.labels[key]=value
-			this.cleanfieldlab()	
-				
-		},
-		includeConst(){
-			this.showselectConsts=true
-			this.consts.push(this.form.constraints)			
-			this.cleanfieldConst()						
-		},
-		includeSec(){
-			this.showselectSec=true
-			this.secrets.push(this.form.secrets)			
-			this.cleanfieldSec()						
-		},
 		isEmpty(obj) {
 			for(var key in obj) {
 				if(obj.hasOwnProperty(key))
@@ -795,36 +998,36 @@ export default {
 			}
 			return true;
 		},
-		removeAnn (key) {     
-			this.$delete(this.anns,key)			
-			if (this.isEmpty(this.anns)) {
-				this.showselectAnn = false
-			}
-		},		
 		removeEnv (key) {     
 			this.$delete(this.envVars,key)			
 			if (this.isEmpty(this.envVars)) {
 				this.showselectEnv = false
 			}		
-		},		
-		removeLab(key) {     
-			this.$delete(this.labels,key)				
-			if (this.isEmpty(this.labels)) {
-				this.showselectLab = false
-			}				
+		},	
+		removeInput (key) {     
+			this.$delete(this.inputs,key)			
+			if (this.isEmpty(this.inputs)) {
+				this.showselectInput = false
+			}		
 		},
-		removeConst(key) {     
-			this.consts.splice(key, 1)							
-			if (this.consts.length == 0) {				
-				this.showselectConsts = false
-			}				
+		removeOutput (key) {     
+			this.$delete(this.outputs,key)			
+			if (this.isEmpty(this.outputs)) {
+				this.showselectOutput = false
+			}		
 		},
-		removeSec(key) {     
-			this.secrets.splice(key, 1)			
-			if (this.secrets.length == 0) {
-				this.showselectSec = false
-			}				
+		removePrefixIn (key) {     
+			this.$delete(this.prefixs_in,key)			
+			if (this.isEmpty(this.prefixs_in)) {
+				this.showselectPrefixIn = false
+			}		
 		},
+		removeSuffixIn (key) {     
+			this.$delete(this.suffixs_in,key)			
+			if (this.isEmpty(this.suffixs_in)) {
+				this.showselectSuffixIn = false
+			}		
+		},	
 		collapse(){			
 			this.drawer = (!this.drawer)			
 			if (this.drawer == true){
@@ -867,10 +1070,6 @@ export default {
 					var binaryData = e.target.result;
 					//Converting Binary Data to base 64
 					_this.base64String = window.btoa(binaryData);
-					//showing file converted to base64
-					// document.getElementById('base64').value = base64String;
-					// console.log(_this.base64String)
-					// alert('File converted to base64 successfuly!\nCheck in Textarea');
 				};
 				})(f);
 				// Read in the image file as a data URL.
@@ -886,20 +1085,15 @@ export default {
 			this.showUploading = false
 			this.filename = this.url
 			this.files.push(uploadedFiles)
-			
-			var params = {
-				'url': this.url				
-			}
-			var _this = this;
-			axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST/chargeurl', data: params})
-				.then((response) => {
-				// handle success          
-				_this.base64String = window.btoa(response.data);          
-				}).catch((error,data) => {
-				// handle error
-				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: error.response.data, color: 'error' })
-			})   
-			
+			var _this = this
+			fetch(this.url).then(r => r.blob()).then(blob => {
+				var reader = new FileReader();
+				reader.onload = function() {
+					_this.base64String = reader.result.replace(/^data:.+;base64,/, '');
+				};
+				reader.readAsDataURL(blob);
+			});
+			this.cleanfield()
 		},
 		closeWithoutSave () {      
 			this.progress.active = false
@@ -912,31 +1106,16 @@ export default {
 				}
 				return obj;
 		},
-		submit () {		
-			this.envrequirehost = false
-			this.envrequiretoken = false
-			this.envrequirespace = false
-			
+		submit () {	
 			if (this.$refs.form.validate() && this.files.length != 0) {
-				// Native form submission is not yet supported
-				if((this.form.envOneDataHost != "" || this.form.envOneDataToken != "" || this.form.envOneDataSpace != "" ) && (this.form.envOneDataHost == "" || this.form.envOneDataToken == "" || this.form.envOneDataSpace == "")){
-					if (this.form.envOneDataHost == ""){
-						this.envrequirehost = true;
-					}
-					if (this.form.envOneDataToken == ""){
-						this.envrequiretoken = true;
-					}
-					if (this.form.envOneDataSpace == ""){
-						this.envrequirespace = true;
-					}
-				}else {
 				this.progress.active = true
 				this.editionMode ? this.editFunction() : this.newFunction()				
 				this.envrequirehost = false
 				this.envrequiretoken = false
 				this.envrequirespace = false
-				}
-				
+				console.log(this.editionMode)
+			}else if (this.editionMode == false){
+				this.show('home')
 			}			
 			if (this.files.length == 0){
 				this.filerequire = true
@@ -949,42 +1128,54 @@ export default {
 		},
 		clear () {
 			this.files = []
-			this.consts = []
-			this.secrets = []
 			this.url = ""
 			this.$refs.files.value = null
 			this.$refs.form.reset()
 			this.editionMode = false
 			this.showUploading = false
 			this.showselectEnv = false
-			this.showselectLab = false
-			this.showselectAnn = false			
-			this.showselectConsts = false
-			this.showselectSec = false
 			this.envVars = {}
-			this.envVarsOneData = {}
 			this.anns = {}
 			this.labels = {}
 			this.expand = "expand_more"
 			$("#panel").slideUp("slow");
 			$("#home-tab").addClass("show active")
 			$("#home").addClass("show active")
+			$("#input_output-tab").removeClass("show active")
+			$("#input_output").removeClass("show active")
 			$("#profile-tab").removeClass("show active")
 			$("#profile").removeClass("show active")
-			// $("#"+id+"-tab").addClass("show active")
+			this.minio.access_key = ''
+			this.minio.secret_key = ''
+			this.minio.endpoint = ''
+			this.minio.verify = true
+			this.form.storage_provider.onedata.oneprovider_host = ''
+			this.form.storage_provider.onedata.token = ''
+			this.form.storage_provider.onedata.space = ''
+			this.form.storage_provider.s3.access_key = ''
+			this.form.storage_provider.s3.secret_key = ''
+			this.form.storage_provider.s3.region = ''
+			this.prefixs_in = []
+			this.suffixs_in = []
+			this.inputs = []
+			this.cleanfieldInput()
+			this.prefixs_out = []
+			this.suffixs_out = []
+			this.outputs = []
+			this.cleanfieldOutput()
+			this.showselectPrefixIn = false
+			this.showselectSuffixIn = false
+			this.showselectPrefixOut = false
+			this.showselectSuffixOut = false
+			this.showselectInput = false
+			this.showselectOutput = false
+			this.select_logLevel = 'INFO'
 		},
-		newFunction () {	
-			this.envVarsOneData = {"ONEPROVIDER_HOST":this.form.envOneDataHost,"ONEDATA_ACCESS_TOKEN":this.form.envOneDataToken,"ONEDATA_SPACE":this.form.envOneDataSpace}
-			console.log(this.envVarsOneData)	
-			if (this.form.envOneDataHost == "" || this.form.envOneDataToken == "" || this.form.envOneDataSpace == "" ){
-				this.envVarsAll = this.envVars;
-			}else{
-				this.envVarsAll = this.extend (this.envVars, this.envVarsOneData);
-			}		
-			
-
+		newFunction () {
+			if (this.minio.endpoint != "") {
+				this.form.storage_provider["minio"]=this.minio
+			} 			
 			var value = $("#classmemory option:selected").text();			
-			var value2 = $("#classmemory2 option:selected").text();				
 				
 
 			if (this.form.limits_memory == ""){
@@ -993,118 +1184,154 @@ export default {
 				this.limits_mem = this.form.limits_memory + value;
 			}
 
-			if (this.form.request_memory == ""){
-				this.request_mem = ''
-			}else{
-				this.request_mem= this.form.request_memory + value2;
-			}			
-
-			// console.log(this.limits_mem,this.request_mem)
-			
 			var params = {
-				'url': this.openFaaS.endpoint, 
-				'service': this.form.name, 
-				'network': this.form.network, 
+				
+				'name': this.form.name, 
 				'image': this.form.image, 
-				// 'envProcess': this.form.process, 
+				'cpu': this.form.limits_cpu,
+				'memory': this.form.limits_memory,
+				'log_level': this.select_logLevel,
+				'environment': {
+					"Variables":this.envVars
+				},
+				'input': this.inputs,
+				'output': this.outputs,
 				'script': this.base64String,
-				'annotations': this.anns,
-				'constraints': this.consts,
-				'envVars':this.envVarsAll,
-				'labels': this.labels,
-				'limits': 
-				{'cpu': this.form.limits_cpu,
-				'memory': this.limits_mem}
-				,
-				'registryAuth': this.form.regAuth,
-				'requests': 
-				{'cpu': this.form.request_cpu,
-				'memory': this.request_mem}
-				,
-				'secrets': this.secrets }			
+				'storage_providers':this.form.storage_provider
+
+			}	
+			this.createServiceCall(params,this.createServiceCallBack)	
 			
-			axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST/newfaas', data: params })
-				.then((response) => {
-				// handle success
-				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${this.form.name} is in process of being deployed, wait until it is displayed.`, color: 'success', timeout: 12000 })
-				this.dialog = false
+		},
+		createServiceCallBack(response){
+			if(response.status == 201){
+				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${this.form.name} was successfully created.`, color: 'success', timeout: 12000 })
+				this.dialog = false;
 				this.clear()
 				this.updateFunctionsGrid()
-				}).catch((error) => {
-				// handle error
-				console.log(error.response.data)
-				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: error.response.data, color: 'error' })
-				}).then(() => {
-				this.progress.active = false
-				})
+			}else {
+				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response, color: 'error' })
+			}
+			this.progress.active = false
+
 		},
 		editFunction () {
+
+			if (this.minio.endpoint != "") {
+				this.form.storage_provider["minio"]=this.minio
+			} 			
+
 			var params = {
-				'url': this.openFaaS.endpoint, 
-				'service': this.form.name, 
-				'network': this.form.network, 
+				
+				'name': this.form.name, 
 				'image': this.form.image, 
-				// 'envProcess': this.form.process, 
+				'cpu': this.form.limits_cpu,
+				'memory': this.form.limits_memory,
+				'log_level': this.select_logLevel,
+				'environment': {
+					"Variables":this.envVars
+				},
+				'input': this.inputs,
+				'output': this.outputs,
 				'script': this.base64String,
-				'annotations': this.anns,
-				'constraints': this.consts,
-				'envVars':this.envVars,
-				'labels': this.labels,
-				'limits': 
-				{'cpu': this.form.limits_cpu,
-				'memory': this.form.limits_memory}
-				,
-				'registryAuth': this.form.regAuth,
-				'requests': 
-				{'cpu': this.form.request_cpu,
-				'memory': this.form.request_memory}
-				,
-				'secrets': this.secrets }	
-			axios({ method: 'put', url: 'https://$VUE_APP_BACKEND_HOST/editfaas', data: params })
-				.then((response) => {
-				// handle success
+				'storage_providers':this.form.storage_provider
+
+			}	
+			console.log(params)
+			
+			this.editServiceCall(params, this.editServiceCallBack)
+			
+		},
+		editServiceCallBack(response){
+			if(response.status == 204){
 				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${this.form.name} has been updated`, color: 'success' })
-				this.dialog = false
+				this.dialog = false;
 				this.clear()
 				this.updateFunctionsGrid()
-				}).catch((error, data) => {
-				// handle error
-				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: error.response.data, color: 'error' })
-				}).then(() => {
-				this.progress.active = false
-				})
+			}else {
+				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response, color: 'error' })
+			}
+			this.progress.active = false
+
 		},
 		updateFunctionsGrid () {
 			window.getApp.$emit('FUNC_GET_FUNCTIONS_LIST')
 		}
 	},
 	computed: {
+		
 		formTitle () {
-		return this.editionMode ? 'Edit Function' : 'New Function'
+			return this.editionMode ? 'Edit Service' : 'New Service'
 		},
 		formColor () {
-		return this.editionMode ? 'pink' : 'primary'
+			return this.editionMode ? 'blue lighten-2' : 'teal lighten-3'
 		},
 		showSelectedFiles () {
-		return this.files.length > 0
+			return this.files.length > 0
 		},
 		
 	},
   
 	created: function () {
 		window.getApp.$on('FUNC_OPEN_MANAGEMENT_DIALOG', (data) => {
-		this.editionMode = data.editionMode
-		this.form.name = data.name
-		this.form.image = data.image
-		this.form.process = data.process
-		this.form.network = data.network
-		this.dialog = true
+		console.log(data)
+			this.dialog = true
+			this.editionMode = data.editionMode
+			this.form.name = data.name
+			this.form.image = data.image
+			this.inputs = data.input
+			this.outputs = data.output
+			this.form.limits_cpu = data.cpu
+			var memory_split = []
+			memory_split = data.memory.match(/[a-z]+|[^a-z]+/gi);
+			this.form.limits_memory = memory_split[0]
+			if (memory_split[1] == "Mi"){
+				var value_select = "1"
+			}else{
+				var value_select = "2"
+			}
+			$('#classmemory').val(value_select)
+			var key=''
+			var values= ''
+			key = Object.keys(data.envVars.Variables)
+			values = Object.values(data.envVars.Variables)
+			for (let i = 0; i < key.length; i++) {
+				this.envVars[key[i]]=values[i]
+			}
+			if(key.length){
+				this.showselectEnv = true
+			}else{
+				this.showselectEnv = true
+			}
+			this.select_logLevel = data.log_Level
+			// this.form.storage_provider = data.storage_provider
+			// this.storage_provider = true
+			if (this.isEmpty(this.inputs)) {
+				this.showselectInput = false
+			}else{
+				this.showselectInput = true
+			}	
+			if (this.isEmpty(this.outputs)) {
+				this.showselectOutput = false
+			}else{
+				this.showselectOutput = true
+			}
+			
 		})
 	}
 }
 </script>
 
 <style scoped>
+
+.active {
+	color: black !important;
+  	background-color: transparent !important;
+  	border-bottom: yellowgreen solid 2px;
+}
+.list__tile {
+  height: 6rem !important;
+}
  #flip {
     /* padding: 5px; */
     /* text-align: center; */
@@ -1126,44 +1353,35 @@ export default {
     box-shadow: none;
 }
 
-/* .v-input__control {
-    padding-right: 5px;
-} */
- 
-	 		/* Small devices (landscape phones, 576px and up)*/
-		@media (min-width: 576px) { 
-			 .custom-select{
-				height: calc(2.25rem + 3px);
-				width: 100%
-			}
-		 }
+	/* Small devices (landscape phones, 576px and up)*/
+@media (min-width: 576px) { 
+		.custom-select{
+		height: calc(2.25rem + 3px);
+		width: 100%
+	}
+	}
 
-		/*Medium devices (tablets, 768px and up)*/
-		@media (min-width: 768px) { 
-			.custom-select{
-				height: calc(2.25rem + 3px);
-				width: 100%
-			}
-		 }
+/*Medium devices (tablets, 768px and up)*/
+@media (min-width: 768px) { 
+	.custom-select{
+		height: calc(2.25rem + 3px);
+		width: 100%
+	}
+	}
 
-		/*Large devices (desktops, 992px and up)*/
-		@media (min-width: 992px) { 
-			.custom-select{
-				height: calc(2.25rem + 3px);
-				width: 100%
-			}
-		 }
+/*Large devices (desktops, 992px and up)*/
+@media (min-width: 992px) { 
+	.custom-select{
+		height: calc(2.25rem + 3px);
+		width: 100%
+	}
+	}
 
-		/* Extra large devices (large desktops, 1200px and up)*/
-		@media (min-width: 1200px) { 
-			.custom-select{
-				height: calc(2.25rem + 3px);
-				width: 75%
-			}
-		 }
-
-
-	  
-
-
+/* Extra large devices (large desktops, 1200px and up)*/
+@media (min-width: 1200px) { 
+	.custom-select{
+		height: calc(2.25rem + 3px);
+		width: 75%
+	}
+}
 </style>

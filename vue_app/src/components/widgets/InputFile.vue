@@ -1,6 +1,6 @@
 <template>
-  <v-layout xs12 align-center row>
-    <v-flex xs4 >
+  <v-layout align-center row>
+    <v-flex xs12 sm12 md6>
       <v-btn
         color="primary"
         class="white--text"
@@ -24,8 +24,7 @@
       		<v-icon>autorenew</v-icon>
     	</v-btn>
     </v-flex>
-    <v-flex xs8 row v-show="showSelectedFiles" id="selectedList">
-      <v-flex xs12>
+    <v-flex xs12 sm12 md6 v-show="showSelectedFiles" id="selectedList">
         <input type="file" id="files" ref="files" multiple v-on:change="handleFilesUpload()"/>
         <v-list two-line subheader dense>
           <v-subheader inset>Files</v-subheader>
@@ -35,7 +34,6 @@
             avatar
             @click.stop=""
           >
-              <!--v-icon :class="[file.iconClass]">{{ file.icon }}</v-icon-->
               <v-progress-circular
                 indeterminate
                 color="teal"
@@ -55,7 +53,6 @@
             </v-list-tile-action>
           </v-list-tile>
         </v-list>
-      </v-flex>
     </v-flex>
   </v-layout>
 </template>
@@ -64,8 +61,10 @@
 import AWS from 'aws-sdk'
 import axios from 'axios'
 import moment from 'moment'
+import Services from '../services.js'
 
 export default {
+  mixins:[Services],
   name: 'InputFile',  
   props: {
     accept: {
@@ -92,10 +91,11 @@ export default {
       type: Boolean,
       default: false
     },
-    minioClient: {
-      type: Object
-    },
     bucketName: {
+      type: String,
+      default: ''
+    },
+    currentPath: {
       type: String,
       default: ''
     }
@@ -105,7 +105,8 @@ export default {
       moment : moment,
       files: [],
       showUploading: false,
-      show: false
+      show: false,
+      filename_up:''
     }
   },
   methods: {
@@ -132,100 +133,77 @@ export default {
         Iteate over any file sent over appending the files
         to the form data.
       */
-     
-      for (let i = 0; i < this.files.length; i++) {
-        let formData = new FormData()        
-        formData.append('file', this.files[i], this.files[i].name)
-        formData.append("bucketName",this.bucketName);
-        formData.append("key",i);
-        var _this = this;
-        this.show = true;
-        // this.files.find((f) => {
-          //     if (f.name === _this.files[i].name) {
-            //     //  f.show = true       
-        //      _this.$set(f, 'show', true)      
-        //     }            
-            
-        //   console.log(f)
-        //   })
-      //  this.$set(this.files[i],'show', true)
-        
-        axios({ 
-          headers: {'Content-Type': 'multipart/form-data'},
-          method: 'post', 
-          url: 'https://$VUE_APP_BACKEND_HOST/minioUpload', 
-          data: formData
-        })
-        .then((response) => {            
-          // _this.files[response.data.key].show = false;
-          
-          //  _this.files.find((f) => {            
-          //   if (f.name === response.data.name) {
-          //     // f.show = false
-          //     _this.$set(f, 'show', false)                 
-          //   }            
-          // })
-          for (var i in _this.files){
-            if (_this.files[i].name == response.data.name){
-              var file = _this.files.splice(i, 1) 
-              break;              
-            }            
-          }     
-          // var file = _this.files.splice(response.data.key, 1) 
-          if (_this.files.length == 0) {
-            _this.show = false
-          }
-
-          window.getApp.$emit('APP_SHOW_SNACKBAR', {
-            text: `The ${file[0].name} file has been successfully uploaded`,
-            color: 'success'
-          })          
-          file[0].etag = response.data.etag                   
-          window.getApp.$emit('FILE_UPLOADED', file[0])           
-          window.getApp.$emit('GET_BUCKET_LIST') 
-          this.$refs.files.value = null
-       
-        }).catch((response) => {                  
-          window.getApp.$emit('APP_SHOW_SNACKBAR', {
-            text: `Error uploading file ${response.data.name}. ${response.data.err.message}`,            
-            color: 'error'
-          })
-        })
+	 	
+		for (let i = 0; i < this.files.length; i++) {
+      var filename = ''
+      this.filename_up = this.files[i].name
+			console.log(this.currentPath)
+			if(this.currentPath == ''){
+				filename = this.files[i].name
+			}else{
+				filename = this.currentPath+'/'+this.files[i].name
       }
-        // this.minioUpload(formData).then((data) => {
-        //   this.files.find((f) => {
-        //     if (f.name === data.key) {
-        //       f.showUploading = false
-        //     }
-        //   })
-        //   this.files.splice(file.name, 1)
-        //   window.getApp.$emit('APP_SHOW_SNACKBAR', {
-        //     text: `The ${file.name} file has been successfully uploaded`,
-        //     color: 'success'
-        //   })
-        //   window.getApp.$emit('FILE_UPLOADED', file)
-        // }).catch((err) => {
-        //   window.getApp.$emit('APP_SHOW_SNACKBAR', {
-        //     text: `Error uploading file ${file.name}. ${err.message}`,
-        //     color: 'error'
-        //   })
-        // })
-      
-      /*
-       * Make the request to the POST /select-files URL
-       */
+      this.showUploading = true;
+      this.show = true
+			var params={
+				"bucketName": this.bucketName,
+				"file": this.files[i],
+				"file_name": filename
+			}
+			this.uploadFileCall(params, this.uploadFileCallBack)
+    
+		}
     },
+    uploadFileCallBack(response){
+      console.log(response)
+		var _this = this
+		// console.log(response)
+		if (response!="uploaded"){
+			window.getApp.$emit('APP_SHOW_SNACKBAR', {
+            	text: `Error uploading file ${response}`,            
+            	color: 'error'
+          	})
+		}else {
 
+        // console.log(this.files)
+        // for (var i in _this.files){
+        // 	if (_this.files[i].name == response.name){
+        // 	var file = _this.files.splice(i, 1) 
+        // 	break;              
+        // 	}            
+        // }     
+        // // var file = _this.files.splice(response.data.key, 1) 
+        // if (_this.files.length == 0) {
+        // 	_this.show = false
+        // }
+      this.showUploading = false;
+      this.show = false;
+        window.getApp.$emit('APP_SHOW_SNACKBAR', {
+          text: `The ${this.filename_up} file has been successfully uploaded`,
+          color: 'success'
+        })          
+        // file[0].etag = response.etag                   
+        // window.getApp.$emit('FILE_UPLOADED', file[0])           
+        window.getApp.$emit('GET_BUCKET_LIST') 
+        this.$refs.files.value = null
+        this.files = []
+      }
+
+
+
+
+	},
     /**
      * Handles the uploading of files
      */
     handleFilesUpload () {
-      let uploadedFiles = this.$refs.files.files      
+	  let uploadedFiles = this.$refs.files.files  
       /*
         Adds the uploaded file to the files array
       */
       for (let i = 0; i < uploadedFiles.length; i++) {
-        uploadedFiles[i]['show'] = false
+		// uploadedFiles[i]['show'] = false
+		console.log(uploadedFiles[i])
         this.files.push(uploadedFiles[i])
       }
      

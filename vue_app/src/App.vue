@@ -2,9 +2,6 @@
   <div id="app">
     <template v-if="!$route.meta.public">
       <v-app id="inspire" class="app">
-        <!-- <app-drawer :minioClient="minioClient" :minio="minio" :openFaaS="openFaaS" class="app--drawer"></app-drawer> -->
-        <!-- <app-drawer class="app--drawer"></app-drawer>
-        <app-toolbar class="app--toolbar"></app-toolbar> -->
         <v-content>
           <v-container fluid wrap grid-list-md align-start justify-space-between>
             <router-view :minioClient="minioClient" :minio="minio" :openFaaS="openFaaS"/>

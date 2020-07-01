@@ -1,80 +1,26 @@
 <template>
 	<v-navigation-drawer id="appDrawer" :clipped="clipped" :mini-variant.sync="mini" fixed :dark="$vuetify.dark" app
 						v-model="drawer" width="260">
-		<v-toolbar color="primary darken-1" dark>
-			<img src="@/assets/logo.png" height="36" alt="OSCAR">
+		<v-toolbar color="teal darken-1" dark>
+			<img src="@/assets/logo.png" height="40" alt="OSCAR">
 			<v-toolbar-title class="ml-0 pl-3">
-				<!-- <span class="hidden-sm-and-down">OSCAR</span> -->
 				<span >OSCAR</span>
 			</v-toolbar-title>
 		</v-toolbar>
 		<vue-perfect-scrollbar class="drawer-menu--scroll" :settings="scrollSettings">
-				<!-- <v-list dense >
-					<template v-for="(item, i) in menus" > -->
-						
-						<!-- <v-list-group :id="item.title" v-if="item.items" :key="item.name" :group="item.group" 
-									:prepend-icon="item.icon" no-action v-model="item.active">
-						
-							<v-list-tile slot="activator" >
-								<v-list-tile-content>
-								<v-list-tile-title>{{ item.title }}</v-list-tile-title>
-								</v-list-tile-content>
-							</v-list-tile>
-						
-							
-							
-								<v-list-tile v-for="(subItem, k) in item.items" :key="k" :to="{path:subItem.to}" v-model="subItem.active">
-									<v-list-tile-action>
-										<span>{{ subItem.title }}</span>
-									</v-list-tile-action>  
-								</v-list-tile>               
-							
-							
-								<v-btn v-show="!menucreate" flat color="blue-grey" class="white--text" @click="menucreate = true"><v-icon left ligth color="blue">add_circle</v-icon>Create Bucket</v-btn>                                             
-								<div v-show = "menucreate" style="margin:10px" class="form-group">                     
-									<div class="input-group">
-									<input type="text" class="form-control" id="bucketname"  v-model="newBucketName" placeholder="Bucket name" autofocus  style="border-right: none; border-left:none; border-top:none; hover: "/>                     
-									
-									<div class="input-group-append mr-2">                        
-										<button class="" type="button" @click="createBucket(newBucketName)"><v-icon left color="green">check_circle</v-icon></button>
-										<button class="" type="button" @click="cleanfield()"><v-icon left color="red">cancel</v-icon></button>                        
-									</div>
-									<span v-show="error" style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>                   
-								</div>            
-								</div>                 
-						</v-list-group> -->
-						<!-- <v-subheader v-if="item.header" :key="i">{{ item.header }}</v-subheader>
-						<v-divider v-else-if="item.divider" :key="i"></v-divider> -->
-						<!--top-level link-->
-						<!-- <v-list-tile v-else :to="!item.href ? { name: item.name } : null" :href="item.href" ripple="ripple"
-									:disabled="item.disabled" :target="item.target" rel="noopener" :key="item.name">
-						<v-list-tile-action v-if="item.icon">
-							<v-icon>{{ item.icon }}</v-icon>
-						</v-list-tile-action>
-						<v-list-tile-content>
-							<v-list-tile-title>{{ item.title }}</v-list-tile-title>
-						</v-list-tile-content>
-						</v-list-tile>
-
-						
-					</template>
-				</v-list>	 -->
-
-
-				<v-subheader>Apps</v-subheader>				  
+				<v-subheader>Apps</v-subheader>		
 
 				<v-flex row xs12 >				
-					<v-btn id="btn_dash" style="justify-content:left"  depressed round flat block small @click.native="collapse('btn_dash')" >		
-						<v-icon left style="padding-right:12px" >dashboard</v-icon>
-						<span v-show="this.mini==false">Dashboard</span> 						
+					<v-btn id="btn_funct"  depressed round flat block small @click.native="collapse('btn_funct')" >		
+						<v-icon left style="padding-right:12px">dashboard</v-icon>
+						<span v-show="this.mini==false">Services</span>						
 					</v-btn>                    
-				</v-flex>				  
-				
-						
+				</v-flex>		  
+
 				<v-flex row xs12 >				
 					<v-btn id="btn_storage"	 depressed round flat block small @click.native="collapse('btn_storage')" >		
 						<v-icon id="icloud" left style="padding-right:12px" >cloud</v-icon>
-						<span v-show="this.mini==false">Storage</span> 
+						<span v-show="this.mini==false">Minio Storage</span> 
 						<v-spacer></v-spacer>
 						<v-icon v-show="this.mini==false" id="expand_sto" right >{{expand_sto}}</v-icon>
 					</v-btn>                    
@@ -118,21 +64,6 @@
 										
 					</template>
 				</v-flex>
-
-				<v-flex row xs12 >				
-					<v-btn id="btn_funct"  depressed round flat block small @click.native="collapse('btn_funct')" >		
-						<v-icon left style="padding-right:12px">functions</v-icon>
-						<span v-show="this.mini==false">Functions</span>						
-					</v-btn>                    
-				</v-flex>
-
-				<v-flex row xs12 >				
-					<v-btn id="btn_sett"  depressed round flat block small @click.native="collapse('btn_sett')" >		
-						<v-icon left style="padding-right:12px">settings</v-icon>
-						<span v-show="this.mini==false">Settings</span>						
-					</v-btn>                    
-				</v-flex>
-
 				<v-flex row xs12 >				
 					<v-btn id="btn_logout" depressed round flat block small @click.native="collapse('btn_logout')" >		
 						<v-icon  left style="padding-right:12px">exit_to_app</v-icon>
@@ -146,9 +77,11 @@
 <script>
 import menu from '@/api/menu'
 import axios from 'axios'
+import Services from '../components/services';
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 export default {
   name: 'app-drawer',
+  mixins:[Services],
   components: {
     VuePerfectScrollbar
   },
@@ -156,10 +89,8 @@ export default {
     expanded: {
       type: Boolean,
       default: true
-    },
-    minio: {},
-    openFaaS: {},
-    minioClient: {}
+    },    
+    openFaaS: {},   
   },
   data: () => ({
     error: false,        
@@ -289,54 +220,38 @@ export default {
       this.newBucketName = " ";
     },
     createBucket (name) {
-      if (this.newBucketName.length > 0){
-        this.error = false
-      this.minioCreateBucket(name).then(() => {
-        window.getApp.$emit('APP_SHOW_SNACKBAR', {
-          text: `Bucket ${name} has been successfully created`,
-          color: 'success'
-        })
-        window.getApp.$emit('REFRESH_BUCKETS_LIST')
-        window.getApp.$emit('BUCKETS_REFRESH_DASHBOARD')
-        
-      }).catch((err) => {
-        if(err.response.data.code == "BucketAlreadyOwnedByYou"){
-          window.getApp.$emit('APP_SHOW_SNACKBAR', {
-          text: "The bucket already exists",
-          color: 'error'
-        })
-        }else{
-        window.getApp.$emit('APP_SHOW_SNACKBAR', {
-          text: err.message,
-          color: 'error'
-        })
-        }
-      }).finally(() => {
-        this.menu = false
+      	if (this.newBucketName.length > 0){
+			this.error = false
+			var params = {'name': name.replace(/[^A-Z0-9]+/ig, "")};
+			this.createBucketCall(params,this.createBucketCallBack)
+		}else{
+			this.error =true
+        	this.error_message_text = "Error"
+		}
+	},
+	createBucketCallBack(response){
+		console.log(response)
+		if(response == "success"){
+			window.getApp.$emit('APP_SHOW_SNACKBAR', {
+          	text: `Bucket ${name} has been successfully created`,
+         	 color: 'success'
+			})
+			window.getApp.$emit('REFRESH_BUCKETS_LIST')
+        	window.getApp.$emit('BUCKETS_REFRESH_DASHBOARD')
+		}else if(response.code == "BucketAlreadyOwnedByYou"){
+			window.getApp.$emit('APP_SHOW_SNACKBAR', {
+				text: "The bucket already exists",
+				color: 'error'
+			})
+		}else{
+			window.getApp.$emit('APP_SHOW_SNACKBAR', {
+				text: err.message,
+				color: 'error'
+			})
+		}
+		this.menu = false
         this.newBucketName = ''
-      })
-      }else{
-        this.error =true
-        this.error_message_text = "Error"
-      }
-    },
-    minioCreateBucket (name) {
-      return new Promise((resolve, reject) => {
-        var params = {'name': name.replace(/[^A-Z0-9]+/ig, "")};
-        axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST/makeBucket', data: params})
-        .then((response) => {
-          this.menucreate = false;
-          this.newBucketName = " ";
-          resolve(response)
-        })
-        .catch((err) => {
-          // handle error
-          reject(err)
-           
-        })           
-      })
-    },
-    
+	},
     genChildTarget (item, subItem) {		
 		this.test = true
       if (subItem.href) return
@@ -350,42 +265,22 @@ export default {
       }
       return {name: subItem.name}
 	},
-	// goto(subItem, item){
-		
-	// 	for (var i in this.menus[item]["items"]){
-	// 		console.log(this.menus[item]["items"][i])
-	// 		if(i == subItem){
-	// 			this.menus[item]["items"][i].active = true
-	// 			// this.$router.push({path:this.menus[item]["items"][i].to})
-	// 			this.$router.push({name:this.menus[item]["items"][i].to})
-	// 			console.log(this.menus[item]["items"][i].to)
-	// 		}else{
-	// 			this.menus[item]["items"][i].active = false				
-	// 		}
-	// 	}	
-	// 	this.menus[item].active = true
-	// },
-    getBucketsList () {
-       axios({ method: 'post', url: 'https://$VUE_APP_BACKEND_HOST/listbuckets'})
-        .then((response) => {
-          // handle success          
-          this.buckets = response.data.map((bucket) => {
+	getBucketListCallBack(response){
+		this.buckets = response.map((bucket) => {
           return {
             title: bucket.name,
 			      to: `/buckets/${bucket.name}`,
 		      	active: false
           }
-        })
-        this.menus.find((obj) => {
+		})
+		this.menus.find((obj) => {
           if (obj.title === 'Storage') {
             obj.items = this.buckets
           }
-        })
-        })
-        .catch((error) => {
-          // handle error
-          window.getApp.$emit('APP_SHOW_SNACKBAR', { text: error.response.data, color: 'error' })
-        })     
+		})
+	},
+    getBucketsList () {
+		this.getBucketListCall(this.getBucketListCallBack)
     },    
   }
 }

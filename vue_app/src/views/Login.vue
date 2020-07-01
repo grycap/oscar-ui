@@ -1,5 +1,5 @@
 <template>
-  <v-app id="login" class="primary">
+  <v-app id="login" class="teal darken-1">
     <v-content>
       <v-container fluid fill-height>
         <v-layout align-center justify-center>
@@ -8,7 +8,7 @@
               <v-card-text>
                 <div class="layout column align-center">
                   <img src="@/assets/logo.png" alt="Vue Material Admin" width="120" height="120">
-                  <h1 class="flex my-4 primary--text">OSCAR Admin</h1>
+                  <h1 class="flex my-4 teal--text">OSCAR ADMIN</h1>
                 </div>
                 <v-form>
                   <v-text-field append-icon="person" name="login" label="Login" type="text"
@@ -28,7 +28,7 @@
                   <v-icon color="light-blue">fa fa-twitter fa-lg</v-icon>
                 </v-btn>
                 <v-spacer></v-spacer>
-                <v-btn block color="primary" @click.native="login()" :loading="loading">Login</v-btn>
+                <v-btn block color="teal" dark @click.native="login()" :loading="loading">Login</v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -67,7 +67,7 @@ export default {
         var _this = this
         localStorage.setItem("authenticated", true);
         // window.location.href = "/dashboard"
-        this.$router.push({name: "Dashboard"})        
+        this.$router.push({name: "Functions"})        
       }else{
         this.loading = false
          window.getApp.$emit('APP_SHOW_SNACKBAR', { text: "Username or password is incorrect", color: 'error' })

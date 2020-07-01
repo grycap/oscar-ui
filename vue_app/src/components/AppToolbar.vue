@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar color="primary" fixed dark app>
+  <v-toolbar color="teal darken-1" fixed dark app>
     <v-toolbar-side-icon @click.stop="handleDrawerToggle"></v-toolbar-side-icon>
     <v-btn icon @click.stop="handleDrawerMini">
       <v-icon v-html="mini ? 'chevron_right' : 'chevron_left'"></v-icon>
