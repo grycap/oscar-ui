@@ -97,7 +97,6 @@ export default {
         return hostname;
     },
     checkLoginCallback(response){
-      console.log(response)
       if(response == 200){
         var _this = this
           axios({

@@ -445,7 +445,11 @@ export default {
 		createFolder(){
 			this.files = []
 			this.showPath(this.current_path+'/'+this.nameFolder)
-			this.current_path = this.current_path+'/'+this.nameFolder
+			if(this.current_path==""){
+				this.current_path = this.nameFolder
+			}else{
+				this.current_path = this.current_path+'/'+this.nameFolder
+			}
 			this.nameFolder = ''
 			this.newFolder = false
 			// this.prefix = this.current_path+'/'+this.nameFolder

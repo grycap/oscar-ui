@@ -314,7 +314,6 @@ export default {
 			}
 		},
 		listServicesCallback(response) {
-			console.log(response)
 			if(response.length > 0){
 				this.show_spinner = false;
 				this.services = Object.assign(this.services, response); 

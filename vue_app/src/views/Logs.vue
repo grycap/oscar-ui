@@ -160,7 +160,6 @@ export default {
 						finish: response[key].finish_time,
 					}
 				})
-				console.log(this.jobs)
 				this.loading = false;
             }else{
                 this.show_spinner=false

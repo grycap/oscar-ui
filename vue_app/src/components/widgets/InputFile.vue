@@ -148,7 +148,7 @@ export default {
 				"bucketName": this.bucketName,
 				"file": this.files[i],
 				"file_name": filename
-			}
+      }
 			this.uploadFileCall(params, this.uploadFileCallBack)
     
 		}

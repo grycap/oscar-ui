@@ -32,15 +32,11 @@ export default {
         });
         this.minioClient.setRequestOptions({rejectUnauthorized: false})
 
-        console.log(this.minioClient)
-        
-        
     },
     methods: {
         //ApiCalls
         checkLoginCall(params,callBackHandler){
             var _this = this
-            console.log(params)
             axios({
                 method: 'get',
                 url: this.api+'/system/info',
@@ -179,8 +175,6 @@ export default {
         //******Minio's Call********/
         
         getBucketListCall(callBackHandler){
-            console.log("entro")
-            console.log(this.minioClient)
             this.minioClient.listBuckets((err, buckets) => {
                 if (err) {
                     callBackHandler(err)
@@ -203,7 +197,6 @@ export default {
         },
 
         bucketExistCall(params,callBackHandler){
-            console.log(this.minioClient)
             this.minioClient.bucketExists(params.name, function(err, exists) {
                 if (err){
                     callBackHandler(err)
@@ -279,7 +272,6 @@ export default {
                     let zip = new JSZip();
                     let folder = zip.folder('collection');
                     for (let i = 0; i < params.select; i++) {
-                        console.log(params.fileName[i])
                         this.minioClient.presignedGetObject(params.bucketName, params.fileName[i], 30000, function(err, presignedUrl) {
                              if (err){
                                 callBackHandler(err)
@@ -296,22 +288,25 @@ export default {
         },
         uploadFileCall(params, callBackHandler){
             this.minioClient.presignedPutObject(params.bucketName, params.file_name, 24*60*60, function(err, presignedUrl) {
-                if (err) return console.log(err)
-                console.log(presignedUrl)
-                fetch(presignedUrl, {
-                    method: 'PUT',
-                    body: params.file
-                }).then(() => {
-                   callBackHandler('uploaded')
-                }).catch((e) => {
-                   callBackHandler(e)
-                });
+                if (err){
+                    console.log(err)  
+                }else{
+                    fetch(presignedUrl, {
+                        method: 'PUT',
+                        body: params.file
+             
+                    }).then(() => {
+                       callBackHandler('uploaded')
+                    }).catch((e) => {
+                       callBackHandler(e)
+                    });
+                } 
+                
             })
         },
         removeFileCall(params,callBackHandler){
             var objectList = [];
             objectList = params.fileName
-            console.log(objectList)
             for(var i=0; i < objectList.length; i++) {
                 this.minioClient.removeObject(params.bucketName, objectList[i], function(err, exists) {
                     if (err){ 
@@ -326,7 +321,6 @@ export default {
         },
 
         removeBucketCall(params,callBackHandler){
-            console.log(params)
             this.minioClient.removeBucket(params, function(err, exists) {    
                 if (err){
                     callBackHandler(err)
