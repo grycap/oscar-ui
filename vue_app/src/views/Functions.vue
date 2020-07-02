@@ -353,7 +353,6 @@ export default {
 		
   	},
 	created: function () {
-		// this.listServicesCall(this.listServicesCallback)
 		window.getApp.$on('FUNC_GET_FUNCTIONS_LIST', () => {
 			this.listServicesCall(this.listServicesCallback)
 		})

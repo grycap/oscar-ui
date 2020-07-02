@@ -1054,7 +1054,6 @@ export default {
 				Adds the uploaded file to the files array
 			*/
 			for (let i = 0; i < uploadedFiles.length; i++) {
-				// uploadedFiles[i]['showUploading'] = false
 				this.showUploading = false
 				this.filename = uploadedFiles[i].name
 				this.files.push(uploadedFiles[i])
@@ -1113,7 +1112,6 @@ export default {
 				this.envrequirehost = false
 				this.envrequiretoken = false
 				this.envrequirespace = false
-				console.log(this.editionMode)
 			}else if (this.editionMode == false){
 				this.show('home')
 			}			
@@ -1237,8 +1235,6 @@ export default {
 				'storage_providers':this.form.storage_provider
 
 			}	
-			console.log(params)
-			
 			this.editServiceCall(params, this.editServiceCallBack)
 			
 		},
@@ -1274,7 +1270,6 @@ export default {
   
 	created: function () {
 		window.getApp.$on('FUNC_OPEN_MANAGEMENT_DIALOG', (data) => {
-		console.log(data)
 			this.dialog = true
 			this.editionMode = data.editionMode
 			this.form.name = data.name
@@ -1304,8 +1299,7 @@ export default {
 				this.showselectEnv = true
 			}
 			this.select_logLevel = data.log_Level
-			// this.form.storage_provider = data.storage_provider
-			// this.storage_provider = true
+		
 			if (this.isEmpty(this.inputs)) {
 				this.showselectInput = false
 			}else{

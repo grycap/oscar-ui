@@ -124,13 +124,14 @@ export default {
     window.getApp.$on('APP_DRAWER_MINI', () => {			
       this.mini = (!this.mini)
       this.menucreate = false;
-    })
+	})
+	
+	this.getBucketsList()
     window.getApp.$on('REFRESH_BUCKETS_LIST', () => {
       this.getBucketsList()
     })
   },
   mounted: function () {
-    this.getBucketsList()
 	window.getApp.$emit('STORAGE_BUCKETS_COUNT', this.buckets.length)
 	var _this = this;
 	this.$nextTick(function(){
@@ -146,39 +147,13 @@ export default {
 			
 		}
 		})
-		
-			
+				
   },
-//   watch: {
-// 	  $route(route){		  
-// 		  for(var i in this.menus){	
-// 			  console.log(route)
-// 			  if(this.menus[i].title == "Storage"){
-// 				//   console.log(this.menus[i].title)		  
-// 				//   console.log(this.menus[i].active)		  
-// 				//   this.menus[i].active = false
-// 					//   console.log(route)
-// 				  for(var k in this.menus[i].items){
-// 					  if(this.menus[i].items[k].to == route.path){
-// 						  var _this = this
-// 						  var i2 = i
-// 						  var k2 = k
-// 						  this.$nextTick(function(){
-// 							//   console.log(_this.menus[i2].items,k2,i2)
-// 							_this.menus[i2].items[k2].active = true
-// 						  	_this.menus[i2].active = true
-// 							})
-						  
-// 					  }else{
-// 						  this.menus[i].items[k].active = false
-// 					  }
-// 				  }
-// 			  }
-// 		  }
-// 	  }
-//   },
 	
   methods: {
+	  getEndpointCallback(response){
+		  this.getBucketListCall(this.getBucketListCallBack)
+	  },
 	collapse(id){
 		$("#btn_dash").css("color","#000!important")
 		$("#btn_funct").css("color","#000!important")
@@ -230,7 +205,6 @@ export default {
 		}
 	},
 	createBucketCallBack(response){
-		console.log(response)
 		if(response == "success"){
 			window.getApp.$emit('APP_SHOW_SNACKBAR', {
           	text: `Bucket ${name} has been successfully created`,

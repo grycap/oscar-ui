@@ -39,7 +39,9 @@
 </template>
 
 <script>
+import Services from '../components/services.js';
 export default {
+  mixins:[Services],
   data: () => ({
     loading: false,
     model: {
@@ -63,14 +65,69 @@ export default {
     },
     login () {
       this.loading = true
-      if (this.model.username == this.user && this.model.password == this.pass ){
+      var params = {
+        'user': this.model.username,
+        'password': this.model.password
+      }
+      this.checkLoginCall(params,this.checkLoginCallback)
+      
+    },
+    getPort(url) {
+        url = url.match(/^(([a-z]+:)?(\/\/)?[^\/]+).*$/)[1] || url;
+        var parts = url.split(':'),
+            port = parseInt(parts[parts.length - 1], 10);
+        return port;
+    },
+    getHost(url) {
+       var hostname;
+        //find & remove protocol (http, ftp, etc.) and get hostname
+
+        if (url.indexOf("//") > -1) {
+            hostname = url.split('/')[2];
+        }
+        else {
+            hostname = url.split('/')[0];
+        }
+
+        //find & remove port number
+        hostname = hostname.split(':')[0];
+        //find & remove "?"
+        hostname = hostname.split('?')[0];
+
+        return hostname;
+    },
+    checkLoginCallback(response){
+      console.log(response)
+      if(response == 200){
         var _this = this
-        localStorage.setItem("authenticated", true);
-        // window.location.href = "/dashboard"
-        this.$router.push({name: "Functions"})        
+          axios({
+                method: 'get',
+                url: this.api+'/system/config',
+                auth: {
+                    username: this.model.username,
+                    password: this.model.password
+                }
+              }).then(function (response) {
+                  var port=_this.getPort(response.data.minio_provider.endpoint)
+                  var endpoint_host = _this.getHost(response.data.minio_provider.endpoint)
+                  localStorage.setItem("endpoint",endpoint_host)
+                  localStorage.setItem("accessKey",response.data.minio_provider.access_key)
+                  localStorage.setItem("secretKey",response.data.minio_provider.secret_key)
+                  localStorage.setItem("port",port)
+                  localStorage.setItem("authenticated", true);
+                  localStorage.setItem("user", _this.model.username);
+                  localStorage.setItem("password", _this.model.password);
+                  _this.$router.push({name: "Functions"}) 
+              }).catch(function (error) {
+                  console.log(error)
+              })
+            
+      }else if (response == 401){
+        this.loading = false
+        window.getApp.$emit('APP_SHOW_SNACKBAR', { text: "Username or password is incorrect", color: 'error' })
       }else{
         this.loading = false
-         window.getApp.$emit('APP_SHOW_SNACKBAR', { text: "Username or password is incorrect", color: 'error' })
+        window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response, color: 'error' })
       }
     }
   }

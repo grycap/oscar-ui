@@ -137,7 +137,6 @@ export default {
 		for (let i = 0; i < this.files.length; i++) {
       var filename = ''
       this.filename_up = this.files[i].name
-			console.log(this.currentPath)
 			if(this.currentPath == ''){
 				filename = this.files[i].name
 			}else{
@@ -155,9 +154,7 @@ export default {
 		}
     },
     uploadFileCallBack(response){
-      console.log(response)
 		var _this = this
-		// console.log(response)
 		if (response!="uploaded"){
 			window.getApp.$emit('APP_SHOW_SNACKBAR', {
             	text: `Error uploading file ${response}`,            
@@ -165,33 +162,16 @@ export default {
           	})
 		}else {
 
-        // console.log(this.files)
-        // for (var i in _this.files){
-        // 	if (_this.files[i].name == response.name){
-        // 	var file = _this.files.splice(i, 1) 
-        // 	break;              
-        // 	}            
-        // }     
-        // // var file = _this.files.splice(response.data.key, 1) 
-        // if (_this.files.length == 0) {
-        // 	_this.show = false
-        // }
       this.showUploading = false;
       this.show = false;
         window.getApp.$emit('APP_SHOW_SNACKBAR', {
           text: `The ${this.filename_up} file has been successfully uploaded`,
           color: 'success'
         })          
-        // file[0].etag = response.etag                   
-        // window.getApp.$emit('FILE_UPLOADED', file[0])           
         window.getApp.$emit('GET_BUCKET_LIST') 
         this.$refs.files.value = null
         this.files = []
       }
-
-
-
-
 	},
     /**
      * Handles the uploading of files
@@ -202,8 +182,6 @@ export default {
         Adds the uploaded file to the files array
       */
       for (let i = 0; i < uploadedFiles.length; i++) {
-		// uploadedFiles[i]['show'] = false
-		console.log(uploadedFiles[i])
         this.files.push(uploadedFiles[i])
       }
      
@@ -219,10 +197,6 @@ export default {
      * Upload file to minio server
      * @param file
      */
-    
-    successUploadCallback (data) {
-      console.log(this.files)
-    }
   },
   computed: {
     showSelectedFiles () {

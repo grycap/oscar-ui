@@ -75,12 +75,6 @@ export default {
 		IntersectingCirclesSpinner,
 	},
 	name: 'Logs',
-        // props: {
-        //     serviceName: {
-        //         type: String,
-        //         default: '',
-        //     },
-        // },
 	data () {
     return {
         expand: false,
@@ -155,12 +149,9 @@ export default {
             
         },
         listJobsCallback(response){
-            console.log(response)
             if(Object.keys(response).length > 0){
                 this.show_spinner = false;
 				this.jobs =  Object.keys(response).map((key,index) => {
-                    console.log(key)
-                    console.log(response[key].status)
 					return {
 						name: key,
 						status: response[key].status,
@@ -184,12 +175,6 @@ export default {
              this.serviceName = this.$route.params.serviceName
                 this.listJobsCall(this.serviceName, this.listJobsCallback);
         }
-		// this.functionsCount()
-		// this.bucketsCount()
-		// this.listServicesCall(this.listServicesCallback)
-		// window.getApp.$on('BUCKETS_REFRESH_DASHBOARD', () => {
-		// 	this.listServicesCall(this.listServicesCallback)
-		// })
   	}	
 }
 </script>

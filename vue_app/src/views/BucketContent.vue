@@ -270,11 +270,9 @@ import filesize from 'filesize'
 import { IntersectingCirclesSpinner } from 'epic-spinners'
 import { saveAs } from 'file-saver'
 import Services from '../components/services'
-import showFiles from '../views/showFiles'
 export default {
 	mixins:[Services],
 	components: {
-		'show-files':showFiles,
 		InputFile,
 		IntersectingCirclesSpinner,
 	},

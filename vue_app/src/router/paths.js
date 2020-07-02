@@ -22,18 +22,6 @@ export default [
 		)
 	},
 	{
-		path: '/dashboard',
-		meta: {
-		public: true
-		},
-		name: 'NotFound',
-		component: () => import(
-		/* webpackChunkName: "routes" */
-		/* webpackMode: "lazy" */
-		`@/views/Dashboard.vue`
-		)
-	},
-	{
 		path: '/403',
 		meta: {
 		public: true
@@ -76,7 +64,7 @@ export default [
 		},
 		name: 'Root',
 		redirect: {
-			name: 'Login'
+			name: 'Functions'
 		}
 	},
 

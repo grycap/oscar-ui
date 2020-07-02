@@ -4,29 +4,66 @@ export default {
     data: () => {
 		return {
             api: 'http://158.42.105.147:30301',  
-            minioClient: '',          
+            minioClient: '',  
+            username_auth:'',
+            password_auth:''        
 		}
     },
     created(){
+        this.username_auth = localStorage.getItem("user");
+        this.password_auth = localStorage.getItem("password");
+        var minio_endpoint = localStorage.getItem("endpoint");
+        var minio_port = localStorage.getItem("port");
+        // var minio_useSSL = localStorage.getItem("useSSL");
+        var minio_accessKey = localStorage.getItem("accessKey");
+        var minio_secretKey = localStorage.getItem("secretKey");
+
+
+
         var Minio = require('minio')
         this.minioClient = new Minio.Client({
+            // endPoint: minio_endpoint,    
             endPoint: '158.42.105.147',    
+            // port: parseInt(minio_port),   
             port: 30300,   
             useSSL: true,
-            accessKey: "minio",
-            secretKey: "M2CvXmUjVbm1q5aIVumS"
+            accessKey: minio_accessKey,
+            secretKey: minio_secretKey
         });
         this.minioClient.setRequestOptions({rejectUnauthorized: false})
+
+        console.log(this.minioClient)
+        
+        
     },
     methods: {
         //ApiCalls
+        checkLoginCall(params,callBackHandler){
+            var _this = this
+            console.log(params)
+            axios({
+                method: 'get',
+                url: this.api+'/system/info',
+                auth: {
+                    username: params.user,
+                    password: params.password
+                }
+            }).then(function (response) {
+                // _this.username_auth = params.user
+                // _this.password_auth = params.password
+                callBackHandler(response.status);
+            }.bind(this)).catch(function (error) {
+                callBackHandler(error.response.status);
+            })
+
+        },
         listServicesCall(callBackHandler) {
             axios({
                 method: 'get',
                 url: this.api+'/system/services',
                 auth: {
-                    username: 'admin',
-                    password: 'password'
+                    username: this.username_auth,
+                    password: this.password_auth
                 }
             }).then(function (response) {
                 callBackHandler(response.data);
@@ -39,8 +76,8 @@ export default {
                 method: 'delete',
                 url: this.api + '/system/services/'+params,
                 auth: {
-                    username: 'admin',
-                    password: 'password'
+                    username: this.username_auth,
+                    password: this.password_auth
                 },
                 data:params,
             }).then(function (response) {
@@ -54,8 +91,8 @@ export default {
                 method: 'get',
                 url: this.api+'/system/logs/'+serviceName,
                 auth: {
-                    username: 'admin',
-                    password: 'password'
+                    username: this.username_auth,
+                    password: this.password_auth
                 }
             }).then(function (response) {
                 callBackHandler(response.data);
@@ -68,8 +105,8 @@ export default {
                 method: 'delete',
                 url: this.ai + '/system/logs/'+params.serviceName+'/'+params.jobName,
                 auth: {
-                    username: 'admin',
-                    password: 'password'
+                    username: this.username_auth,
+                    password: this.password_auth
                 },
                 data:params,
             }).then(function (response) {
@@ -83,8 +120,8 @@ export default {
                 method: 'get',
                 url: this.api+'/system/logs/'+params.serviceName+'/'+params.jobName,
                 auth: {
-                    username: 'admin',
-                    password: 'password'
+                    username: this.username_auth,
+                    password: this.password_auth
                 }
             }).then(function (response) {
                 callBackHandler(response.data);
@@ -97,8 +134,8 @@ export default {
                 method: 'delete',
                 url: this.api+'/system/logs/'+params,
                 auth: {
-                    username: 'admin',
-                    password: 'password'
+                    username: this.username_auth,
+                    password: this.password_auth
                 }
             }).then(function (response) {
                 callBackHandler(response);
@@ -106,14 +143,14 @@ export default {
                 callBackHandler(error);
             })
         },
-
+        
         createServiceCall(params, callBackHandler){
             axios({
                 method: 'post',
                 url: this.api+'/system/services',
                 auth: {
-                    username: 'admin',
-                    password: 'password'
+                    username: this.username_auth,
+                    password: this.password_auth
                 },
                 data: params
             }).then(function(response){
@@ -128,8 +165,8 @@ export default {
                 method: 'put',
                 url: this.api+'/system/services',
                 auth: {
-                    username: 'admin',
-                    password: 'password'
+                    username: this.username_auth,
+                    password: this.password_auth
                 },
                 data: params
             }).then(function(response){
@@ -138,10 +175,12 @@ export default {
                 callBackHandler(error)
             })
         },
+
         //******Minio's Call********/
         
         getBucketListCall(callBackHandler){
-
+            console.log("entro")
+            console.log(this.minioClient)
             this.minioClient.listBuckets((err, buckets) => {
                 if (err) {
                     callBackHandler(err)
@@ -164,6 +203,7 @@ export default {
         },
 
         bucketExistCall(params,callBackHandler){
+            console.log(this.minioClient)
             this.minioClient.bucketExists(params.name, function(err, exists) {
                 if (err){
                     callBackHandler(err)
@@ -172,7 +212,6 @@ export default {
                         color: 'error'
                     })
                 }else{
-                    // res.status(200).json(exists);        
                     callBackHandler('success')
                 }        
                     
@@ -297,5 +336,5 @@ export default {
                     
             })
         },
-    }
+    },
 }
