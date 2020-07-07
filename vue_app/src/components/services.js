@@ -321,14 +321,42 @@ export default {
         },
 
         removeBucketCall(params,callBackHandler){
-            this.minioClient.removeBucket(params, function(err, exists) {    
-                if (err){
-                    callBackHandler(err)
-                }else{
-                    callBackHandler('success');        
-                }             
-                    
+
+            var objectsList = []
+            var _this = this
+
+            // List all object paths in bucket my-bucketname.
+            var objectsStream = this.minioClient.listObjects(params, '', true)
+
+            objectsStream.on('data', function(obj) {
+            objectsList.push(obj.name);
             })
+
+            objectsStream.on('error', function(e) {
+            console.log(e);
+            })
+
+            objectsStream.on('end', function() {
+
+                console.log(objectsList)
+            _this.minioClient.removeObjects(params,objectsList, function(e) {
+                if (e) {
+                    return console.log('Unable to remove Objects ',e)
+                }
+                _this.minioClient.removeBucket(params, function(err, exists) {    
+                    console.log(err)
+                    if (err){
+                        callBackHandler(err)
+                    }else{
+                        callBackHandler('success');        
+                    }             
+                        
+                })
+                console.log('Removed the objects successfully')
+            })
+
+            })
+            
         },
     },
 }

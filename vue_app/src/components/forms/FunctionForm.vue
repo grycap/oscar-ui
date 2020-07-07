@@ -585,7 +585,7 @@
 												<v-layout row style="padding:0px,10px;" >										
 													<v-flex xs12 sm8 offset-sm2>
 														<v-text-field
-															v-model="form.storage_provider.onedata.oneprovider_host"
+															v-model="onedata.oneprovider_host"
 															:counter="200"		
 															label="ONEPROVIDER HOST:"																
 														></v-text-field>
@@ -599,7 +599,7 @@
 												<v-layout row style="padding:0px,10px;">
 													<v-flex xs12 sm8 offset-sm2>
 														<v-text-field 
-															v-model="form.storage_provider.onedata.token"
+															v-model="onedata.token"
 															:append-icon="showOneDataToken ? 'visibility_off' : 'visibility'"
 															:type="showOneDataToken ? 'text' : 'password'"
 															:counter="200"
@@ -616,7 +616,7 @@
 												<v-layout row style="padding:0px,10px;">
 													<v-flex xs12 sm8 offset-sm2>
 														<v-text-field 
-															v-model="form.storage_provider.onedata.space"
+															v-model="onedata.space"
 															:counter="200"
 															label="SPACE:"
 														></v-text-field>
@@ -702,7 +702,7 @@
 												<v-layout row style="padding:0px,10px;">
 													<v-flex xs12 sm8 offset-sm2>
 														<v-text-field 
-															v-model="form.storage_provider.s3.access_key"
+															v-model="s3.access_key"
 															:append-icon="showS3AccessKey ? 'visibility_off' : 'visibility'"
 															:type="showS3AccessKey ? 'text' : 'password'"
 															:counter="200"
@@ -715,7 +715,7 @@
 												<v-layout row style="padding:0px,10px;">
 													<v-flex xs12 sm8 offset-sm2>
 														<v-text-field 
-															v-model="form.storage_provider.s3.secret_key"
+															v-model="s3.secret_key"
 															:append-icon="showS3SecretKey ? 'visibility_off' : 'visibility'"
 															:type="showS3SecretKey ? 'text' : 'password'"
 															:counter="200"
@@ -732,7 +732,7 @@
 												<v-layout row style="padding:0px,10px;">
 													<v-flex xs12 sm8 offset-sm2>
 														<v-text-field 
-															v-model="form.storage_provider.s3.region"
+															v-model="s3.region"
 															:counter="200"
 															label="REGION"
 														></v-text-field>
@@ -812,6 +812,16 @@ export default {
 				access_key: '',
 				verify: true
 			},
+			s3:{
+				access_key: '',
+				secret_key: '',
+				region: ''
+			},
+			onedata:{
+				oneprovider_host: '',		
+				token: '',		
+				space: ''
+			},
 
 			form: {
 				valid: false,
@@ -837,16 +847,16 @@ export default {
 				prefix_out:"",
 				suffix_out:"",
 				storage_provider:{
-					s3:{
-						access_key: '',
-						secret_key: '',
-						region: ''
-					},
-					onedata:{
-						oneprovider_host: '',		
-						token: '',		
-						space: ''
-					},
+					// s3:{
+					// 	access_key: '',
+					// 	secret_key: '',
+					// 	region: ''
+					// },
+					// onedata:{
+					// 	oneprovider_host: '',		
+					// 	token: '',		
+					// 	space: ''
+					// },
 				},
 				limits_cpu: '',
 				limits_memory: '',
@@ -1147,12 +1157,12 @@ export default {
 			this.minio.secret_key = ''
 			this.minio.endpoint = ''
 			this.minio.verify = true
-			this.form.storage_provider.onedata.oneprovider_host = ''
-			this.form.storage_provider.onedata.token = ''
-			this.form.storage_provider.onedata.space = ''
-			this.form.storage_provider.s3.access_key = ''
-			this.form.storage_provider.s3.secret_key = ''
-			this.form.storage_provider.s3.region = ''
+			this.onedata.oneprovider_host = ''
+			this.onedata.token = ''
+			this.onedata.space = ''
+			this.s3.access_key = ''
+			this.s3.secret_key = ''
+			this.s3.region = ''
 			this.prefixs_in = []
 			this.suffixs_in = []
 			this.inputs = []
@@ -1172,7 +1182,14 @@ export default {
 		newFunction () {
 			if (this.minio.endpoint != "") {
 				this.form.storage_provider["minio"]=this.minio
-			} 			
+			}
+			if (this.s3.access_key != ""){
+				this.form.storage_provider["s3"]=this.s3
+			}
+			if (this.onedata.oneprovider_host != ""){
+				this.form.storage_provider["onedata"]=this.onedata
+			}
+			
 			var value = $("#classmemory option:selected").text();			
 				
 
@@ -1217,7 +1234,13 @@ export default {
 
 			if (this.minio.endpoint != "") {
 				this.form.storage_provider["minio"]=this.minio
-			} 			
+			}
+			if (this.s3.access_key != ""){
+				this.form.storage_provider["s3"]=this.s3
+			}
+			if (this.onedata.oneprovider_host != ""){
+				this.form.storage_provider["onedata"]=this.onedata
+			}			
 
 			var params = {
 				

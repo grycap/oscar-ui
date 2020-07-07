@@ -286,6 +286,7 @@ export default {
 				name: this.services[index].service,
 				image: this.services[index].container,
 				input: this.services[index].inputs,
+				output: this.services[index].outputs,
 				log_Level: this.services[index].logLevel,
 				envVars: this.services[index].envVars,
 				cpu: this.services[index].cpu,

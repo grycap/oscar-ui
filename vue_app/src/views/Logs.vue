@@ -46,7 +46,7 @@
             </template>
             <template v-slot:expand="props">
             <v-card flat color="black">
-                <v-card-text style="font-family: monospace;color:white">{{job_logs}}</v-card-text>
+                <v-card-text style="font-family: monospace;color:white;white-space: pre-wrap;">{{job_logs}}</v-card-text>
             </v-card>
             </template>
              <template v-slot:no-data>
