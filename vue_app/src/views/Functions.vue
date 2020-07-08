@@ -290,6 +290,7 @@ export default {
 				log_Level: this.services[index].logLevel,
 				envVars: this.services[index].envVars,
 				cpu: this.services[index].cpu,
+				script: this.services[index].script,
 				memory: this.services[index].memory,
 				storage_provider: this.services[index].storage
 			
@@ -328,7 +329,8 @@ export default {
 						memory: serv.memory,
 						inputs: serv.input,
 						outputs: serv.output,
-						storage: serv.storage_provider
+						storage: serv.storage_provider,
+						script: serv.script
 					}
 				})				
 				this.loading = false;   

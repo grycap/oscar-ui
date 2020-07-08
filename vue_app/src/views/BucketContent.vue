@@ -802,7 +802,10 @@ export default {
 		},
 		
 		removeBucket (name) {
-			this.removeBucketCall(name,this.removeBucketCallBack)
+			if (confirm('Are you sure you want to remove this bucket?')) {
+				this.removeBucketCall(name,this.removeBucketCallBack)
+			}
+
 		},
 		removeBucketCallBack(response){
 			if (response == 'success') {

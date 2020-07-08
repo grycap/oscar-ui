@@ -217,9 +217,8 @@ export default {
                 err : "",
                 files: []
             };
-            var files = [];
             stream.on('data', function(obj) 
-            {   
+            {   console.log(obj)
                 funct.files.push(obj);
                 
             })    
@@ -338,7 +337,6 @@ export default {
 
             objectsStream.on('end', function() {
 
-                console.log(objectsList)
             _this.minioClient.removeObjects(params,objectsList, function(e) {
                 if (e) {
                     return console.log('Unable to remove Objects ',e)

@@ -864,6 +864,7 @@ export default {
 				request_cpu: '',
 				request_memory: '',
 				secrets: '',
+				script: '',
 				
 				
 			},
@@ -1077,12 +1078,17 @@ export default {
 				reader.onload = (function(theFile) {
 				return function(e) {
 					var binaryData = e.target.result;
+
+					//Reading as String
+					_this.base64String = binaryData
 					//Converting Binary Data to base 64
-					_this.base64String = window.btoa(binaryData);
+					// _this.base64String = window.btoa(binaryData);
 				};
 				})(f);
 				// Read in the image file as a data URL.
-				reader.readAsBinaryString(f);
+				// reader.readAsBinaryString(f);
+				// reader.readAsBinaryString(f);
+				reader.readAsText(f)
 			} else {
 				alert('The File APIs are not fully supported in this browser.');
 			}      
@@ -1099,6 +1105,8 @@ export default {
 				var reader = new FileReader();
 				reader.onload = function() {
 					_this.base64String = reader.result.replace(/^data:.+;base64,/, '');
+					// Convert to string because new OSCAR version doesn't need base64
+					_this.base64String = atob(_this.base64String)
 				};
 				reader.readAsDataURL(blob);
 			});
@@ -1130,9 +1138,7 @@ export default {
 			}else{
 				this.filerequire = false
 			}			
-			if(this.editionMode == true ){				
-				this.filerequire = false
-			}			
+						
 		},
 		clear () {
 			this.files = []
@@ -1204,7 +1210,7 @@ export default {
 				'name': this.form.name, 
 				'image': this.form.image, 
 				'cpu': this.form.limits_cpu,
-				'memory': this.form.limits_memory,
+				'memory': this.limits_mem,
 				'log_level': this.select_logLevel,
 				'environment': {
 					"Variables":this.envVars
@@ -1214,7 +1220,7 @@ export default {
 				'script': this.base64String,
 				'storage_providers':this.form.storage_provider
 
-			}	
+			}
 			this.createServiceCall(params,this.createServiceCallBack)	
 			
 		},
@@ -1224,6 +1230,7 @@ export default {
 				this.dialog = false;
 				this.clear()
 				this.updateFunctionsGrid()
+
 			}else {
 				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response, color: 'error' })
 			}
@@ -1231,7 +1238,6 @@ export default {
 
 		},
 		editFunction () {
-
 			if (this.minio.endpoint != "") {
 				this.form.storage_provider["minio"]=this.minio
 			}
@@ -1240,21 +1246,33 @@ export default {
 			}
 			if (this.onedata.oneprovider_host != ""){
 				this.form.storage_provider["onedata"]=this.onedata
-			}			
-
+			}
+			
+			var value = $("#classmemory option:selected").text();
+			if (this.form.limits_memory == ""){
+				this.limits_mem = ''
+			}else{
+				this.limits_mem = this.form.limits_memory + value;
+			}
+			var script = ''
+			if (this.script == '') {
+				script = this.base64String
+			}else{
+				script = this.script
+			}
 			var params = {
 				
 				'name': this.form.name, 
 				'image': this.form.image, 
 				'cpu': this.form.limits_cpu,
-				'memory': this.form.limits_memory,
+				'memory': this.limits_mem,
 				'log_level': this.select_logLevel,
 				'environment': {
 					"Variables":this.envVars
 				},
 				'input': this.inputs,
 				'output': this.outputs,
-				'script': this.base64String,
+				'script': script,
 				'storage_providers':this.form.storage_provider
 
 			}	
@@ -1267,6 +1285,7 @@ export default {
 				this.dialog = false;
 				this.clear()
 				this.updateFunctionsGrid()
+				window.getApp.$emit('REFRESH_BUCKETS_LIST')
 			}else {
 				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response, color: 'error' })
 			}
@@ -1308,7 +1327,9 @@ export default {
 			}else{
 				var value_select = "2"
 			}
-			$('#classmemory').val(value_select)
+			setTimeout(function(){
+				$('#classmemory').val(value_select)
+			},100)
 			var key=''
 			var values= ''
 			key = Object.keys(data.envVars.Variables)
@@ -1321,7 +1342,9 @@ export default {
 			}else{
 				this.showselectEnv = true
 			}
-			this.select_logLevel = data.log_Level
+			setTimeout(function(){
+				this.select_logLevel = data.log_Level
+			},100)
 		
 			if (this.isEmpty(this.inputs)) {
 				this.showselectInput = false
@@ -1332,6 +1355,10 @@ export default {
 				this.showselectOutput = false
 			}else{
 				this.showselectOutput = true
+			}
+			this.script = data.script
+			if(this.script != ""){
+				this.files.length = 1
 			}
 			
 		})

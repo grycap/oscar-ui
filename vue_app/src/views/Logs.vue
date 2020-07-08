@@ -25,15 +25,18 @@
             :expand="expand"
             item-key="name"
             :search="search"
+            :custom-sort="customSort"
+            :must-sort = true
+            :pagination.sync="pagination"
             v-show="!show_spinner"
         >
             <template v-slot:items="props">
             <tr >
                 <td>{{ props.item.name }}</td>
                 <td class="text-xs-center">{{ props.item.status }}</td>
-                <td class="text-xs-center">{{ props.item.creation }}</td>
-                <td class="text-xs-center">{{ props.item.start }}</td>
-                <td class="text-xs-center">{{ props.item.finish }}</td>
+                <td class="text-xs-center">{{ moment(props.item.creation).format("YYYY-MM-DD HH:mm") }}</td>
+                <td class="text-xs-center">{{ moment(props.item.start).format("YYYY-MM-DD HH:mm") }}</td>
+                <td class="text-xs-center">{{ moment(props.item.finish).format("YYYY-MM-DD HH:mm") }}</td>
                 <td class="text-xs-center">
                     <v-icon small class="mr-2" @click="deleteJob(props.item,props.item.name)">delete</v-icon>
                 </td>
@@ -68,6 +71,7 @@
 <script>
 import Services from '../components/services';
 import { IntersectingCirclesSpinner } from 'epic-spinners'
+import moment from 'moment'
 /* eslint-disable */
 export default {
     mixins:[Services],
@@ -81,22 +85,27 @@ export default {
         serviceName: '',
         show_spinner: true,
         show_alert: false,
+        moment : moment,
         search:'',
         loading:true,
         headers: [
             {
             text: 'JOB NAME',
             align: 'start',
-            sortable: false,
+            
             value: 'name',
             },
-            { text: 'Status',sortable: false,align: 'center', value: 'calories' },
-            { text: 'Creation Time',sortable: false, align: 'center', value: 'fat' },
-            { text: 'Start time',sortable: false,align: 'center', value: 'carbs' },
-            { text: 'Finish Time',sortable: false,align: 'center', value: 'protein' },       
-            { text: '',sortable: false,align: 'center', value: 'actions' },
-            { text: '',sortable: false,align: 'center', value: 'expand' },
+            { text: 'Status',align: 'center', value: 'status' },
+            { text: 'Creation Time', align: 'center', value: 'create_time' },
+            { text: 'Start time',align: 'center', value: 'start_time' },
+            { text: 'Finish Time',align: 'center', value: 'finish_time' },       
+            { text: '',align: 'center', value: 'actions' },
+            { text: '',align: 'center', value: 'expand' },
         ],
+        pagination: {
+            descending: true,
+            sortBy: 'create_time',
+		},
         jobs: [],
         index:'',
         params_delete:'', 
@@ -105,6 +114,24 @@ export default {
     }
   },
 	methods: {
+        customSort(items, index, isDesc) {
+            items.sort((a, b) => {
+                if (index === "create_time") {
+                    if (!isDesc) {
+                        return a.creation - b.creation;
+                    } else {
+                        return b.creation - a.creation;
+                    }
+                } else {
+                if (!isDesc) {
+                    return a[index] < b[index] ? -1 : 1;
+                } else {
+                    return b[index] < a[index] ? -1 : 1;
+                }
+                }
+            });
+            return items;
+        },
         handleUpdate(){
              this.listJobsCall(this.serviceName, this.listJobsCallback);
         },
@@ -155,7 +182,7 @@ export default {
 					return {
 						name: key,
 						status: response[key].status,
-						creation: response[key].creation_time,
+						creation: Date.parse(response[key].creation_time),
 						start: response[key].start_time,
 						finish: response[key].finish_time,
 					}
