@@ -22,10 +22,8 @@ export default {
 
         var Minio = require('minio')
         this.minioClient = new Minio.Client({
-            // endPoint: minio_endpoint,    
-            endPoint: '158.42.105.147',    
-            // port: parseInt(minio_port),   
-            port: 30300,   
+            endPoint: minio_endpoint,    
+            port: parseInt(minio_port),   
             useSSL: true,
             accessKey: minio_accessKey,
             secretKey: minio_secretKey
@@ -218,7 +216,7 @@ export default {
                 files: []
             };
             stream.on('data', function(obj) 
-            {   console.log(obj)
+            {   
                 funct.files.push(obj);
                 
             })    
