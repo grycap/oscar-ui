@@ -1,5 +1,6 @@
 import JSZip from "jszip";
 import JSZipUtils from "jszip-utils"
+import qs from 'qs'
 export default {
     data: () => {
 		return {
@@ -22,8 +23,10 @@ export default {
 
         var Minio = require('minio')
         this.minioClient = new Minio.Client({
-            endPoint: minio_endpoint,    
-            port: parseInt(minio_port),   
+            // endPoint: minio_endpoint,    
+            endPoint: '158.42.105.147',    
+            port: 30300,   
+            // port: parseInt(minio_port),   
             useSSL: true,
             accessKey: minio_accessKey,
             secretKey: minio_secretKey
@@ -90,22 +93,22 @@ export default {
                 }
             }).then(function (response) {
                 callBackHandler(response.data);
-            }.bind(this)).catch(function (error) {
+            }).catch(function (error) {
                 callBackHandler(error);
             })
         },
         deleteJobCall(params, callBackHandler) {
             axios({
                 method: 'delete',
-                url: this.ai + '/system/logs/'+params.serviceName+'/'+params.jobName,
+                url: this.api + '/system/logs/'+params.serviceName+'/'+params.jobName,
                 auth: {
                     username: this.username_auth,
                     password: this.password_auth
                 },
                 data:params,
             }).then(function (response) {
-                callBackHandler("success");
-            }.bind(this)).catch(function (error) {
+                callBackHandler(response);
+            }).catch(function (error) {
                 callBackHandler(error);
             })
         },
@@ -119,25 +122,24 @@ export default {
                 }
             }).then(function (response) {
                 callBackHandler(response.data);
-            }.bind(this)).catch(function (error) {
+            }).catch(function (error) {
                 callBackHandler(error);
             })
         },
         deleteAllJobCall(params,callBackHandler) {
             axios({
                 method: 'delete',
-                url: this.api+'/system/logs/'+params,
+                url: this.api+'/system/logs/'+params.serviceName+'?all='+params.all,
                 auth: {
                     username: this.username_auth,
                     password: this.password_auth
-                }
+                },     
             }).then(function (response) {
                 callBackHandler(response);
-            }.bind(this)).catch(function (error) {
+            }).catch(function (error) {
                 callBackHandler(error);
             })
-        },
-        
+        },               
         createServiceCall(params, callBackHandler){
             axios({
                 method: 'post',

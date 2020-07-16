@@ -108,8 +108,34 @@
 																</v-list-tile-action>
 														</v-list-tile>
 													</v-list>
-											</v-flex>					
-									
+													<v-card flat>
+														<v-card-actions >
+														<v-btn
+															outline color="indigo"
+															round
+															small
+															@click.native="editSummernote()"
+														>
+															Edit															
+														</v-btn>
+														<v-btn
+															outline color="indigo"
+															round
+															small
+															@click.native="saveSummernote()"
+														>
+															Save															
+														</v-btn>
+														</v-card-actions>
+														<v-card-actions>
+														
+														</v-card-actions>
+													</v-card>
+											</v-flex>	
+											<v-flex xs12>
+                                            	<div v-show="editScript==true" style="white-space: pre-wrap;" class="click2edit text-left">{{base64String}}</div>				
+                                            	<!-- <div v-show="editScript==true" style="white-space: pre-wrap;" class="click2edit text-left"></div>				 -->
+											</v-flex>
 									
 											<v-flex xs12>
 													<v-btn
@@ -876,11 +902,59 @@ export default {
 			showinput: true,
 			memory: '',
 			varsEnv: '',
+			editScript: false
 
 
 		}
 	},
 	methods: {
+		editSummernote(){
+			console.log(this.base64String)
+			var _this = this
+            $('.click2edit').summernote(
+                {
+					callbacks:{
+						onInit: function() {
+							 $('.click2edit').summernote('codeview.activate');
+						},		
+					},
+					codeviewFilter: true,
+  					codeviewIframeFilter: true,
+					focus: true,
+					height: 200,                 // set editor height
+					minHeight: null,             // set minimum height of editor
+					maxHeight: null,             // set maximum height of editor
+                    toolbar: [
+                        // [groupName, [list of button]]
+                        ['style', ['bold', 'italic', 'underline', 'clear']],
+                        ['font', ['strikethrough', 'superscript', 'subscript']],
+                        ['fontsize', ['fontsize']],
+                        ['color', ['color']],
+                        ['para', ['ul', 'ol', 'paragraph']],
+						['height', ['height']],
+						['view', ['codeview']]
+					],
+					codemirror: { // codemirror options
+						theme: 'monokai',
+						lineNumbers: true,
+						lineWrapping: true,
+    					tabMode: 'indent'
+					},
+					
+                }, 'code', _this.base64String)
+                .on("summernote.enter", function(we, e) {
+                    $(this).summernote("pasteHTML", "<br><br>");
+                    e.preventDefault();
+                });
+        },
+        saveSummernote(){
+			console.log(this.editScript)
+			this.base64String = $('.click2edit').summernote('code')
+			$('.click2edit').summernote('destroy');
+            console.log(this.base64String)
+            this.editScript = false
+        },
+
 		show(id){
 			$("#myTabContent .tab-pane-content").removeClass("show active")
 			$("#myTab .nav-link").removeClass("show active")
@@ -1184,6 +1258,7 @@ export default {
 			this.showselectInput = false
 			this.showselectOutput = false
 			this.select_logLevel = 'INFO'
+			this.editScript = false
 		},
 		newFunction () {
 			if (this.minio.endpoint != "") {
@@ -1221,7 +1296,8 @@ export default {
 				'storage_providers':this.form.storage_provider
 
 			}
-			this.createServiceCall(params,this.createServiceCallBack)	
+			// this.createServiceCall(params,this.createServiceCallBack)	
+			console.log(params)
 			
 		},
 		createServiceCallBack(response){

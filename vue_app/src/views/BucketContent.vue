@@ -519,6 +519,7 @@ export default {
 			this.getBucketFilesCall(params,this.getBucketFilesCallBack)			
 		},
 		getBucketFilesCallBack(response) {
+			console.log(response)
 			this.search = ''
 			this.paths=[]
 			this.files = [] 
@@ -572,7 +573,28 @@ export default {
 						before = i-1
 					}
 
-					if(i == 0){
+					if(first_path == this.paths[i][this.paths[i].length-1]){
+                        var extension = this.getFileExtension1(first_path)
+                        var icon_file = ''
+                        var color_file = ''
+                        if(extension == 'jpg' || extension == 'jpeg' || extension == 'png'){
+                            icon_file = 'insert_photo'
+                            color_file = 'blue'
+                        }else{
+                            icon_file = 'insert_drive_file'
+                            color_file = 'gray'
+                        }
+                        var file = {
+                                name: this.paths[i][0],
+                                path: this.allData[i].name,
+                                icon: icon_file,
+                                color: color_file,
+                                lastModified: response.files[i].lastModified,
+                                size: response.files[i].size,
+                            }
+							first.push(file)
+							
+                    }else if(i == 0){
 						var extension = this.getFileExtension1(first_path)
 						if (extension == undefined){
 							var folder = {
@@ -585,6 +607,11 @@ export default {
 							}
 							first.push(folder)
 						}else{
+							console.log(extension)
+							var icon_file = ''
+							// if (extension != '.jpeg' || extension != '.jpg' || extension != '.png') {
+							// 	icon_file = 
+							// }
 							var file = {
 								name: this.paths[i][0],
 								path: this.allData[i].name,
@@ -598,6 +625,7 @@ export default {
 						
 					}else if(first_path != this.paths[i-1][0]){
 						var extension = this.getFileExtension1(first_path)
+						console.log(extension)
 						if (extension == undefined){
 							var folder = {
 								name: first_path,
