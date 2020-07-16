@@ -295,6 +295,7 @@ export default {
 				storage_provider: this.services[index].storage
 			
 			}
+			console.log(servInfo)
 			window.getApp.$emit('FUNC_OPEN_MANAGEMENT_DIALOG', servInfo)
 		},    
 		deleteFunction(serv, servName) {      

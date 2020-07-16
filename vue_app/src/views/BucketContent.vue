@@ -519,7 +519,6 @@ export default {
 			this.getBucketFilesCall(params,this.getBucketFilesCallBack)			
 		},
 		getBucketFilesCallBack(response) {
-			console.log(response)
 			this.search = ''
 			this.paths=[]
 			this.files = [] 
@@ -572,8 +571,17 @@ export default {
 					if(i>0){
 						before = i-1
 					}
-
-					if(first_path == this.paths[i][this.paths[i].length-1]){
+					if(first_path == ''){
+						var file = {
+                                name: '',
+                                path: '',
+                                icon: '',
+                                color: '',
+                                lastModified: '',
+                                size: '',
+                            }
+						first.push(file)
+					}else if(first_path == this.paths[i][this.paths[i].length-1]){
                         var extension = this.getFileExtension1(first_path)
                         var icon_file = ''
                         var color_file = ''
@@ -607,11 +615,6 @@ export default {
 							}
 							first.push(folder)
 						}else{
-							console.log(extension)
-							var icon_file = ''
-							// if (extension != '.jpeg' || extension != '.jpg' || extension != '.png') {
-							// 	icon_file = 
-							// }
 							var file = {
 								name: this.paths[i][0],
 								path: this.allData[i].name,
@@ -625,7 +628,6 @@ export default {
 						
 					}else if(first_path != this.paths[i-1][0]){
 						var extension = this.getFileExtension1(first_path)
-						console.log(extension)
 						if (extension == undefined){
 							var folder = {
 								name: first_path,
