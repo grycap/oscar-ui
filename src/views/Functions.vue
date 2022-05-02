@@ -67,6 +67,17 @@
 									<v-card flat>
 										<v-card-text class="custom-padding xs6"> <strong>Name: </strong> {{props.item.service}}</v-card-text>
 										<v-card-text class="custom-padding"><strong>Image: </strong> {{props.item.container}}</v-card-text>
+										<v-card-text style="display:flex;margin-right: 5px;" class="custom-padding">
+											<strong style="padding-top: 12px;margin-right: 5px;">Token: </strong> 
+											<v-text-field style="width: 80%!important;padding-top: 0px!important;margin-top: 0px!important;"
+												:value="props.item.token"
+												:append-icon="show1 ? 'visibility' : 'visibility_off'"
+												:type="show1 ? 'text' : 'password'"
+												name="input-10-1"
+												@click:append="show1 = !show1"
+												readonly
+											></v-text-field>
+										</v-card-text>
 										<v-card-text class="custom-padding"><strong>Environment variables: </strong> 
 											<pre v-show="Object.keys(props.item.envVars.Variables).length!==0" id="json-renderer"></pre>
 										</v-card-text>
@@ -256,6 +267,7 @@ export default {
 		disable_form: true,
 		disable_storage: true,
 		params_delete: '', 
+		show1:false
 	}),
   	methods: {
 		showEnvVars(value){
@@ -285,17 +297,19 @@ export default {
 				editionMode: true,
 				name: this.services[index].service,
 				image: this.services[index].container,
+				token: this.services[index].token,
 				input: this.services[index].inputs,
 				output: this.services[index].outputs,
 				log_Level: this.services[index].logLevel,
 				envVars: this.services[index].envVars,
+				annotations: this.services[index].annotations?this.services[index].annotations:{},
+				labels: this.services[index].labels?this.services[index].labels:{},
 				cpu: this.services[index].cpu,
 				script: this.services[index].script,
 				memory: this.services[index].memory,
 				storage_provider: this.services[index].storage
 			
 			}
-			console.log(servInfo)
 			window.getApp.$emit('FUNC_OPEN_MANAGEMENT_DIALOG', servInfo)
 		},    
 		deleteFunction(serv, servName) {      
@@ -317,20 +331,21 @@ export default {
 			}
 		},
 		listServicesCallback(response) {
-			if(response.length > 0){
+			if(response.status == 200){
 				this.show_spinner = false;
-				this.services = Object.assign(this.services, response); 
-				this.services = response.map((serv) => {
+				this.services = Object.assign(this.services, response.data); 
+				this.services = response.data.map((serv) => {
 					return {
 						service: serv.name,
 						container: serv.image,
+						token: serv.token,
 						cpu: serv.cpu,
 						logLevel: serv.log_level,
 						envVars: serv.environment,
 						memory: serv.memory,
 						inputs: serv.input,
 						outputs: serv.output,
-						storage: serv.storage_provider,
+						storage: serv.storage_providers,
 						script: serv.script
 					}
 				})				

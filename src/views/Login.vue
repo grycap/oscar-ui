@@ -18,7 +18,7 @@
                 </v-form>
               </v-card-text>
               <v-card-actions>
-                <v-btn icon>
+                <!-- <v-btn icon>
                   <v-icon color="blue">fa fa-facebook-square fa-lg</v-icon>
                 </v-btn>
                 <v-btn icon>
@@ -26,9 +26,9 @@
                 </v-btn>
                 <v-btn icon>
                   <v-icon color="light-blue">fa fa-twitter fa-lg</v-icon>
-                </v-btn>
+                </v-btn> -->
                 <v-spacer></v-spacer>
-                <v-btn block color="teal" dark @click.native="login()" :loading="loading">Login</v-btn>
+                <v-btn color="teal" dark @click.native="login()" :loading="loading">Login</v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -53,6 +53,7 @@ export default {
     
   }),
   created(){
+    localStorage.clear();
     localStorage.setItem("authenticated", false);
   },
 
@@ -101,7 +102,7 @@ export default {
         var _this = this
           axios({
                 method: 'get',
-                url: this.api+'/system/config',
+                url: this.env.api+'/system/config',
                 auth: {
                     username: this.model.username,
                     password: this.model.password

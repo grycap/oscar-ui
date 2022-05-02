@@ -1,10 +1,10 @@
 import JSZip from "jszip";
 import JSZipUtils from "jszip-utils"
-import qs from 'qs'
+import env from '../env'
 export default {
     data: () => {
 		return {
-            api: 'http://158.42.105.147:30301',  
+            api: env.api,
             minioClient: '',  
             username_auth:'',
             password_auth:''        
@@ -23,10 +23,8 @@ export default {
 
         var Minio = require('minio')
         this.minioClient = new Minio.Client({
-            // endPoint: minio_endpoint,    
-            endPoint: '158.42.105.147',    
-            port: 30300,   
-            // port: parseInt(minio_port),   
+            endPoint: minio_endpoint,    
+            port: parseInt(minio_port),   
             useSSL: true,
             accessKey: minio_accessKey,
             secretKey: minio_secretKey
@@ -63,7 +61,7 @@ export default {
                     password: this.password_auth
                 }
             }).then(function (response) {
-                callBackHandler(response.data);
+                callBackHandler(response);
             }.bind(this)).catch(function (error) {
                 callBackHandler(error);
             })
@@ -71,7 +69,7 @@ export default {
         deleteServiceCall(params, callBackHandler) {
             axios({
                 method: 'delete',
-                url: this.api + '/system/services/'+params,
+                url: this.api+'/system/services/'+params,
                 auth: {
                     username: this.username_auth,
                     password: this.password_auth
@@ -93,14 +91,14 @@ export default {
                 }
             }).then(function (response) {
                 callBackHandler(response.data);
-            }).catch(function (error) {
+            }.bind(this)).catch(function (error) {
                 callBackHandler(error);
             })
         },
         deleteJobCall(params, callBackHandler) {
             axios({
                 method: 'delete',
-                url: this.api + '/system/logs/'+params.serviceName+'/'+params.jobName,
+                url:  this.api+'/system/logs/'+params.serviceName+'/'+params.jobName,
                 auth: {
                     username: this.username_auth,
                     password: this.password_auth
@@ -108,7 +106,7 @@ export default {
                 data:params,
             }).then(function (response) {
                 callBackHandler(response);
-            }).catch(function (error) {
+            }.bind(this)).catch(function (error) {
                 callBackHandler(error);
             })
         },
@@ -121,8 +119,8 @@ export default {
                     password: this.password_auth
                 }
             }).then(function (response) {
-                callBackHandler(response.data);
-            }).catch(function (error) {
+                callBackHandler(response);
+            }.bind(this)).catch(function (error) {
                 callBackHandler(error);
             })
         },
@@ -133,13 +131,14 @@ export default {
                 auth: {
                     username: this.username_auth,
                     password: this.password_auth
-                },     
+                }
             }).then(function (response) {
                 callBackHandler(response);
-            }).catch(function (error) {
+            }.bind(this)).catch(function (error) {
                 callBackHandler(error);
             })
-        },               
+        },
+        
         createServiceCall(params, callBackHandler){
             axios({
                 method: 'post',
@@ -212,7 +211,7 @@ export default {
         },
 
         getBucketFilesCall(params, callBackHandler){
-            let stream = this.minioClient.listObjects(params.name, params.prefix, true,) 
+            let stream = this.minioClient.listObjectsV2(params.name, params.prefix, true) 
             var funct = {
                 err : "",
                 files: []
@@ -220,7 +219,6 @@ export default {
             stream.on('data', function(obj) 
             {   
                 funct.files.push(obj);
-                
             })    
             stream.on('error', function(err) 
             {       
@@ -325,7 +323,7 @@ export default {
             var _this = this
 
             // List all object paths in bucket my-bucketname.
-            var objectsStream = this.minioClient.listObjects(params, '', true)
+            var objectsStream = this.minioClient.listObjectsV2(params, '', true)
 
             objectsStream.on('data', function(obj) {
             objectsList.push(obj.name);
@@ -336,23 +334,43 @@ export default {
             })
 
             objectsStream.on('end', function() {
-
-            _this.minioClient.removeObjects(params,objectsList, function(e) {
-                if (e) {
-                    return console.log('Unable to remove Objects ',e)
+                var files_count = objectsList.length;                
+                if(objectsList.length != 0){
+                    for (let i = 0; i < objectsList.length; i++) {
+                        _this.minioClient.removeObject(params,objectsList[i], function(e) {
+                            if (e) {
+                                return console.log('Unable to remove Objects ',e)
+                            }
+                            files_count = files_count - 1;
+                            if(files_count == 0){
+                                _this.minioClient.removeBucket(params, function(err, exists) {    
+                                    if (err){
+                                        callBackHandler(err)
+                                    }else{
+                                        callBackHandler('success');        
+                                    }             
+                                        
+                                })
+                            }
+                        })
+                        console.log('Removed the objects successfully')
+                    }
+                    
+                }else{
+                    _this.minioClient.removeBucket(params, function(err, exists) {    
+                        console.log(err)
+                        if (err){
+                            callBackHandler(err)
+                        }else{
+                            callBackHandler('success');        
+                        }             
+                            
+                    })
                 }
-                _this.minioClient.removeBucket(params, function(err, exists) {    
-                    console.log(err)
-                    if (err){
-                        callBackHandler(err)
-                    }else{
-                        callBackHandler('success');        
-                    }             
-                        
-                })
-                console.log('Removed the objects successfully')
-            })
 
+                
+
+                           
             })
             
         },

@@ -1,9 +1,8 @@
 <template>
     <div class="mb-1">		
         <v-toolbar flat color="white">
+            <v-btn color="primary" icon  @click="goBack()"><v-icon>arrow_back</v-icon> </v-btn>
             <v-toolbar-title>LOGS: Service {{serviceName}} </v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-btn color="primary" dark @click="goBack()">BACK</v-btn>
         </v-toolbar>
         <v-card-title>
             <v-text-field
@@ -16,7 +15,7 @@
             <v-btn flat icon color="blue" @click="handleUpdate()">
                 <v-icon>autorenew</v-icon>
             </v-btn>
-             <v-btn color="green lighten-2" dark @click="deleteSuccessJobs()">DELETE SUCCESS JOBS</v-btn>          
+             <v-btn color="green lighten-2" dark @click="deleteSuccessJobs()">DELETE SUCCEEDED JOBS</v-btn>          
              <v-btn color="error" dark @click="deleteAllJobs()">DELETE ALL JOBS</v-btn>          
         </v-card-title>
         <v-data-table
@@ -35,15 +34,18 @@
             <tr >
                 <td>{{ props.item.name }}</td>
                 <td class="text-xs-center">{{ props.item.status }}</td>
-                <td class="text-xs-center">{{ moment(props.item.creation).format("YYYY-MM-DD HH:mm") }}</td>
-                <td class="text-xs-center">{{ moment(props.item.start).format("YYYY-MM-DD HH:mm") }}</td>
-                <td class="text-xs-center">{{ moment(props.item.finish).format("YYYY-MM-DD HH:mm") }}</td>
+                <td class="text-xs-center">{{ moment(props.item.creation).format("YYYY-MM-DD HH:mm:ss") }}</td>
+                <td class="text-xs-center" v-if="props.item.status!='Pending'">{{ moment(props.item.start).format("YYYY-MM-DD HH:mm:ss") }}</td>
+                <td class="text-xs-center" v-else></td>
+                <td class="text-xs-center" v-if="props.item.status!='Pending' && props.item.status!='Running'">{{ moment(props.item.finish).format("YYYY-MM-DD HH:mm:ss") }}</td>
+                <td class="text-xs-center" v-else></td>
                 <td class="text-xs-center">
+                    <v-icon small class="mr-2" @click="moreLogs(props.item.name);handleUpdate()">autorenew</v-icon>
                     <v-icon small class="mr-2" @click="deleteJob(props.item,props.item.name)">delete</v-icon>
                 </td>
                 <td class="justify-center layout px-0">
-                        <v-icon  medium v-show="props.expanded" @click="props.expanded = !props.expanded">expand_less</v-icon>
-                        <v-icon  medium v-show="!props.expanded" @click="props.expanded = !props.expanded;moreLogs(props.item.name)">expand_more</v-icon>
+                        <v-icon  medium v-show="props.expanded && props.item.status!='Pending'" @click="props.expanded = !props.expanded">expand_less</v-icon>
+                        <v-icon  medium v-show="!props.expanded && props.item.status!='Pending'" @click="props.expanded = !props.expanded;moreLogs(props.item.name)">expand_more</v-icon>
                 </td>
 
             </tr>
@@ -96,10 +98,10 @@ export default {
             
             value: 'name',
             },
-            { text: 'Status',align: 'center', value: 'status' },
-            { text: 'Creation Time', align: 'center', value: 'create_time' },
-            { text: 'Start time',align: 'center', value: 'start_time' },
-            { text: 'Finish Time',align: 'center', value: 'finish_time' },       
+            { text: 'STATUS',align: 'center', value: 'status' },
+            { text: 'CREATION TIME', align: 'center', value: 'create_time' },
+            { text: 'START TIME',align: 'center', value: 'start_time' },
+            { text: 'FINISH TIME',align: 'center', value: 'finish_time' },       
             { text: '',align: 'center', value: 'actions' },
             { text: '',align: 'center', value: 'expand' },
         ],
@@ -142,7 +144,12 @@ export default {
             this.listJobNameCall(params_logs, this.listJobNameCallback);
         },
         listJobNameCallback(response){
-                this.job_logs = response  //remember to handle error
+                this.job_logs = ''
+                if(response.status==200){
+                    this.job_logs = response.data  //remember to handle error
+                }else {
+                    this.job_logs = "There are no logs available."
+                }
         },
         goBack(){
             this.$router.push({name: "Functions"})
