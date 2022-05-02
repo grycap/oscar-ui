@@ -40,6 +40,7 @@
 
 <script>
 import Services from '../components/services.js';
+import env from '../env';
 export default {
   mixins:[Services],
   data: () => ({
@@ -102,7 +103,7 @@ export default {
         var _this = this
           axios({
                 method: 'get',
-                url: this.env.api+'/system/config',
+                url: env.api+'/system/config',
                 auth: {
                     username: this.model.username,
                     password: this.model.password
