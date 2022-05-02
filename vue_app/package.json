@@ -15,7 +15,7 @@
     "epic-spinners": "^1.0.3",
     "filesize": "^3.6.1",
     "minio": "^7.0.0",
-    "moment": "^2.22.2",
+    "moment": "^2.29.2",
     "nprogress": "^0.2.0",
     "register-service-worker": "^1.0.0",
     "vue": "^2.5.17",
