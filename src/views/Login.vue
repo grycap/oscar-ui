@@ -134,10 +134,8 @@ export default {
     },autoLogin(){
       const queryString = window.location.search;
       const urlParams = new URLSearchParams(queryString);
-
       const username = urlParams.get('username')
       const endpoint = urlParams.get('endpoint')
-
       if (username !== null && endpoint !== null) {
         this.model.username = username
         this.endpoint= 'http://'+endpoint
