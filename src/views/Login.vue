@@ -48,14 +48,15 @@ export default {
     model: {
       username: '',
       password: ''
-    }, 
+    },
     user: "admin",
     pass: "admin",
-    
+
   }),
   created(){
     localStorage.clear();
     localStorage.setItem("authenticated", false);
+    this.autoLogin();
   },
 
   methods: {
@@ -63,7 +64,7 @@ export default {
       event.preventDefault();
       if (event.keyCode === 13) {
         this.login()
-      } 
+      }
     },
     login () {
       this.loading = true
@@ -72,7 +73,7 @@ export default {
         'password': this.model.password
       }
       this.checkLoginCall(params,this.checkLoginCallback)
-      
+
     },
     getPort(url) {
         url = url.match(/^(([a-z]+:)?(\/\/)?[^\/]+).*$/)[1] || url;
@@ -118,17 +119,27 @@ export default {
                   localStorage.setItem("authenticated", true);
                   localStorage.setItem("user", _this.model.username);
                   localStorage.setItem("password", _this.model.password);
-                  _this.$router.push({name: "Functions"}) 
+                  _this.$router.push({name: "Functions"})
               }).catch(function (error) {
                   console.log(error)
               })
-            
+
       }else if (response == 401){
         this.loading = false
         window.getApp.$emit('APP_SHOW_SNACKBAR', { text: "Username or password is incorrect", color: 'error' })
       }else{
         this.loading = false
         window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response, color: 'error' })
+      }
+    },autoLogin(){
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      const username = urlParams.get('username')
+      const endpoint = urlParams.get('endpoint')
+      if (username !== null && endpoint !== null) {
+        this.model.username = username
+        this.endpoint= 'http://'+endpoint
+
       }
     }
   }

@@ -5,9 +5,9 @@ export default {
     data: () => {
 		return {
             api: env.api,
-            minioClient: '',  
+            minioClient: '',
             username_auth:'',
-            password_auth:''        
+            password_auth:''
 		}
     },
     created(){
@@ -23,8 +23,8 @@ export default {
 
         var Minio = require('minio')
         this.minioClient = new Minio.Client({
-            endPoint: minio_endpoint,    
-            port: parseInt(minio_port),   
+            endPoint: minio_endpoint,
+            port: parseInt(minio_port),
             useSSL: true,
             accessKey: minio_accessKey,
             secretKey: minio_secretKey
@@ -138,7 +138,7 @@ export default {
                 callBackHandler(error);
             })
         },
-        
+
         createServiceCall(params, callBackHandler){
             axios({
                 method: 'post',
@@ -172,7 +172,7 @@ export default {
         },
 
         //******Minio's Call********/
-        
+
         getBucketListCall(callBackHandler){
             this.minioClient.listBuckets((err, buckets) => {
                 if (err) {
@@ -180,7 +180,7 @@ export default {
                 }else{
                     callBackHandler(buckets)
                 }
-                
+
             })
         },
 
@@ -189,9 +189,9 @@ export default {
                 if (err) {
                     callBackHandler(err)
                 }else{
-                    callBackHandler("success")       
-                }         
-                    
+                    callBackHandler("success")
+                }
+
             })
         },
 
@@ -205,41 +205,41 @@ export default {
                     })
                 }else{
                     callBackHandler('success')
-                }        
-                    
+                }
+
             })
         },
 
         getBucketFilesCall(params, callBackHandler){
-            let stream = this.minioClient.listObjectsV2(params.name, params.prefix, true) 
+            let stream = this.minioClient.listObjectsV2(params.name, params.prefix, true)
             var funct = {
                 err : "",
                 files: []
             };
-            stream.on('data', function(obj) 
-            {   
+            stream.on('data', function(obj)
+            {
                 funct.files.push(obj);
-            })    
-            stream.on('error', function(err) 
-            {       
+            })
+            stream.on('error', function(err)
+            {
                 funct["err"] = err;
             })
-            stream.on('end', function(e) 
-            {       
+            stream.on('end', function(e)
+            {
                 callBackHandler(funct);
             })
         },
-        previewFileCall(params,callBackHandler){  
+        previewFileCall(params,callBackHandler){
             this.minioClient.presignedUrl('GET',params.bucketName, params.fileName, 30000, function(err, presignedUrl) {
                 if (err){
                     callBackHandler(err)
                 }else{
                     callBackHandler(presignedUrl)
-                   
+
                 }
-               
+
               })
-            
+
         },
         urlToPromise(url) {
             return new Promise(function(resolve, reject) {
@@ -252,8 +252,8 @@ export default {
                 });
             });
         },
-        downloadFileCall(params,callBackHandler){   
-            var _this = this     
+        downloadFileCall(params,callBackHandler){
+            var _this = this
             if (params.select == 1){
                 this.minioClient.presignedGetObject(params.bucketName, params.fileName[0], 1500, function(err, presignedUrl) {
                     if (err){
@@ -277,7 +277,7 @@ export default {
                                 var name = params.fileName[i].substr(params.fileName[i].lastIndexOf('/') + 1);
                                 folder.file(name, _this.urlToPromise(presignedUrl), {binary:true});
                             }
-                        })                                           
+                        })
                     }
 
                     callBackHandler(folder)
@@ -286,19 +286,19 @@ export default {
         uploadFileCall(params, callBackHandler){
             this.minioClient.presignedPutObject(params.bucketName, params.file_name, 24*60*60, function(err, presignedUrl) {
                 if (err){
-                    console.log(err)  
+                    console.log(err)
                 }else{
                     fetch(presignedUrl, {
                         method: 'PUT',
                         body: params.file
-             
+
                     }).then(() => {
                        callBackHandler('uploaded')
                     }).catch((e) => {
                        callBackHandler(e)
                     });
-                } 
-                
+                }
+
             })
         },
         removeFileCall(params,callBackHandler){
@@ -306,12 +306,12 @@ export default {
             objectList = params.fileName
             for(var i=0; i < objectList.length; i++) {
                 this.minioClient.removeObject(params.bucketName, objectList[i], function(err, exists) {
-                    if (err){ 
-                        callBackHandler(error)          
+                    if (err){
+                        callBackHandler(error)
                     }else{
-                        callBackHandler("success");        
+                        callBackHandler("success");
                     }
-                        
+
                 })
             }
 
@@ -334,7 +334,7 @@ export default {
             })
 
             objectsStream.on('end', function() {
-                var files_count = objectsList.length;                
+                var files_count = objectsList.length;
                 if(objectsList.length != 0){
                     for (let i = 0; i < objectsList.length; i++) {
                         _this.minioClient.removeObject(params,objectsList[i], function(e) {
@@ -343,36 +343,36 @@ export default {
                             }
                             files_count = files_count - 1;
                             if(files_count == 0){
-                                _this.minioClient.removeBucket(params, function(err, exists) {    
+                                _this.minioClient.removeBucket(params, function(err, exists) {
                                     if (err){
                                         callBackHandler(err)
                                     }else{
-                                        callBackHandler('success');        
-                                    }             
-                                        
+                                        callBackHandler('success');
+                                    }
+
                                 })
                             }
                         })
                         console.log('Removed the objects successfully')
                     }
-                    
+
                 }else{
-                    _this.minioClient.removeBucket(params, function(err, exists) {    
+                    _this.minioClient.removeBucket(params, function(err, exists) {
                         console.log(err)
                         if (err){
                             callBackHandler(err)
                         }else{
-                            callBackHandler('success');        
-                        }             
-                            
+                            callBackHandler('success');
+                        }
+
                     })
                 }
 
-                
 
-                           
+
+
             })
-            
+
         },
     },
 }
