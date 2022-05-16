@@ -11,10 +11,13 @@
                   <h1 class="flex my-4 teal--text">OSCAR ADMIN</h1>
                 </div>
                 <v-form>
+                  <v-text-field v-show="env.deploy_container == 'true'" append-icon="language" name="password" label="Endpoint" id="password" type="password"
+                                v-model="model.endpoint" ></v-text-field>
                   <v-text-field append-icon="person" name="login" label="Login" type="text"
                                 v-model="model.username"></v-text-field>
                   <v-text-field append-icon="lock" name="password" label="Password" id="password" type="password"
                                 v-model="model.password" v-on:keyup="bindLogin()"></v-text-field>
+
                 </v-form>
               </v-card-text>
               <v-card-actions>
@@ -47,7 +50,8 @@ export default {
     loading: false,
     model: {
       username: '',
-      password: ''
+      password: '',
+      endpoint: ''
     },
     user: "admin",
     pass: "admin",
