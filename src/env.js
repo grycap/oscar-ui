@@ -4,6 +4,6 @@ module.exports = {
     "redirect_uri" : `${location.origin}/callback.html`,
     "url_authorize": "https://aai-dev.egi.eu/oidc/authorize",
     "url_user_info": "https://aai-dev.egi.eu/oidc/userinfo",
-    "api" : "http://localhost", // value of the api,
-    "deploy_container": "false",
+    "api" : "https://oscar-demo.ramses.i3m.upv.es", // value of the api,
+    "deploy_container": "true",
 }

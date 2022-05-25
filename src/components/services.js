@@ -35,6 +35,7 @@ export default {
     methods: {
         //ApiCalls
         checkLoginCall(params,callBackHandler){
+            
             var _this = this
             axios({
                 method: 'get',
@@ -53,6 +54,7 @@ export default {
 
         },
         listServicesCall(callBackHandler) {
+            console.log(this.username_auth, this.password_auth )
             axios({
                 method: 'get',
                 url: this.api+'/system/services',

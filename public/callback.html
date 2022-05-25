@@ -34,11 +34,11 @@
       <div>
     </div>
   </div>
-  <script type="text/javascript" src="../src/env.js"></script>
+  <script type="text/javascript" src="../src/env.js">
+  </script>
   <script>
-        import env from '../src/env';
-        const baseUrl = env.provider_url;
-        const client_id = env.client_id;
+        const baseUrl = provider_url;
+        const client_id = client_id;
         const groupId = '00gwb2x6jewAvwYSX0h7';
         const redirect_uri = env.redirect_uri;
         const authorize_endpoint = `${baseUrl}authorize`;
@@ -123,7 +123,7 @@
 
     async function getTokens() {
       const params = {
-                grant_type: 'authorization_code',
+              grant_type: 'authorization_code',
               code: q.get('code'),
               client_id,
               redirect_uri,
@@ -139,10 +139,13 @@
               const id_token = JSON.parse(atob(tokens.id_token.split('.')[1]));
               console.log('id_token', id_token);
               const access_token = JSON.parse(atob(tokens.access_token.split('.')[1]));
-              // localStorage.setItem("session", JSON.stringify({ user: { 'access_token': tokens['access_token'], authenticated: true } }));
-              var token_prov = 'eyJraWQiOiJvaWRjIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiI2NmNiYjA1MWRhZDRiNmMzZGFjOGUwY2FiMWQ5YzBhNGMzODhmZDRhNTkzYTczYmEwZjhjYmY2MTU2MTI2MmRiQGVnaS5ldSIsImF6cCI6IjEwMzMzZjA4LTdlOGYtNGNjNC1iYmEwLWU2NmY0ZTU1MDVkMCIsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUiLCJpc3MiOiJodHRwczpcL1wvYWFpLWRldi5lZ2kuZXVcL29pZGNcLyIsImV4cCI6MTYyODY5MTI2MCwiaWF0IjoxNjI4NjA0ODYwLCJqdGkiOiIyODI1NmU0Ni02MDRhLTRlNmMtOTQ3NS1kMTYzNTdlNWEzMGQifQ.D3-28nR0HoojWXYrl4MwnFERyiVM58gZHDZZv6Brf7iVaI1BkhR4bf0XbIm2Fj6A-pdU5jopGWb11fxNfJrylHk1mzITFz8RojO2nWJFhFasxHKjJ3YyGrB7_NcLwowJ36UXxLh_N397GN36Y1SFAAt_UT3QcjeZQDU5X9Ik6l35W4vy10iAOwSvYikYuKk_C-JLsQWBBj3UDvhZ4BzFJdzXdqzEM-DY6OhBDJ_ydPtooQdBEbjsocmVA4MvdW_DEBfNoJrIPyD-NT66T0q5EG5b-7LGbqDAiB_53jZP8JQQSQ2hp1pW6pYRfdc4ELlqB9wnojSkuYQPD2t_t68wwg'
-              localStorage.setItem("session", JSON.stringify({ user: { 'access_token': token_prov, authenticated: true } }));
-              var url_redirect = window.location.origin + "/#/auth/select-option"
+              localStorage.setItem("endpoint",endpoint_host)
+              localStorage.setItem("accessKey",response.data.minio_provider.access_key)
+              localStorage.setItem("secretKey",response.data.minio_provider.secret_key)
+              localStorage.setItem("port",port)
+              localStorage.setItem("authenticated", true);       
+              localStorage.setItem("token", access_token);       
+              var url_redirect = window.location.origin + "/#/services"
               window.location.href = url_redirect
               // return tokens;
     }

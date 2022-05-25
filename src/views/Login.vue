@@ -10,13 +10,34 @@
                   <img src="@/assets/logo.png" alt="Vue Material Admin" width="120" height="120">
                   <h1 class="flex my-4 teal--text">OSCAR ADMIN</h1>
                 </div>
+                <v-form >
+                  <v-text-field  append-icon="language" name="password" label="Endpoint" id="password" type="text"
+                                v-model="model.endpoint" hide-details='true'></v-text-field>   
+                  <div class="text-right">
+                    <span style="color:red; font-size:10px;">Required</span>              
+
+                  </div>
+
+                </v-form>
+                <v-divider class='mt-5 mb-5'></v-divider>
+                <div class="text-center">
+                  <h3 style="color:#8C8786">Log in with:</h3>
+                </div>
                 <v-form>
-                  <v-text-field v-show="env.deploy_container == 'true'" append-icon="language" name="password" label="Endpoint" id="password" type="password"
-                                v-model="model.endpoint" ></v-text-field>
-                  <v-text-field append-icon="person" name="login" label="Login" type="text"
+                   <v-text-field  append-icon="person" name="user" label="User" type="text"
                                 v-model="model.username"></v-text-field>
-                  <v-text-field append-icon="lock" name="password" label="Password" id="password" type="password"
+                  <v-text-field  append-icon="lock" name="password" label="Password" id="password" type="password"
                                 v-model="model.password" v-on:keyup="bindLogin()"></v-text-field>
+                  <div class="text-center">
+                    <v-btn color="teal" dark @click.native="login()" :loading="loading">Basic auth</v-btn>
+                  </div>
+                </v-form>
+                <v-divider class='mt-5 mb-5'></v-divider>
+                <v-form>
+                  <div class="text-center">
+                    <v-btn color="indigo" dark @click.native="login_egi()" :loading="loading">EGI Check-in</v-btn>
+
+                  </div>
 
                 </v-form>
               </v-card-text>
@@ -30,9 +51,10 @@
                 <v-btn icon>
                   <v-icon color="light-blue">fa fa-twitter fa-lg</v-icon>
                 </v-btn> -->
-                <v-spacer></v-spacer>
-                <v-btn color="teal" dark @click.native="login()" :loading="loading">Login</v-btn>
+                
+                
               </v-card-actions>
+              
             </v-card>
           </v-flex>
         </v-layout>
@@ -78,6 +100,13 @@ export default {
       }
       this.checkLoginCall(params,this.checkLoginCallback)
 
+    },
+    login_egi(){
+      if(this.model.endpoint == ''){
+        window.getApp.$emit('APP_SHOW_SNACKBAR', { text: "Endpoint is required", color: 'error' })
+      }else{
+        window.location.replace(this.env.redirect_uri);
+      }
     },
     getPort(url) {
         url = url.match(/^(([a-z]+:)?(\/\/)?[^\/]+).*$/)[1] || url;
@@ -142,7 +171,7 @@ export default {
       const endpoint = urlParams.get('endpoint')
       if (username !== null && endpoint !== null) {
         this.model.username = username
-        this.endpoint= 'http://'+endpoint
+        this.model.endpoint= 'http://'+endpoint
 
       }
     }
