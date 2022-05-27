@@ -34,13 +34,12 @@
       <div>
     </div>
   </div>
-  <script type="text/javascript" src="../src/env.js">
-  </script>
-  <script>
-        const baseUrl = provider_url;
-        const client_id = client_id;
+ 
+  <script type="text/javascript">
+        const baseUrl = 'https://aai-dev.egi.eu/oidc/';
+        const client_id = localStorage.getItem('client_id');
         const groupId = '00gwb2x6jewAvwYSX0h7';
-        const redirect_uri = env.redirect_uri;
+        const redirect_uri = `${location.origin}/callback.html`;
         const authorize_endpoint = `${baseUrl}authorize`;
         const token_endpoint = `${baseUrl}token`;
         const userinfo_endpoint = `${baseUrl}userinfo`;
@@ -139,12 +138,12 @@
               const id_token = JSON.parse(atob(tokens.id_token.split('.')[1]));
               console.log('id_token', id_token);
               const access_token = JSON.parse(atob(tokens.access_token.split('.')[1]));
-              localStorage.setItem("endpoint",endpoint_host)
-              localStorage.setItem("accessKey",response.data.minio_provider.access_key)
-              localStorage.setItem("secretKey",response.data.minio_provider.secret_key)
-              localStorage.setItem("port",port)
+              
+              // localStorage.setItem("accessKey",response.data.minio_provider.access_key)
+              // localStorage.setItem("secretKey",response.data.minio_provider.secret_key)
+              // localStorage.setItem("port",port)
               localStorage.setItem("authenticated", true);       
-              localStorage.setItem("token", access_token);       
+              // localStorage.setItem("token", access_token);       
               var url_redirect = window.location.origin + "/#/services"
               window.location.href = url_redirect
               // return tokens;
