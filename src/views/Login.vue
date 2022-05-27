@@ -10,11 +10,35 @@
                   <img src="@/assets/logo.png" alt="Vue Material Admin" width="120" height="120">
                   <h1 class="flex my-4 teal--text">OSCAR ADMIN</h1>
                 </div>
+                <v-form >
+                  <v-text-field  append-icon="language" name="password" label="Endpoint" id="password" type="text"
+                                v-model="model.endpoint" hide-details=true></v-text-field>   
+                  <div class="text-right">
+                    <span style="color:red; font-size:10px;">Required</span>              
+
+                  </div>
+
+                </v-form>
+                <v-divider class='mt-5 mb-5'></v-divider>
+                <div class="text-center">
+                  <h3 style="color:#8C8786">Log in with:</h3>
+                </div>
                 <v-form>
-                  <v-text-field append-icon="person" name="login" label="Login" type="text"
+                   <v-text-field  append-icon="person" name="user" label="User" type="text"
                                 v-model="model.username"></v-text-field>
-                  <v-text-field append-icon="lock" name="password" label="Password" id="password" type="password"
-                                v-model="model.password" v-on:keyup="bindLogin()"></v-text-field>
+                  <v-text-field  append-icon="lock" name="password" label="Password" id="password" type="password"
+                                v-model="model.password"></v-text-field>
+                  <div class="text-center">
+                    <v-btn color="teal" dark @click.native="login()" :loading="loading">Basic auth</v-btn>
+                  </div>
+                </v-form>
+                <v-divider class='mt-5 mb-5'></v-divider>
+                <v-form v-show="env.deploy_container == 'false'">
+                  <div   class="text-center">
+                    <v-btn color="indigo" dark @click.native="login_egi()" :loading="loading_egi">EGI Check-in</v-btn>
+
+                  </div>
+
                 </v-form>
               </v-card-text>
               <v-card-actions>
@@ -27,9 +51,10 @@
                 <v-btn icon>
                   <v-icon color="light-blue">fa fa-twitter fa-lg</v-icon>
                 </v-btn> -->
-                <v-spacer></v-spacer>
-                <v-btn color="teal" dark @click.native="login()" :loading="loading">Login</v-btn>
+                
+                
               </v-card-actions>
+              
             </v-card>
           </v-flex>
         </v-layout>
@@ -45,9 +70,11 @@ export default {
   mixins:[Services],
   data: () => ({
     loading: false,
+    loading_egi: false,
     model: {
       username: '',
-      password: ''
+      password: '',
+      endpoint: ''
     },
     user: "admin",
     pass: "admin",
@@ -56,24 +83,33 @@ export default {
   created(){
     localStorage.clear();
     localStorage.setItem("authenticated", false);
+    if(env.deploy_container == 'true'){
+      this.endpoint = env.api
+    }
     this.autoLogin();
   },
 
-  methods: {
-    bindLogin(){
-      event.preventDefault();
-      if (event.keyCode === 13) {
-        this.login()
-      }
-    },
+  methods: {    
     login () {
       this.loading = true
       var params = {
         'user': this.model.username,
-        'password': this.model.password
+        'password': this.model.password,
+        'api': this.model.endpoint
       }
+      localStorage.setItem("api", this.model.endpoint);
       this.checkLoginCall(params,this.checkLoginCallback)
 
+    },
+    login_egi(){
+      this.loading_egi = true;
+      if(this.model.endpoint == ''){
+        window.getApp.$emit('APP_SHOW_SNACKBAR', { text: "Endpoint is required", color: 'error' })
+      }else{
+        localStorage.setItem("api", this.model.endpoint);
+        localStorage.setItem("client_id", this.env.client_id);
+        window.location.replace(this.env.redirect_uri);
+      }
     },
     getPort(url) {
         url = url.match(/^(([a-z]+:)?(\/\/)?[^\/]+).*$/)[1] || url;
@@ -104,7 +140,7 @@ export default {
         var _this = this
           axios({
                 method: 'get',
-                url: env.api+'/system/config',
+                url: this.model.endpoint+'/system/config',
                 auth: {
                     username: this.model.username,
                     password: this.model.password
@@ -131,15 +167,32 @@ export default {
         this.loading = false
         window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response, color: 'error' })
       }
-    },autoLogin(){
+    },
+    validateURL(link)
+    {
+        if (link.indexOf("http://") == 0 || link.indexOf("https://") == 0) {
+            console.log("The link has http or https.");
+            return true;
+        }
+        else{
+            console.log("The link doesn't have http or https.");
+            return false;
+        }
+    },    
+    autoLogin(){
       const queryString = window.location.search;
+      console.log(queryString);
       const urlParams = new URLSearchParams(queryString);
       const username = urlParams.get('username')
       const endpoint = urlParams.get('endpoint')
-      if (username !== null && endpoint !== null) {
-        this.model.username = username
-        this.endpoint= 'http://'+endpoint
-
+      console.log(username, endpoint)
+      if (username !== null){
+        this.model.username = username;
+      }
+      
+      if(endpoint !== null) {
+        console.log(this.validateURL(endpoint))
+        this.model.endpoint= this.validateURL(endpoint)?endpoint:'https://'+endpoint;
       }
     }
   }

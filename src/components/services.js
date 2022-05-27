@@ -4,7 +4,7 @@ import env from '../env'
 export default {
     data: () => {
 		return {
-            api: env.api,
+            api: localStorage.getItem('api'),
             minioClient: '',
             username_auth:'',
             password_auth:''
@@ -18,6 +18,7 @@ export default {
         // var minio_useSSL = localStorage.getItem("useSSL");
         var minio_accessKey = localStorage.getItem("accessKey");
         var minio_secretKey = localStorage.getItem("secretKey");
+        this.api = localStorage.getItem('api');
 
 
 
@@ -38,7 +39,7 @@ export default {
             var _this = this
             axios({
                 method: 'get',
-                url: this.api+'/system/info',
+                url: params.api+'/system/info',
                 auth: {
                     username: params.user,
                     password: params.password
@@ -53,6 +54,7 @@ export default {
 
         },
         listServicesCall(callBackHandler) {
+            console.log(this.username_auth, this.password_auth )
             axios({
                 method: 'get',
                 url: this.api+'/system/services',
