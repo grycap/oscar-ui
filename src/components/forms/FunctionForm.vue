@@ -48,7 +48,8 @@
 													<v-text-field
 														v-model="form.name"
 														:rules="form.nameRules"
-														:counter="200"
+														:counter="26"
+														maxlength="26"
 														label="Function name"
 														required
 														:disabled="this.editionMode"
