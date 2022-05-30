@@ -1987,9 +1987,9 @@ export default {
 				this.envVars[key[i]]=values[i]
 			}
 			if(key.length > 0){
-				this.showselectEnv = true
+				this.showselectEnv = true;
 			}else{
-				this.showselectEnv = true
+				this.showselectEnv = false;
 			}			
 			if(Object.keys(data.annotations).length > 0){
 				this.annotations = data.annotations;
