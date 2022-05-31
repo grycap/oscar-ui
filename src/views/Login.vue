@@ -112,6 +112,7 @@ export default {
               }).then(function (response) {
                   var port=_this.getPort(response.data.minio_provider.endpoint)
                   var endpoint_host = _this.getHost(response.data.minio_provider.endpoint)
+                  var yunikorn_enable = _this.getHost(response.data.yunikorn_enable)
                   localStorage.setItem("endpoint",endpoint_host)
                   localStorage.setItem("accessKey",response.data.minio_provider.access_key)
                   localStorage.setItem("secretKey",response.data.minio_provider.secret_key)
@@ -119,6 +120,7 @@ export default {
                   localStorage.setItem("authenticated", true);
                   localStorage.setItem("user", _this.model.username);
                   localStorage.setItem("password", _this.model.password);
+                  localStorage.setItem("yunikorn_enable",yunikorn_enable);
                   _this.$router.push({name: "Functions"})
               }).catch(function (error) {
                   console.log(error)
@@ -138,7 +140,7 @@ export default {
       const endpoint = urlParams.get('endpoint')
       if (username !== null && endpoint !== null) {
         this.model.username = username
-        this.endpoint= 'http://'+endpoint
+        this.model.endpoint= 'http://'+endpoint
 
       }
     }

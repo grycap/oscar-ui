@@ -365,15 +365,48 @@
 															</select>
 														</v-flex>	
 
-														<v-flex xs12 sm3 style="padding-top:10px;">
-															<v-select
-																:items="form.log_level"
-																label="LOG LEVEL"
-																v-model="select_logLevel"
-															></v-select>
-														</v-flex>	
 														
-													</v-layout>
+														<v-flex v-show=" getYunikorn_option == 'true'" xs10 sm5>
+															<v-text-field
+																v-model="form.total_cpu"
+																:counter="10"
+																label="Total CPU"
+																style="padding-right: 5px;"											
+															></v-text-field>											
+														</v-flex>
+
+														<v-flex v-show=" getYunikorn_option == 'true'" xs10 sm5>
+															<v-text-field
+																v-model="form.total_memory"
+																:counter="10"
+																label="Total Memory"
+																style="padding-right: 5px;"																											
+															></v-text-field>																						
+														</v-flex> 
+														<v-flex v-show=" getYunikorn_option == 'true'" xs2 sm2 style="padding-top:10px;">
+															<select id="total_classmemory" class="custom-select" >																										
+																<option selected value="1">Mi</option>
+																<option value="2">Gi</option>															
+															</select>
+														</v-flex>	
+
+													
+														<v-flex xs12 sm5 >
+															<v-flex xs12 sm7 style="padding-top:10px;">
+																<v-select
+																	:items="form.log_level"
+																	label="LOG LEVEL"
+																	v-model="select_logLevel"
+																></v-select>
+															</v-flex>
+														</v-flex>
+														<v-flex v-show=" getYunikorn_option == 'true'" xs12 sm5 style="padding-top:10px;">
+															<v-switch v-model="form.yunikorn_enable" label="Are you going to use the Yunikorn scheduler?"></v-switch>
+														</v-flex>
+														<v-flex xs12 sm12 style="padding-top:10px;">
+															<v-switch v-model="form.alpine" label=" Does you image need support for Alpine?"></v-switch>
+														</v-flex>	
+													</v-layout>													
 												</v-container>								
 											</v-flex> 						
 										</v-layout>
@@ -1141,6 +1174,7 @@ export default {
 			labels:{},
 			envVarsAll:{},
 			limits_mem: '',
+			total_mem:'',
 			request_mem: '',
 			select_logLevel: '',
 			ONEDATA_DICT:{},
@@ -1213,6 +1247,10 @@ export default {
 				request_memory: '',
 				secrets: '',
 				script: '',
+				yunikorn_enable: false,
+				total_cpu:'',
+				total_memory:'',
+				alpine:false,
 				
 				
 			},
@@ -1227,7 +1265,7 @@ export default {
 			editScript: false,
 			storages_all:[],
 			select_tab:'',
-			disabled_submit:false
+			disabled_submit:false,
 
 
 		}
@@ -1823,7 +1861,7 @@ export default {
 			this.show_input('input')
 			
 		},
-		newFunction () {
+		prepareFunction(){
 			if (this.isEmpty(this.MINIO_DICT)==false) {
 				this.form.storage_provider["minio"]=this.MINIO_DICT
 			}
@@ -1843,6 +1881,21 @@ export default {
 				this.limits_mem = this.form.limits_memory + value;
 			}
 
+			var total_value = $("#total_classmemory option:selected").text();
+			if (this.form.total_memory == ""){
+				this.total_mem = ''
+			}else{
+				this.total_mem = this.form.total_memory + total_value;
+			}
+			if(this.editionMode){
+				var script = ''
+				if (this.script == '') {
+					script = this.base64String
+				}else{
+					script = this.script
+				}
+			}
+			
 			var params = {
 				
 				'name': this.form.name, 
@@ -1854,13 +1907,21 @@ export default {
 					"Variables":this.envVars
 				},
 				'annotations':this.annotations,
-				'labels':this.labels,
+				'labels': this.labels,
 				'input': this.inputs,
 				'output': this.outputs,
 				'script': this.base64String,
-				'storage_providers':this.form.storage_provider
-
+				'storage_providers': this.form.storage_provider,
+				'yunikorn_enable': this.form.yunikorn_enable,
+				'total_memory': this.total_mem,
+				'total_cpu': this.form.total_cpu,
+				'alpine':this.form.alpine,
 			}
+			console.log(params)
+			return params
+		},
+		newFunction () {
+			var params =this.prepareFunction()
 			this.createServiceCall(params,this.createServiceCallBack)	
 			
 		},
@@ -1871,7 +1932,6 @@ export default {
 				this.clear()
 				this.updateFunctionsGrid()
 				window.getApp.$emit('REFRESH_BUCKETS_LIST')
-
 			}else {
 				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response, color: 'error' })
 			}
@@ -1879,46 +1939,7 @@ export default {
 
 		},
 		editFunction () {
-			if (this.isEmpty(this.MINIO_DICT)==false) {
-				this.form.storage_provider["minio"]=this.MINIO_DICT
-			}
-			if (this.isEmpty(this.S3_DICT)==false){
-				this.form.storage_provider["s3"]=this.S3_DICT
-			}
-			if (this.isEmpty(this.ONEDATA_DICT)==false){
-				this.form.storage_provider["onedata"]=this.ONEDATA_DICT
-			}
-			
-			var value = $("#classmemory option:selected").text();
-			if (this.form.limits_memory == ""){
-				this.limits_mem = ''
-			}else{
-				this.limits_mem = this.form.limits_memory + value;
-			}
-			var script = ''
-			if (this.script == '') {
-				script = this.base64String
-			}else{
-				script = this.script
-			}
-			var params = {
-				
-				'name': this.form.name, 
-				'image': this.form.image, 
-				'cpu': this.form.limits_cpu,
-				'memory': this.limits_mem,
-				'log_level': this.select_logLevel,
-				'environment': {
-					"Variables":this.envVars
-				},
-				'annotations':this.annotations,
-				'labels':this.labels,
-				'input': this.inputs,
-				'output': this.outputs,
-				'script': this.base64String,
-				'storage_providers':this.form.storage_provider
-
-			}	
+			var params =this.prepareFunction()
 			this.progress.active = true;
 			this.disabled_submit = true;
 			this.editServiceCall(params, this.editServiceCallBack)
@@ -1955,6 +1976,9 @@ export default {
 		showSelectedFiles () {
 			return this.files.length > 0
 		},
+		getYunikorn_option () {
+			return localStorage.getItem('yunikorn_enable')
+		},		
 		
 	},
   
@@ -1978,6 +2002,23 @@ export default {
 			}
 			setTimeout(function(){
 				$('#classmemory').val(value_select)
+			},100)
+			this.form.alpine=data.alpine
+			this.form.yunikorn_enable=data.yunikorn_enable
+			this.form.total_cpu=data.total_cpu
+			var total_value_select = "1"
+			if(data.total_memory === undefined){
+				this.form.total_memory = ''
+			}else{
+				var total_memory_split = []
+				total_memory_split = data.total_memory.match(/[a-z]+|[^a-z]+/gi);
+				this.form.total_memory = total_memory_split[0]
+				if (total_memory_split[1] == "Gi"){
+					total_value_select = "2"
+				}
+			}
+			setTimeout(function(){
+				$('#total_classmemory').val(total_value_select)
 			},100)
 			var key=''
 			var values= ''
