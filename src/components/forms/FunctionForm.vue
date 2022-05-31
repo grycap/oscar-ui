@@ -1917,7 +1917,6 @@ export default {
 				'total_cpu': this.form.total_cpu,
 				'alpine':this.form.alpine,
 			}
-			console.log(params)
 			return params
 		},
 		newFunction () {
