@@ -2000,9 +2000,6 @@ export default {
 			}else{
 				var value_select = "2"
 			}
-			setTimeout(function(){
-				$('#classmemory').val(value_select)
-			},100)
 			this.form.alpine=data.alpine
 			this.form.yunikorn_enable=data.yunikorn_enable
 			this.form.total_cpu=data.total_cpu
@@ -2018,6 +2015,7 @@ export default {
 				}
 			}
 			setTimeout(function(){
+				$('#classmemory').val(value_select)
 				$('#total_classmemory').val(total_value_select)
 			},100)
 			var key=''
