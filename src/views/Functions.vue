@@ -345,6 +345,8 @@ export default {
 						cpu: serv.cpu,
 						logLevel: serv.log_level,
 						envVars: serv.environment,
+						annotations: serv.annotations, 
+						labels: serv.labels,
 						memory: serv.memory,
 						inputs: serv.input,
 						outputs: serv.output,

@@ -48,7 +48,8 @@
 													<v-text-field
 														v-model="form.name"
 														:rules="form.nameRules"
-														:counter="200"
+														:counter="26"
+														maxlength="26"
 														label="Function name"
 														required
 														:disabled="this.editionMode"
@@ -2025,9 +2026,9 @@ export default {
 				this.envVars[key[i]]=values[i]
 			}
 			if(key.length > 0){
-				this.showselectEnv = true
+				this.showselectEnv = true;
 			}else{
-				this.showselectEnv = true
+				this.showselectEnv = false;
 			}			
 			if(Object.keys(data.annotations).length > 0){
 				this.annotations = data.annotations;
