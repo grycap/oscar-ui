@@ -51,9 +51,12 @@
             </tr>
             </template>
             <template v-slot:expand="props">
-            <v-card flat color="black">
-                <v-card-text style="font-family: monospace;color:white;white-space: pre-wrap;">{{job_logs}}</v-card-text>
-            </v-card>
+                <div v-if="job_logs != ''"  class="col-12" style="padding-top:2rem;height:40vh;overflow-y: auto;">
+                    <editor editorId="editorB" lang="text" :content="job_logs" ></editor>
+                </div>
+                <div v-else class="text-center">
+                    <i class="fa fa-3x fa-spinner fa-spin"></i>
+                </div>
             </template>
              <template v-slot:no-data>
                 <v-alert :value="true" color="error" icon="warning">
@@ -73,13 +76,15 @@
 
 <script>
 import Services from '../components/services';
-import { IntersectingCirclesSpinner } from 'epic-spinners'
-import moment from 'moment'
+import { IntersectingCirclesSpinner } from 'epic-spinners';
+import moment from 'moment';
+import Editor from './AceEditor';
 /* eslint-disable */
 export default {
     mixins:[Services],
     components: {
 		IntersectingCirclesSpinner,
+        'editor': Editor,
 	},
 	name: 'Logs',
 	data () {
@@ -146,6 +151,7 @@ export default {
         listJobNameCallback(response){
                 this.job_logs = ''
                 if(response.status==200){
+                    console.log(response.data)
                     this.job_logs = response.data  //remember to handle error
                 }else {
                     this.job_logs = "There are no logs available."
