@@ -402,10 +402,10 @@
 															</v-flex>
 														</v-flex>
 														<v-flex v-show=" getYunikorn_option == 'true'" xs12 sm5 style="padding-top:10px;">
-															<v-switch v-model="form.yunikorn_enable" label="Are you going to use the Yunikorn scheduler?"></v-switch>
+															<v-switch v-model="form.yunikorn_enable" label=" Use the Yunikorn scheduler:"></v-switch>
 														</v-flex>
 														<v-flex xs12 sm12 style="padding-top:10px;">
-															<v-switch v-model="form.alpine" label=" Does you image need support for Alpine?"></v-switch>
+															<v-switch v-model="form.alpine" label=" Alpine Image:"></v-switch>
 														</v-flex>	
 													</v-layout>													
 												</v-container>								
