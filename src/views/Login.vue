@@ -151,6 +151,9 @@ export default {
                   localStorage.setItem("endpoint",endpoint_host)
                   localStorage.setItem("accessKey",response.data.minio_provider.access_key)
                   localStorage.setItem("secretKey",response.data.minio_provider.secret_key)
+                  if(response.data.minio_provider.useSSL){
+                    localStorage.setItem("useSSL",response.data.minio_provider.useSSL)
+                  }
                   localStorage.setItem("port",port)
                   localStorage.setItem("authenticated", true);
                   localStorage.setItem("user", _this.model.username);
