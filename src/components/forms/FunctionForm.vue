@@ -1930,8 +1930,7 @@ export default {
 					params['total_cpu']=this.form.total_cpu
 				}
 
-			}
-			console.log(params)
+			}			
 			
 			return params
 		},
