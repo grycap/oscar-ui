@@ -402,16 +402,16 @@
 														</v-flex>
 														
 
-														<v-flex xs12 sm5 style="padding-top:10px; margin-left: 10px;">
-														<span class="v-label theme--light" aria-hidden="true" 
-															style="left: 0px; 
-																	right: auto;
-																	position: relative;
-																	display:inline-block;
-																	margin-right: 10px;" >
-																	Does you image need support for Alpine? 
-														</span>
-															<v-switch v-model="form.alpine" style="display:inline-block;"></v-switch>
+														<v-flex class="text-center" xs12 sm5 style="padding-top:10px; margin-left: 10px;">
+															<div>
+																<span class="v-label theme--light" aria-hidden="true" 
+																	style="left: 0px; 
+																			right: auto;
+																			margin-right: 10px;" >
+																			Is your image based on Alpine? 
+																</span>
+																<v-switch  v-model="form.alpine" style="display:inline-block;"></v-switch>
+															</div>
 														</v-flex>
 
 
@@ -1920,12 +1920,20 @@ export default {
 				'output': this.outputs,
 				'script': this.base64String,
 				'storage_providers': this.form.storage_provider,
-				
 				'alpine':this.form.alpine,
 			}
 			if(localStorage.getItem('yunikorn_enable') == "true"){
+<<<<<<< HEAD
 				params.total_memory=this.total_mem
 				params.total_cpu=this.form.total_cpu
+=======
+				if(this.form.total_memory != ''){
+					params['total_memory']=this.total_mem
+				}
+				if(this.form.total_cpu != ''){
+					params['total_cpu']=this.form.total_cpu
+				}
+>>>>>>> 99150c871f7ec4f064d44e61faef8607c93a9997
 
 			}
 			console.log(params)
