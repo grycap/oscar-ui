@@ -392,21 +392,29 @@
 														</v-flex>	
 
 													
-														<v-flex xs12 sm5 >
-															<v-flex xs12 sm7 style="padding-top:10px;">
-																<v-select
-																	:items="form.log_level"
-																	label="LOG LEVEL"
-																	v-model="select_logLevel"
-																></v-select>
-															</v-flex>
+														
+														<v-flex xs12 sm5 style="padding-top:10px;">
+															<v-select
+																:items="form.log_level"
+																label="LOG LEVEL"
+																v-model="select_logLevel"
+															></v-select>
 														</v-flex>
-														<v-flex v-show=" getYunikorn_option == 'true'" xs12 sm5 style="padding-top:10px;">
-															<v-switch v-model="form.yunikorn_enable" label=" Use the Yunikorn scheduler:"></v-switch>
+														
+
+														<v-flex xs12 sm5 style="padding-top:10px; margin-left: 10px;">
+														<span class="v-label theme--light" aria-hidden="true" 
+															style="left: 0px; 
+																	right: auto;
+																	position: relative;
+																	display:inline-block;
+																	margin-right: 10px;" >
+																	Does you image need support for Alpine? 
+														</span>
+															<v-switch v-model="form.alpine" style="display:inline-block;"></v-switch>
 														</v-flex>
-														<v-flex xs12 sm12 style="padding-top:10px;">
-															<v-switch v-model="form.alpine" label=" Alpine Image:"></v-switch>
-														</v-flex>	
+
+
 													</v-layout>													
 												</v-container>								
 											</v-flex> 						
@@ -1248,7 +1256,6 @@ export default {
 				request_memory: '',
 				secrets: '',
 				script: '',
-				yunikorn_enable: false,
 				total_cpu:'',
 				total_memory:'',
 				alpine:false,
@@ -1913,10 +1920,13 @@ export default {
 				'output': this.outputs,
 				'script': this.base64String,
 				'storage_providers': this.form.storage_provider,
-				'yunikorn_enable': this.form.yunikorn_enable,
-				'total_memory': this.total_mem,
-				'total_cpu': this.form.total_cpu,
+				
 				'alpine':this.form.alpine,
+			}
+			if(localStorage.getItem('yunikorn_enable') == "true"){
+				params.total_memory=this.form.total_mem
+				params.total_cpu=this.form.cpu
+
 			}
 			return params
 		},
@@ -2001,7 +2011,6 @@ export default {
 				var value_select = "2"
 			}
 			this.form.alpine=data.alpine
-			this.form.yunikorn_enable=data.yunikorn_enable
 			this.form.total_cpu=data.total_cpu
 			var total_value_select = "1"
 			if(data.total_memory === undefined){

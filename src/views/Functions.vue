@@ -308,7 +308,6 @@ export default {
 				script: this.services[index].script,
 				memory: this.services[index].memory,
 				storage_provider: this.services[index].storage,
-				yunikorn_enable:this.services[index].yunikorn_enable,
 				total_memory:this.services[index].total_memory,
 				total_cpu:this.services[index].total_cpu,
 				alpine:this.services[index].alpine
