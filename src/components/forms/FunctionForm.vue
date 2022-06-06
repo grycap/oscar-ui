@@ -1924,10 +1924,12 @@ export default {
 				'alpine':this.form.alpine,
 			}
 			if(localStorage.getItem('yunikorn_enable') == "true"){
-				params.total_memory=this.form.total_mem
-				params.total_cpu=this.form.cpu
+				params.total_memory=this.total_mem
+				params.total_cpu=this.form.total_cpu
 
 			}
+			console.log(params)
+			
 			return params
 		},
 		newFunction () {
