@@ -64,8 +64,8 @@ export default {
   }),
   computed: {
   },
-  created () {    
-    this.auth = localStorage.getItem("authenticated")    
+  created () {
+    this.auth = localStorage.getItem("authenticated")
     AppEvents.forEach(item => {
       this.$on(item.name, item.callback)
     })

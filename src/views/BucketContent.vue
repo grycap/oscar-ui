@@ -693,12 +693,11 @@ export default {
 						color: 'error'
 					}) 			
 			}else {
-
+				this.toDownload=[]
 				this.selected.map((sel) => {
 					return _this.toDownload.push(sel.path)
-				})    
-
-				if (this.selected.leght == 1) {
+				}) 				
+				if (this.selected.length == 1) {
 					var params = {'bucketName': this.bucketName, "fileName": this.toDownload, "select": this.selected.length, "response_type": 'blob'}
 				} else{
 					var params = {'bucketName': this.bucketName, "fileName": this.toDownload, "select": this.selected.length, "response_type": 'arraybuffer'}

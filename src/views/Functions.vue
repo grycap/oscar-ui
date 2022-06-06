@@ -307,8 +307,10 @@ export default {
 				cpu: this.services[index].cpu,
 				script: this.services[index].script,
 				memory: this.services[index].memory,
-				storage_provider: this.services[index].storage
-			
+				storage_provider: this.services[index].storage,
+				total_memory:this.services[index].total_memory,
+				total_cpu:this.services[index].total_cpu,
+				alpine:this.services[index].alpine
 			}
 			window.getApp.$emit('FUNC_OPEN_MANAGEMENT_DIALOG', servInfo)
 		},    
