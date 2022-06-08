@@ -148,13 +148,28 @@ export default {
               }).then(function (response) {
                   var port=_this.getPort(response.data.minio_provider.endpoint)
                   var endpoint_host = _this.getHost(response.data.minio_provider.endpoint)
-                  localStorage.setItem("endpoint",endpoint_host)
+                  if(_this.model.endpoint.includes('localhost')){
+                    localStorage.setItem("endpoint",'localhost')
+                  }else{
+                    localStorage.setItem("endpoint",endpoint_host)
+                    }
+
                   localStorage.setItem("accessKey",response.data.minio_provider.access_key)
                   localStorage.setItem("secretKey",response.data.minio_provider.secret_key)
                   if(response.data.minio_provider.useSSL){
-                    localStorage.setItem("useSSL",response.data.minio_provider.useSSL)
+                    if(_this.model.endpoint.includes('localhost')){
+                      localStorage.setItem("useSSL",false)
+                    }else{
+                      localStorage.setItem("useSSL",response.data.minio_provider.useSSL)
+                    }
+                  }else{
+                    localStorage.setItem("useSSL",false)
                   }
-                  localStorage.setItem("port",port)
+                  if(_this.model.endpoint.includes('localhost')){
+                    localStorage.setItem("port",30300)
+                  }else{
+                    localStorage.setItem("port",port)
+                  }
                   localStorage.setItem("authenticated", true);
                   localStorage.setItem("user", _this.model.username);
                   localStorage.setItem("password", _this.model.password);
