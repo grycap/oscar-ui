@@ -108,6 +108,10 @@ export default {
       }else{
         localStorage.setItem("api", this.model.endpoint);
         localStorage.setItem("client_id", this.env.client_id);
+        localStorage.setItem("provider_url", this.env.provider_url);
+        localStorage.setItem("url_authorize", this.env.url_authorize);
+        localStorage.setItem("url_user_info", this.env.url_user_info);
+        localStorage.setItem("token_endpoint", this.env.token_endpoint);
         window.location.replace(this.env.redirect_uri);
       }
     },
@@ -189,11 +193,11 @@ export default {
     },
     validateURL(link)
     {
-        if (link.indexOf("http://") == 0 || link.indexOf("https://") == 0) {
+        if (link.indexOf("https://") == 0) {
             console.log("The link has http or https.");
             return true;
         }
-        else{
+        else if(link.indexOf("http://") == 0 ||){
             console.log("The link doesn't have http or https.");
             return false;
         }
