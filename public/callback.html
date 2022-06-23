@@ -76,7 +76,7 @@
           const r = await fetch(`${userinfo_endpoint}`, options);
           const users = await r.json();
           localStorage.setItem("session", JSON.stringify({ user: { 'access_token': tokens['access_token'], info:users, authenticated: true } }));
-          var url_redirect = window.location.origin + "/#/auth/select-option"
+          var url_redirect = window.location.origin + "/#//services"
           window.location.href = url_redirect
 
     }
