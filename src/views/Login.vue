@@ -197,7 +197,7 @@ export default {
             console.log("The link has http or https.");
             return true;
         }
-        else if(link.indexOf("http://") == 0 ||){
+        else if(link.indexOf("http://") == 0){
             console.log("The link doesn't have http or https.");
             return false;
         }
