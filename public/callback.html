@@ -34,15 +34,15 @@
       <div>
     </div>
   </div>
- 
-  <script type="text/javascript">
-        const baseUrl = 'https://aai-dev.egi.eu/oidc/';
+  
+  <script>
+        const baseUrl = localStorage.getItem('provider_url');
         const client_id = localStorage.getItem('client_id');
         const groupId = '00gwb2x6jewAvwYSX0h7';
         const redirect_uri = `${location.origin}/callback.html`;
-        const authorize_endpoint = `${baseUrl}authorize`;
-        const token_endpoint = `${baseUrl}token`;
-        const userinfo_endpoint = `${baseUrl}userinfo`;
+        const authorize_endpoint = localStorage.getItem('url_authorize');;
+        const token_endpoint = localStorage.getItem('token_endpoint');;
+        const userinfo_endpoint = localStorage.getItem('url_user_info');;
         const scope = 'openid profile email eduperson_entitlement';
 
         const q = new URLSearchParams(location.search);
@@ -52,9 +52,9 @@
           results.innerHTML = q.get('error') + '<br>' + q.get('error_description') + `<br><br>Fix the error and <a href="${redirect_uri}">try again</a>`;
         } else if (q.has('code')) { // If the server returned an authorization code, exchange it for an access token.
           if (localStorage.state == q.get('state')) {
-            // getUsers();
+            getUsers();
             // updateMe();
-            getTokens();
+            // getTokens();
             console.log('here')
           } else {
             results.innerHTML = 'Invalid state. <a href="/pkce">retry</a>';
@@ -62,14 +62,12 @@
 
         } else {
           startPkce();
-          console.log('here2')
         }
 
       async function getUsers() {
         tokens = await getTokens();
         history.replaceState({}, null, '/callback.html'); // Remove the auth code from the browser address bar.
         const id_token = JSON.parse(atob(tokens.id_token.split('.')[1]));
-        console.log('id_token', id_token);
         const access_token = JSON.parse(atob(tokens.access_token.split('.')[1]));
         console.log('access_token', access_token);
         const options = {
@@ -77,6 +75,45 @@
         };
           const r = await fetch(`${userinfo_endpoint}`, options);
           const users = await r.json();
+          localStorage.setItem("session", JSON.stringify({ user: { 'access_token': tokens['access_token'], info:users, authenticated: true } }));          
+          axios({
+                method: 'get',
+                url: localStorage.getItem('api')+'/system/config',   
+                headers: {Authorization: `Bearer ${tokens.access_token}` }
+
+              }).then(function (response) {
+                  var port=getPort(response.data.minio_provider.endpoint)
+                  var endpoint_host = getHost(response.data.minio_provider.endpoint)
+                  if(localStorage.getItem('api').includes('localhost')){
+                    localStorage.setItem("endpoint",'localhost')
+                  }else{
+                    localStorage.setItem("endpoint",endpoint_host)
+                    }
+
+                  localStorage.setItem("accessKey",response.data.minio_provider.access_key)
+                  localStorage.setItem("secretKey",response.data.minio_provider.secret_key)
+                  if(response.data.minio_provider.useSSL){
+                    if(localStorage.getItem('api').includes('localhost')){
+                      localStorage.setItem("useSSL",false)
+                    }else{
+                      localStorage.setItem("useSSL",response.data.minio_provider.useSSL)
+                    }
+                  }else{
+                    localStorage.setItem("useSSL",true)
+                  }
+                  if(localStorage.getItem('api').includes('localhost')){
+                    localStorage.setItem("port",30300)
+                  }else{
+                    localStorage.setItem("port",port)
+                  }
+                  localStorage.setItem("authenticated", true);
+                  localStorage.setItem("yunikorn_enable",response.data.yunikorn_enable);
+                  var url_redirect = window.location.origin + "/#/services"
+                  window.location.href = url_redirect
+              }).catch(function (error) {
+                  console.log(error)
+              })
+
     }
 
     async function getGroups() {
@@ -127,26 +164,15 @@
               client_id,
               redirect_uri,
               code_verifier: localStorage.code_verifier
-              // code_verifier: 'Gi7fopV0~BaKqIie978fh~xyutU3Qf2eXngJY9lVAEjukZy-KdUUR5DHh2NwpPYfuYOvEL--Ykat387NE4sC1Al30nfXQO6_qEQtMfpLBuNq-UBEJtvTqh-ErLHqxedb'
       };
               const r = await fetch(token_endpoint, {
                 method: 'post',
               body: new URLSearchParams(params)
       });
               const tokens = await r.json();
-              console.log(tokens)
               const id_token = JSON.parse(atob(tokens.id_token.split('.')[1]));
-              console.log('id_token', id_token);
               const access_token = JSON.parse(atob(tokens.access_token.split('.')[1]));
-              
-              // localStorage.setItem("accessKey",response.data.minio_provider.access_key)
-              // localStorage.setItem("secretKey",response.data.minio_provider.secret_key)
-              // localStorage.setItem("port",port)
-              localStorage.setItem("authenticated", true);       
-              // localStorage.setItem("token", access_token);       
-              var url_redirect = window.location.origin + "/#/services"
-              window.location.href = url_redirect
-              // return tokens;
+              return tokens;
     }
 
     async function startPkce() {
@@ -191,6 +217,32 @@
       //   (replace + with -, replace / with _, trim trailing =)
       return btoa(String.fromCharCode.apply(null, new Uint8Array(str)))
               .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+
+    function getHost(url) {
+       var hostname;
+        //find & remove protocol (http, ftp, etc.) and get hostname
+
+        if (url.indexOf("//") > -1) {
+            hostname = url.split('/')[2];
+        }
+        else {
+            hostname = url.split('/')[0];
+        }
+
+        //find & remove port number
+        hostname = hostname.split(':')[0];
+        //find & remove "?"
+        hostname = hostname.split('?')[0];
+
+        return hostname;
+    }
+
+    function  getPort(url) {
+        url = url.match(/^(([a-z]+:)?(\/\/)?[^\/]+).*$/)[1] || url;
+        var parts = url.split(':'),
+            port = parseInt(parts[parts.length - 1], 10);
+        return port;
     }
   </script>
 	<style>
