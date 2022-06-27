@@ -97,6 +97,7 @@ export default {
         'password': this.model.password,
         'api': this.model.endpoint
       }
+      this.model.endpoint = this.model.endpoint.endsWith('/') ? this.model.endpoint.slice(0, -1) : this.model.endpoint;
       localStorage.setItem("api", this.model.endpoint);
       this.checkLoginCall(params,this.checkLoginCallback);
 
@@ -106,6 +107,7 @@ export default {
       if(this.model.endpoint == ''){
         window.getApp.$emit('APP_SHOW_SNACKBAR', { text: "Endpoint is required", color: 'error' })
       }else{
+        this.model.endpoint = this.model.endpoint.endsWith('/') ? this.model.endpoint.slice(0, -1) : this.model.endpoint;
         localStorage.setItem("api", this.model.endpoint);
         localStorage.setItem("client_id", this.env.client_id);
         localStorage.setItem("provider_url", this.env.provider_url);
@@ -242,7 +244,7 @@ export default {
         else if(link.indexOf("http://") == 0){
             console.log("The link doesn't have http or https.");
             return false;
-        }
+        }        
     },    
     autoLogin(){
       const queryString = window.location.search;
