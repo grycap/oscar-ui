@@ -15,7 +15,6 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 window.axios.interceptors.request.use(function (config) {
   // Do something before request is sent
-  // const AUTH_TOKEN = document.getElementsByName("token")["0"].content;
   var session = JSON.parse(localStorage.getItem("session"))
   if(session && session['user'] && session['user']['access_token']){
     const AUTH_TOKEN = session.user.access_token

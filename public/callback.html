@@ -36,7 +36,7 @@
   </div>
   
   <script>
-        const baseUrl = localStorage.getItem('provider_url');;
+        const baseUrl = localStorage.getItem('provider_url');
         const client_id = localStorage.getItem('client_id');
         const groupId = '00gwb2x6jewAvwYSX0h7';
         const redirect_uri = `${location.origin}/callback.html`;
@@ -75,9 +75,44 @@
         };
           const r = await fetch(`${userinfo_endpoint}`, options);
           const users = await r.json();
-          localStorage.setItem("session", JSON.stringify({ user: { 'access_token': tokens['access_token'], info:users, authenticated: true } }));
-          var url_redirect = window.location.origin + "/#//services"
-          window.location.href = url_redirect
+          localStorage.setItem("session", JSON.stringify({ user: { 'access_token': tokens['access_token'], info:users, authenticated: true } }));          
+          axios({
+                method: 'get',
+                url: localStorage.getItem('api')+'/system/config',   
+                headers: {Authorization: `Bearer ${tokens.access_token}` }
+
+              }).then(function (response) {
+                  var port=getPort(response.data.minio_provider.endpoint)
+                  var endpoint_host = getHost(response.data.minio_provider.endpoint)
+                  if(localStorage.getItem('api').includes('localhost')){
+                    localStorage.setItem("endpoint",'localhost')
+                  }else{
+                    localStorage.setItem("endpoint",endpoint_host)
+                    }
+
+                  localStorage.setItem("accessKey",response.data.minio_provider.access_key)
+                  localStorage.setItem("secretKey",response.data.minio_provider.secret_key)
+                  if(response.data.minio_provider.useSSL){
+                    if(localStorage.getItem('api').includes('localhost')){
+                      localStorage.setItem("useSSL",false)
+                    }else{
+                      localStorage.setItem("useSSL",response.data.minio_provider.useSSL)
+                    }
+                  }else{
+                    localStorage.setItem("useSSL",true)
+                  }
+                  if(localStorage.getItem('api').includes('localhost')){
+                    localStorage.setItem("port",30300)
+                  }else{
+                    localStorage.setItem("port",port)
+                  }
+                  localStorage.setItem("authenticated", true);
+                  localStorage.setItem("yunikorn_enable",response.data.yunikorn_enable);
+                  var url_redirect = window.location.origin + "/#/services"
+                  window.location.href = url_redirect
+              }).catch(function (error) {
+                  console.log(error)
+              })
 
     }
 
@@ -182,6 +217,32 @@
       //   (replace + with -, replace / with _, trim trailing =)
       return btoa(String.fromCharCode.apply(null, new Uint8Array(str)))
               .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+
+    function getHost(url) {
+       var hostname;
+        //find & remove protocol (http, ftp, etc.) and get hostname
+
+        if (url.indexOf("//") > -1) {
+            hostname = url.split('/')[2];
+        }
+        else {
+            hostname = url.split('/')[0];
+        }
+
+        //find & remove port number
+        hostname = hostname.split(':')[0];
+        //find & remove "?"
+        hostname = hostname.split('?')[0];
+
+        return hostname;
+    }
+
+    function  getPort(url) {
+        url = url.match(/^(([a-z]+:)?(\/\/)?[^\/]+).*$/)[1] || url;
+        var parts = url.split(':'),
+            port = parseInt(parts[parts.length - 1], 10);
+        return port;
     }
   </script>
 	<style>
