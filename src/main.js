@@ -40,7 +40,6 @@ window.axios.interceptors.response.use(
   res => {   
     // Do something with response data
     if (res) {
-      unblockPage();
       if (res.status === 401) {
           setTimeout(() => {
             window.Swal.fire({
@@ -68,8 +67,6 @@ window.axios.interceptors.response.use(
       // Something happened in setting up the request that triggered an Error
       console.log('Error', error.message);
     }
-
-    unblockPage();
     if (status === 401) {
       setTimeout(() => {
         window.Swal.fire({
