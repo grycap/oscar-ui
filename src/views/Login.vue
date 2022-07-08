@@ -97,8 +97,9 @@ export default {
         'password': this.model.password,
         'api': this.model.endpoint
       }
+      this.model.endpoint = this.model.endpoint.endsWith('/') ? this.model.endpoint.slice(0, -1) : this.model.endpoint;
       localStorage.setItem("api", this.model.endpoint);
-      this.checkLoginCall(params,this.checkLoginCallback)
+      this.checkLoginCall(params,this.checkLoginCallback);
 
     },
     login_egi(){
@@ -106,8 +107,13 @@ export default {
       if(this.model.endpoint == ''){
         window.getApp.$emit('APP_SHOW_SNACKBAR', { text: "Endpoint is required", color: 'error' })
       }else{
+        this.model.endpoint = this.model.endpoint.endsWith('/') ? this.model.endpoint.slice(0, -1) : this.model.endpoint;
         localStorage.setItem("api", this.model.endpoint);
         localStorage.setItem("client_id", this.env.client_id);
+        localStorage.setItem("provider_url", this.env.provider_url);
+        localStorage.setItem("url_authorize", this.env.url_authorize);
+        localStorage.setItem("url_user_info", this.env.url_user_info);
+        localStorage.setItem("token_endpoint", this.env.token_endpoint);
         window.location.replace(this.env.redirect_uri);
       }
     },
@@ -138,7 +144,46 @@ export default {
     checkLoginCallback(response){
       if(response == 200){
         var _this = this
-          axios({
+         var if_token = this.checkIfToken();
+            if(if_token){
+                axios({
+                method: 'get',
+                url: this.model.endpoint+'/system/config',               
+              }).then(function (response) {
+                  var port=_this.getPort(response.data.minio_provider.endpoint)
+                  var endpoint_host = _this.getHost(response.data.minio_provider.endpoint)
+                  if(_this.model.endpoint.includes('localhost')){
+                    localStorage.setItem("endpoint",'localhost')
+                  }else{
+                    localStorage.setItem("endpoint",endpoint_host)
+                    }
+
+                  localStorage.setItem("accessKey",response.data.minio_provider.access_key)
+                  localStorage.setItem("secretKey",response.data.minio_provider.secret_key)
+                  if(response.data.minio_provider.useSSL){
+                    if(_this.model.endpoint.includes('localhost')){
+                      localStorage.setItem("useSSL",false)
+                    }else{
+                      localStorage.setItem("useSSL",response.data.minio_provider.useSSL)
+                    }
+                  }else{
+                    localStorage.setItem("useSSL",false)
+                  }
+                  if(_this.model.endpoint.includes('localhost')){
+                    localStorage.setItem("port",30300)
+                  }else{
+                    localStorage.setItem("port",port)
+                  }
+                  localStorage.setItem("authenticated", true);
+                  localStorage.setItem("user", _this.model.username);
+                  localStorage.setItem("password", _this.model.password);
+                  localStorage.setItem("yunikorn_enable",response.data.yunikorn_enable);
+                  _this.$router.push({name: "Functions"})
+              }).catch(function (error) {
+                  console.log(error)
+              })
+            }else{
+              axios({
                 method: 'get',
                 url: this.model.endpoint+'/system/config',
                 auth: {
@@ -148,13 +193,28 @@ export default {
               }).then(function (response) {
                   var port=_this.getPort(response.data.minio_provider.endpoint)
                   var endpoint_host = _this.getHost(response.data.minio_provider.endpoint)
-                  localStorage.setItem("endpoint",endpoint_host)
+                  if(_this.model.endpoint.includes('localhost')){
+                    localStorage.setItem("endpoint",'localhost')
+                  }else{
+                    localStorage.setItem("endpoint",endpoint_host)
+                    }
+
                   localStorage.setItem("accessKey",response.data.minio_provider.access_key)
                   localStorage.setItem("secretKey",response.data.minio_provider.secret_key)
                   if(response.data.minio_provider.useSSL){
-                    localStorage.setItem("useSSL",response.data.minio_provider.useSSL)
+                    if(_this.model.endpoint.includes('localhost')){
+                      localStorage.setItem("useSSL",false)
+                    }else{
+                      localStorage.setItem("useSSL",response.data.minio_provider.useSSL)
+                    }
+                  }else{
+                    localStorage.setItem("useSSL",false)
                   }
-                  localStorage.setItem("port",port)
+                  if(_this.model.endpoint.includes('localhost')){
+                    localStorage.setItem("port",30300)
+                  }else{
+                    localStorage.setItem("port",port)
+                  }
                   localStorage.setItem("authenticated", true);
                   localStorage.setItem("user", _this.model.username);
                   localStorage.setItem("password", _this.model.password);
@@ -163,6 +223,9 @@ export default {
               }).catch(function (error) {
                   console.log(error)
               })
+
+            }
+          
 
       }else if (response == 401){
         this.loading = false
@@ -174,18 +237,17 @@ export default {
     },
     validateURL(link)
     {
-        if (link.indexOf("http://") == 0 || link.indexOf("https://") == 0) {
+        if (link.indexOf("https://") == 0) {
             console.log("The link has http or https.");
             return true;
         }
-        else{
+        else if(link.indexOf("http://") == 0){
             console.log("The link doesn't have http or https.");
             return false;
-        }
+        }        
     },    
     autoLogin(){
       const queryString = window.location.search;
-      console.log(queryString);
       const urlParams = new URLSearchParams(queryString);
       const username = urlParams.get('username')
       const endpoint = urlParams.get('endpoint')

@@ -15,7 +15,11 @@ export default {
         this.password_auth = localStorage.getItem("password");
         var minio_endpoint = localStorage.getItem("endpoint");
         var minio_port = localStorage.getItem("port");
+<<<<<<< HEAD
         var minio_useSSL = localStorage.getItem("useSSL");
+=======
+        var minio_useSSL = localStorage.getItem("useSSL")==='false'?false:true;
+>>>>>>> 46737ef0c8564d6f258f039b17206e010975a804
         var minio_accessKey = localStorage.getItem("accessKey");
         var minio_secretKey = localStorage.getItem("secretKey");
         this.api = localStorage.getItem('api');
@@ -34,143 +38,271 @@ export default {
 
     },
     methods: {
+        checkIfToken(){
+            var session = JSON.parse(localStorage.getItem("session"))
+            if(session && session['user'] && session['user']['access_token']){
+                return true;
+            }else{
+                return false;
+            }
+        },
         //ApiCalls
         checkLoginCall(params,callBackHandler){
             var _this = this
-            axios({
-                method: 'get',
-                url: params.api+'/system/info',
-                auth: {
-                    username: params.user,
-                    password: params.password
-                }
-            }).then(function (response) {
-                // _this.username_auth = params.user
-                // _this.password_auth = params.password
-                callBackHandler(response.status);
-            }.bind(this)).catch(function (error) {
-                callBackHandler(error.response.status);
-            })
+            var if_token = this.checkIfToken();
+            if(if_token){
+                axios({
+                    method: 'get',
+                    url: params.api+'/system/info',
+                }).then(function (response) {
+                    // _this.username_auth = params.user
+                    // _this.password_auth = params.password
+                    callBackHandler(response.status);
+                }.bind(this)).catch(function (error) {
+                    callBackHandler(error.response.status);
+                })
+            }else{
+                axios({
+                    method: 'get',
+                    url: params.api+'/system/info',
+                    auth: {
+                        username: params.user,
+                        password: params.password
+                    }
+                }).then(function (response) {
+                    // _this.username_auth = params.user
+                    // _this.password_auth = params.password
+                    callBackHandler(response.status);
+                }.bind(this)).catch(function (error) {
+                    callBackHandler(error.response.status);
+                })
+            }
 
         },
         listServicesCall(callBackHandler) {
-            console.log(this.username_auth, this.password_auth )
-            axios({
-                method: 'get',
-                url: this.api+'/system/services',
-                auth: {
-                    username: this.username_auth,
-                    password: this.password_auth
-                }
-            }).then(function (response) {
-                callBackHandler(response);
-            }.bind(this)).catch(function (error) {
-                callBackHandler(error);
-            })
+            var if_token = this.checkIfToken();
+            if(if_token){
+                axios({
+                    method: 'get',
+                    url: this.api+'/system/services',                    
+                }).then(function (response) {
+                    callBackHandler(response);
+                }.bind(this)).catch(function (error) {
+                    callBackHandler(error);
+                })
+            }else{
+                axios({
+                    method: 'get',
+                    url: this.api+'/system/services',
+                    auth: {
+                        username: this.username_auth,
+                        password: this.password_auth
+                    }
+                }).then(function (response) {
+                    callBackHandler(response);
+                }.bind(this)).catch(function (error) {
+                    callBackHandler(error);
+                })
+            }
         },
         deleteServiceCall(params, callBackHandler) {
-            axios({
-                method: 'delete',
-                url: this.api+'/system/services/'+params,
-                auth: {
-                    username: this.username_auth,
-                    password: this.password_auth
-                },
-                data:params,
-            }).then(function (response) {
-                callBackHandler(response);
-            }.bind(this)).catch(function (error) {
-                callBackHandler(error);
-            })
+            var if_token = this.checkIfToken();
+            if(if_token){
+                axios({
+                    method: 'delete',
+                    url: this.api+'/system/services/'+params,
+                    data:params,
+                }).then(function (response) {
+                    callBackHandler(response);
+                }.bind(this)).catch(function (error) {
+                    callBackHandler(error);
+                })
+            }else{
+                axios({
+                    method: 'delete',
+                    url: this.api+'/system/services/'+params,
+                    auth: {
+                        username: this.username_auth,
+                        password: this.password_auth
+                    },
+                    data:params,
+                }).then(function (response) {
+                    callBackHandler(response);
+                }.bind(this)).catch(function (error) {
+                    callBackHandler(error);
+                })
+            }
         },
         listJobsCall(serviceName,callBackHandler) {
-            axios({
-                method: 'get',
-                url: this.api+'/system/logs/'+serviceName,
-                auth: {
-                    username: this.username_auth,
-                    password: this.password_auth
-                }
-            }).then(function (response) {
-                callBackHandler(response.data);
-            }.bind(this)).catch(function (error) {
-                callBackHandler(error);
-            })
+            var if_token = this.checkIfToken();
+            if(if_token){
+                axios({
+                    method: 'get',
+                    url: this.api+'/system/logs/'+serviceName,
+                    auth: {
+                        username: this.username_auth,
+                        password: this.password_auth
+                    }
+                }).then(function (response) {
+                    callBackHandler(response.data);
+                }.bind(this)).catch(function (error) {
+                    callBackHandler(error);
+                })
+            }else{
+                axios({
+                    method: 'get',
+                    url: this.api+'/system/logs/'+serviceName,
+                    auth: {
+                        username: this.username_auth,
+                        password: this.password_auth
+                    }
+                }).then(function (response) {
+                    callBackHandler(response.data);
+                }.bind(this)).catch(function (error) {
+                    callBackHandler(error);
+                })
+            }
         },
         deleteJobCall(params, callBackHandler) {
-            axios({
-                method: 'delete',
-                url:  this.api+'/system/logs/'+params.serviceName+'/'+params.jobName,
-                auth: {
-                    username: this.username_auth,
-                    password: this.password_auth
-                },
-                data:params,
-            }).then(function (response) {
-                callBackHandler(response);
-            }.bind(this)).catch(function (error) {
-                callBackHandler(error);
-            })
+            var if_token = this.checkIfToken();
+            if(if_token){
+                axios({
+                    method: 'delete',
+                    url:  this.api+'/system/logs/'+params.serviceName+'/'+params.jobName,                    
+                    data:params,
+                }).then(function (response) {
+                    callBackHandler(response);
+                }.bind(this)).catch(function (error) {
+                    callBackHandler(error);
+                })
+            }else{
+                axios({
+                    method: 'delete',
+                    url:  this.api+'/system/logs/'+params.serviceName+'/'+params.jobName,
+                    auth: {
+                        username: this.username_auth,
+                        password: this.password_auth
+                    },
+                    data:params,
+                }).then(function (response) {
+                    callBackHandler(response);
+                }.bind(this)).catch(function (error) {
+                    callBackHandler(error);
+                })
+
+            }
         },
         listJobNameCall(params,callBackHandler) {
-            axios({
-                method: 'get',
-                url: this.api+'/system/logs/'+params.serviceName+'/'+params.jobName,
-                auth: {
-                    username: this.username_auth,
-                    password: this.password_auth
-                }
-            }).then(function (response) {
-                callBackHandler(response);
-            }.bind(this)).catch(function (error) {
-                callBackHandler(error);
-            })
+            var if_token = this.checkIfToken();
+            if(if_token){
+                axios({
+                    method: 'get',
+                    url: this.api+'/system/logs/'+params.serviceName+'/'+params.jobName,
+                }).then(function (response) {
+                    callBackHandler(response);
+                }.bind(this)).catch(function (error) {
+                    callBackHandler(error);
+                })
+            }else{
+                axios({
+                    method: 'get',
+                    url: this.api+'/system/logs/'+params.serviceName+'/'+params.jobName,
+                    auth: {
+                        username: this.username_auth,
+                        password: this.password_auth
+                    }
+                }).then(function (response) {
+                    callBackHandler(response);
+                }.bind(this)).catch(function (error) {
+                    callBackHandler(error);
+                })
+            }
         },
         deleteAllJobCall(params,callBackHandler) {
-            axios({
-                method: 'delete',
-                url: this.api+'/system/logs/'+params.serviceName+'?all='+params.all,
-                auth: {
-                    username: this.username_auth,
-                    password: this.password_auth
-                }
-            }).then(function (response) {
-                callBackHandler(response);
-            }.bind(this)).catch(function (error) {
-                callBackHandler(error);
-            })
+            var if_token = this.checkIfToken();
+            if(if_token){
+                axios({
+                    method: 'delete',
+                    url: this.api+'/system/logs/'+params.serviceName+'?all='+params.all,                   
+                }).then(function (response) {
+                    callBackHandler(response);
+                }.bind(this)).catch(function (error) {
+                    callBackHandler(error);
+                })
+            }else{
+                axios({
+                    method: 'delete',
+                    url: this.api+'/system/logs/'+params.serviceName+'?all='+params.all,
+                    auth: {
+                        username: this.username_auth,
+                        password: this.password_auth
+                    }
+                }).then(function (response) {
+                    callBackHandler(response);
+                }.bind(this)).catch(function (error) {
+                    callBackHandler(error);
+                })
+            }
         },
 
         createServiceCall(params, callBackHandler){
-            axios({
-                method: 'post',
-                url: this.api+'/system/services',
-                auth: {
-                    username: this.username_auth,
-                    password: this.password_auth
-                },
-                data: params
-            }).then(function(response){
-                callBackHandler(response)
-            }).catch(function(error){
-                callBackHandler(error)
-            })
+            var if_token = this.checkIfToken();
+            if(if_token){
+                axios({
+                    method: 'post',
+                    url: this.api+'/system/services',                    
+                    data: params
+                }).then(function(response){
+                    callBackHandler(response)
+                }).catch(function(error){
+                    callBackHandler(error)
+                })
+            }else{
+                axios({
+                    method: 'post',
+                    url: this.api+'/system/services',
+                    auth: {
+                        username: this.username_auth,
+                        password: this.password_auth
+                    },
+                    data: params
+                }).then(function(response){
+                    callBackHandler(response)
+                }).catch(function(error){
+                    callBackHandler(error)
+                })
+
+            }
         },
 
         editServiceCall(params, callBackHandler){
-            axios({
-                method: 'put',
-                url: this.api+'/system/services',
-                auth: {
-                    username: this.username_auth,
-                    password: this.password_auth
-                },
-                data: params
-            }).then(function(response){
-                callBackHandler(response)
-            }).catch(function(error){
-                callBackHandler(error)
-            })
+            var if_token = this.checkIfToken();
+            if(if_token){
+                axios({
+                    method: 'put',
+                    url: this.api+'/system/services',
+                    data: params
+                }).then(function(response){
+                    callBackHandler(response)
+                }).catch(function(error){
+                    callBackHandler(error)
+                })
+            }else{
+                axios({
+                    method: 'put',
+                    url: this.api+'/system/services',
+                    auth: {
+                        username: this.username_auth,
+                        password: this.password_auth
+                    },
+                    data: params
+                }).then(function(response){
+                    callBackHandler(response)
+                }).catch(function(error){
+                    callBackHandler(error)
+                })
+
+            }
         },
 
         //******Minio's Call********/
