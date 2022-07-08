@@ -12,10 +12,10 @@ export default {
     },
     created(){
         this.username_auth = localStorage.getItem("user");
-        this.password_auth = localStorage.getItem("password");        
+        this.password_auth = localStorage.getItem("password");
         var minio_endpoint = localStorage.getItem("endpoint");
         var minio_port = localStorage.getItem("port");
-        var minio_useSSL = localStorage.getItem("useSSL")?localStorage.getItem("useSSL"):true;
+        var minio_useSSL = localStorage.getItem("useSSL");
         var minio_accessKey = localStorage.getItem("accessKey");
         var minio_secretKey = localStorage.getItem("secretKey");
         this.api = localStorage.getItem('api');
