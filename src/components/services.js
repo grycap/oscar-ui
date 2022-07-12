@@ -15,11 +15,7 @@ export default {
         this.password_auth = localStorage.getItem("password");
         var minio_endpoint = localStorage.getItem("endpoint");
         var minio_port = localStorage.getItem("port");
-<<<<<<< HEAD
         var minio_useSSL = localStorage.getItem("useSSL");
-=======
-        var minio_useSSL = localStorage.getItem("useSSL")==='false'?false:true;
->>>>>>> 46737ef0c8564d6f258f039b17206e010975a804
         var minio_accessKey = localStorage.getItem("accessKey");
         var minio_secretKey = localStorage.getItem("secretKey");
         this.api = localStorage.getItem('api');
