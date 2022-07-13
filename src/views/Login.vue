@@ -10,7 +10,7 @@
                   <img src="@/assets/logo.png" alt="Vue Material Admin" width="120" height="120">
                   <h1 class="flex my-4 teal--text">OSCAR ADMIN</h1>
                 </div>
-                <v-form >
+                <v-form v-if= "env.deploy_container == 'false'" >
                   <v-text-field  append-icon="language" name="password" label="Endpoint" id="password" type="text"
                                 v-model="model.endpoint" hide-details=true></v-text-field>   
                   <div class="text-right">
@@ -19,7 +19,7 @@
                   </div>
 
                 </v-form>
-                <v-divider class='mt-5 mb-5'></v-divider>
+                <v-divider v-if= "env.deploy_container == 'false'" class='mt-5 mb-5'></v-divider>
                 <div class="text-center">
                   <h3 style="color:#8C8786">Log in with:</h3>
                 </div>
@@ -91,6 +91,9 @@ export default {
 
   methods: {    
     login () {
+      if(env.deploy_container == "true"){
+        this.model.endpoint = env.api
+      }
       this.loading = true
       var params = {
         'user': this.model.username,
