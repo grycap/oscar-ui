@@ -22,7 +22,7 @@
     "moment": "^2.29.2",
     "nprogress": "^0.2.0",
     "register-service-worker": "^1.0.0",
-    "sweetalert2": "^11.4.19",
+    "sweetalert2": "^11.4.20",
     "vue": "^2.5.17",
     "vue-material": "^1.0.0-beta-14",
     "vue-perfect-scrollbar": "^0.1.0",
