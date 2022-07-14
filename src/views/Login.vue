@@ -144,6 +144,37 @@ export default {
 
         return hostname;
     },
+    getloginResponse(response){
+      console.log(response)
+      var port=this.getPort(response.data.minio_provider.endpoint)
+      var endpoint_host = this.getHost(response.data.minio_provider.endpoint)
+      if(this.model.endpoint.includes('localhost')){
+        localStorage.setItem("endpoint",'localhost')
+      }else{
+        localStorage.setItem("endpoint",endpoint_host)
+        }
+
+      localStorage.setItem("accessKey",response.data.minio_provider.access_key)
+      localStorage.setItem("secretKey",response.data.minio_provider.secret_key)
+      if(response.data.minio_provider.verify){
+        if(this.model.endpoint.includes('localhost')){
+          localStorage.setItem("useSSL",false)
+        }else{
+          localStorage.setItem("useSSL",response.data.minio_provider.verify)
+        }
+      }else{
+        localStorage.setItem("useSSL",false)
+      }
+      if(this.model.endpoint.includes('localhost')){
+        localStorage.setItem("port",30300)
+      }else{
+        localStorage.setItem("port",port)
+      }
+      localStorage.setItem("authenticated", true);
+      localStorage.setItem("user", this.model.username);
+      localStorage.setItem("password", this.model.password);
+      localStorage.setItem("yunikorn_enable",response.data.yunikorn_enable);
+    },
     checkLoginCallback(response){
       if(response == 200){
         var _this = this
@@ -153,34 +184,7 @@ export default {
                 method: 'get',
                 url: this.model.endpoint+'/system/config',               
               }).then(function (response) {
-                  var port=_this.getPort(response.data.minio_provider.endpoint)
-                  var endpoint_host = _this.getHost(response.data.minio_provider.endpoint)
-                  if(_this.model.endpoint.includes('localhost')){
-                    localStorage.setItem("endpoint",'localhost')
-                  }else{
-                    localStorage.setItem("endpoint",endpoint_host)
-                    }
-
-                  localStorage.setItem("accessKey",response.data.minio_provider.access_key)
-                  localStorage.setItem("secretKey",response.data.minio_provider.secret_key)
-                  if(response.data.minio_provider.useSSL){
-                    if(_this.model.endpoint.includes('localhost')){
-                      localStorage.setItem("useSSL",false)
-                    }else{
-                      localStorage.setItem("useSSL",response.data.minio_provider.useSSL)
-                    }
-                  }else{
-                    localStorage.setItem("useSSL",false)
-                  }
-                  if(_this.model.endpoint.includes('localhost')){
-                    localStorage.setItem("port",30300)
-                  }else{
-                    localStorage.setItem("port",port)
-                  }
-                  localStorage.setItem("authenticated", true);
-                  localStorage.setItem("user", _this.model.username);
-                  localStorage.setItem("password", _this.model.password);
-                  localStorage.setItem("yunikorn_enable",response.data.yunikorn_enable);
+                  _this.getloginResponse(response)
                   _this.$router.push({name: "Functions"})
               }).catch(function (error) {
                   console.log(error)
@@ -194,34 +198,9 @@ export default {
                     password: this.model.password
                 }
               }).then(function (response) {
-                  var port=_this.getPort(response.data.minio_provider.endpoint)
-                  var endpoint_host = _this.getHost(response.data.minio_provider.endpoint)
-                  if(_this.model.endpoint.includes('localhost')){
-                    localStorage.setItem("endpoint",'localhost')
-                  }else{
-                    localStorage.setItem("endpoint",endpoint_host)
-                    }
-
-                  localStorage.setItem("accessKey",response.data.minio_provider.access_key)
-                  localStorage.setItem("secretKey",response.data.minio_provider.secret_key)
-                  if(response.data.minio_provider.useSSL){
-                    if(_this.model.endpoint.includes('localhost')){
-                      localStorage.setItem("useSSL",false)
-                    }else{
-                      localStorage.setItem("useSSL",response.data.minio_provider.useSSL)
-                    }
-                  }else{
-                    localStorage.setItem("useSSL",false)
-                  }
-                  if(_this.model.endpoint.includes('localhost')){
-                    localStorage.setItem("port",30300)
-                  }else{
-                    localStorage.setItem("port",port)
-                  }
-                  localStorage.setItem("authenticated", true);
-                  localStorage.setItem("user", _this.model.username);
-                  localStorage.setItem("password", _this.model.password);
-                  localStorage.setItem("yunikorn_enable",response.data.yunikorn_enable);
+                  _this.getloginResponse(response)
+                  //console.log(response)
+                
                   _this.$router.push({name: "Functions"})
               }).catch(function (error) {
                   console.log(error)
