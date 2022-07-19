@@ -6,5 +6,5 @@ module.exports = {
     "url_user_info": "https://aai-dev.egi.eu/auth/realms/egi/protocol/openid-connect/userinfo",
     "token_endpoint": "https://aai-dev.egi.eu/auth/realms/egi/protocol/openid-connect/token",
     "api" : "",
-    "deploy_container" : "true",
+    "deploy_container" : "false",
 }
