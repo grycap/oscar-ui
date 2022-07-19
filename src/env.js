@@ -5,6 +5,6 @@ module.exports = {
     "url_authorize": "https://aai-dev.egi.eu/auth/realms/egi/protocol/openid-connect/auth",
     "url_user_info": "https://aai-dev.egi.eu/auth/realms/egi/protocol/openid-connect/userinfo",
     "token_endpoint": "https://aai-dev.egi.eu/auth/realms/egi/protocol/openid-connect/token",
-    "api" : "", // value of the api,
-    "deploy_container": "false",
+    "api" : "",
+    "deploy_container" : "true",
 }
