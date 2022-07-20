@@ -147,28 +147,20 @@ export default {
     getloginResponse(response){
       var port=this.getPort(response.data.minio_provider.endpoint)
       var endpoint_host = this.getHost(response.data.minio_provider.endpoint)
-      if(endpoint_host =='minio.minio'){
-        localStorage.setItem("endpoint",'localhost')
+      if(endpoint_host ==env.response_default_minio){
+        localStorage.setItem("endpoint",env.minio_local_endpoint)
+        localStorage.setItem("port",env.minio_local_port)
       }else{
         localStorage.setItem("endpoint",endpoint_host)
-        }
-
-      localStorage.setItem("accessKey",response.data.minio_provider.access_key)
-      localStorage.setItem("secretKey",response.data.minio_provider.secret_key)
-      if(response.data.minio_provider.verify){
-        if(endpoint_host =='minio.minio'){
-          localStorage.setItem("useSSL",false)
-        }else{
-          localStorage.setItem("useSSL",response.data.minio_provider.verify)
-        }
-      }else{
-        localStorage.setItem("useSSL",false)
-      }
-      if(endpoint_host =='minio.minio'){
-        localStorage.setItem("port",30300)
-      }else{
         localStorage.setItem("port",port)
       }
+      if(response.data.minio_provider.verify && endpoint_host !=env.response_default_minio){
+        localStorage.setItem("useSSL",response.data.minio_provider.verify)
+      }else{
+        localStorage.setItem("useSSL",env.minio_local_ssl)
+      }
+      localStorage.setItem("accessKey",response.data.minio_provider.access_key)
+      localStorage.setItem("secretKey",response.data.minio_provider.secret_key)
       localStorage.setItem("authenticated", true);
       localStorage.setItem("user", this.model.username);
       localStorage.setItem("password", this.model.password);
