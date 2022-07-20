@@ -7,4 +7,8 @@ module.exports = {
     "token_endpoint": "https://aai-dev.egi.eu/auth/realms/egi/protocol/openid-connect/token",
     "api" : "",
     "deploy_container" : "false",
+    "minio_endpoint" :"localhost",
+    "minio_port": "30300",
+    "minio_ssl": false ,
+    "response_default_minio": "minio.minio"
 }
