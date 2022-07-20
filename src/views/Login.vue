@@ -12,9 +12,9 @@
                 </div>
                 <v-form v-if= "env.deploy_container == 'false'" >
                   <v-text-field  append-icon="language" name="password" label="Endpoint" id="password" type="text"
-                                v-model="model.endpoint" hide-details=true></v-text-field>   
+                                v-model="model.endpoint" hide-details=true></v-text-field>
                   <div class="text-right">
-                    <span style="color:red; font-size:10px;">Required</span>              
+                    <span style="color:red; font-size:10px;">Required</span>
 
                   </div>
 
@@ -51,10 +51,10 @@
                 <v-btn icon>
                   <v-icon color="light-blue">fa fa-twitter fa-lg</v-icon>
                 </v-btn> -->
-                
-                
+
+
               </v-card-actions>
-              
+
             </v-card>
           </v-flex>
         </v-layout>
@@ -89,7 +89,7 @@ export default {
     this.autoLogin();
   },
 
-  methods: {    
+  methods: {
     login () {
       if(env.deploy_container == "true"){
         this.model.endpoint = env.api
@@ -145,31 +145,22 @@ export default {
         return hostname;
     },
     getloginResponse(response){
-      console.log(response)
       var port=this.getPort(response.data.minio_provider.endpoint)
       var endpoint_host = this.getHost(response.data.minio_provider.endpoint)
-      if(this.model.endpoint.includes('localhost')){
-        localStorage.setItem("endpoint",'localhost')
+      if(endpoint_host ==env.response_default_minio){
+        localStorage.setItem("endpoint",env.minio_local_endpoint)
+        localStorage.setItem("port",env.minio_local_port)
       }else{
         localStorage.setItem("endpoint",endpoint_host)
-        }
-
-      localStorage.setItem("accessKey",response.data.minio_provider.access_key)
-      localStorage.setItem("secretKey",response.data.minio_provider.secret_key)
-      if(response.data.minio_provider.verify){
-        if(this.model.endpoint.includes('localhost')){
-          localStorage.setItem("useSSL",false)
-        }else{
-          localStorage.setItem("useSSL",response.data.minio_provider.verify)
-        }
-      }else{
-        localStorage.setItem("useSSL",false)
-      }
-      if(this.model.endpoint.includes('localhost')){
-        localStorage.setItem("port",30300)
-      }else{
         localStorage.setItem("port",port)
       }
+      if(response.data.minio_provider.verify && endpoint_host !=env.response_default_minio){
+        localStorage.setItem("useSSL",response.data.minio_provider.verify)
+      }else{
+        localStorage.setItem("useSSL",env.minio_local_ssl)
+      }
+      localStorage.setItem("accessKey",response.data.minio_provider.access_key)
+      localStorage.setItem("secretKey",response.data.minio_provider.secret_key)
       localStorage.setItem("authenticated", true);
       localStorage.setItem("user", this.model.username);
       localStorage.setItem("password", this.model.password);
@@ -182,7 +173,7 @@ export default {
             if(if_token){
                 axios({
                 method: 'get',
-                url: this.model.endpoint+'/system/config',               
+                url: this.model.endpoint+'/system/config',
               }).then(function (response) {
                   _this.getloginResponse(response)
                   _this.$router.push({name: "Functions"})
@@ -199,15 +190,13 @@ export default {
                 }
               }).then(function (response) {
                   _this.getloginResponse(response)
-                  //console.log(response)
-                
                   _this.$router.push({name: "Functions"})
               }).catch(function (error) {
                   console.log(error)
               })
 
             }
-          
+
 
       }else if (response == 401){
         this.loading = false
@@ -226,8 +215,8 @@ export default {
         else if(link.indexOf("http://") == 0){
             console.log("The link doesn't have http or https.");
             return false;
-        }        
-    },    
+        }
+    },
     autoLogin(){
       const queryString = window.location.search;
       const urlParams = new URLSearchParams(queryString);
@@ -237,7 +226,7 @@ export default {
       if (username !== null){
         this.model.username = username;
       }
-      
+
       if(endpoint !== null) {
         console.log(this.validateURL(endpoint))
         this.model.endpoint= this.validateURL(endpoint)?endpoint:'https://'+endpoint;

@@ -1,5 +1,5 @@
-<template> 
-    <v-layout row wrap class="mb-1">      
+<template>
+    <v-layout row wrap class="mb-1">
     <v-flex xs12>
         <v-card id="functions">
 			<v-card-title>
@@ -9,11 +9,11 @@
 					label="Search"
 					single-line
 				></v-text-field>
-				<v-spacer></v-spacer>            
+				<v-spacer></v-spacer>
 				<FunctionForm :openFaaS="openFaaS" @SHOWSPINNER="handleSHOW()"></FunctionForm>
 			</v-card-title>
-			
-			<v-data-table 
+
+			<v-data-table
 				:headers="headers"
 				:items="services"
 				:loading="loading"
@@ -44,7 +44,7 @@
 				</template>
 
 				<template v-slot:expand="props" style="margin-top:1rem">
-					 
+
 					<div class=" div-list-content" >
 						<v-card style="padding:0 2rem 2rem 2rem;">
 
@@ -59,7 +59,7 @@
 								>
 									Service Info
 								</v-tab>
-								
+
 							</v-tabs>
 
 							<v-tabs-items v-model="model" >
@@ -68,7 +68,7 @@
 										<v-card-text class="custom-padding xs6"> <strong>Name: </strong> {{props.item.service}}</v-card-text>
 										<v-card-text class="custom-padding"><strong>Image: </strong> {{props.item.container}}</v-card-text>
 										<v-card-text style="display:flex;margin-right: 5px;" class="custom-padding">
-											<strong style="padding-top: 12px;margin-right: 5px;">Token: </strong> 
+											<strong style="padding-top: 12px;margin-right: 5px;">Token: </strong>
 											<v-text-field style="width: 80%!important;padding-top: 0px!important;margin-top: 0px!important;"
 												:value="props.item.token"
 												:append-icon="show1 ? 'visibility' : 'visibility_off'"
@@ -78,14 +78,14 @@
 												readonly
 											></v-text-field>
 										</v-card-text>
-										<v-card-text class="custom-padding"><strong>Environment variables: </strong> 
+										<v-card-text class="custom-padding"><strong>Environment variables: </strong>
 											<pre v-show="Object.keys(props.item.envVars.Variables).length!==0" id="json-renderer"></pre>
 										</v-card-text>
-										
+
 										<v-card-actions>
 											<span class="custom-padding" style="padding:10px;"><strong>Inputs:</strong></span>
 										</v-card-actions>
-								
+
 										<div class="row" style="margin:15px 30px 0px 30px;">
 											<div class="col-3 col-md-3 text-left d-md-inline" style="background-color:#eee;">
 												<b>Path</b>
@@ -103,22 +103,22 @@
 										<div v-for="(val, i) in props.item.inputs" :key="'A'+ i"  class="row" style="margin:10px 30px 20px 30px;border-bottom:1px solid #eee;padding-bottom:10px;">
 											<div class="col-3 col-md-3 text-left">
 												<span class="d-inline d-md-none">{{val.path}}</span>
-											</div> 
+											</div>
 											<div class="col-3 col-md-3 text-left">
 												<span class="d-inline d-md-none">{{val.storage_provider}}</span>
-											</div> 
+											</div>
 											<div class="col-3 col-md-3 text-left">
 												<div v-for="(val,i) in val.prefix" :key="'B'+ i">
 													<span class="d-inline d-md-none">{{val}}</span>
 												</div>
-											</div> 
+											</div>
 											<div class="col-3 col-md-3 text-left">
 												<div v-for="(val,i) in val.suffix" :key="'C'+ i">
 													<span class="d-inline d-md-none">{{val}}</span>
 												</div>
-											</div> 
+											</div>
 										</div>
-										
+
 										<v-card-actions>
 											<span class="custom-padding" style="padding:10px;"><strong>Outputs:</strong></span>
 										</v-card-actions>
@@ -139,20 +139,20 @@
 										<div v-for="(val, i) in props.item.outputs" :key="'D'+ i"  class="row" style="margin:10px 30px 20px 30px;border-bottom:1px solid #eee;padding-bottom:10px;">
 											<div class="col-3 col-md-3 text-left">
 												<span class="d-inline d-md-none">{{val.path}}</span>
-											</div> 
+											</div>
 											<div class="col-3 col-md-3 text-left">
 												<span class="d-inline d-md-none">{{val.storage_provider}}</span>
-											</div> 
+											</div>
 											<div class="col-3 col-md-3 text-left">
 												<div v-for="(val,i) in val.prefix" :key="'E'+ i">
 													<span class="d-inline d-md-none">{{val}}</span>
 												</div>
-											</div> 
+											</div>
 											<div class="col-3 col-md-3 text-left">
 												<div v-for="(val,i) in val.suffix" :key="'F'+ i">
 													<span class="d-inline d-md-none">{{val}}</span>
 												</div>
-											</div> 
+											</div>
 										</div>
 									</v-card>
 								</v-tab-item>
@@ -189,7 +189,7 @@
 											>
 												CANCEL
 											</v-btn>
-											
+
 											<v-btn
 												color="success"
 												@click="done_storage()"
@@ -204,8 +204,8 @@
 							</v-tabs-items>
 						</v-card>
 					</div>
-				
-					
+
+
 				</template>
 
 				 <template v-slot:no-data>
@@ -217,10 +217,10 @@
 				<v-alert slot="no-results" :value="true" color="error" icon="warning">
 					Your search for "{{ search }}" found no results.
 				</v-alert>
-			</v-data-table> 
-				<div v-show="show_spinner" style="position:fixed; left:50%;">	
-					<intersecting-circles-spinner :animation-duration="1200" :size="50" :color="'#0066ff'" />              		
-				</div>  
+			</v-data-table>
+				<div v-show="show_spinner" style="position:fixed; left:50%;">
+					<intersecting-circles-spinner :animation-duration="1200" :size="50" :color="'#0066ff'" />
+				</div>
         </v-card>
       </v-flex>
     </v-layout>
@@ -259,14 +259,14 @@ export default {
 		loading: true,
 		search: '',
 		services:[],
-		env_Vars: {},		
+		env_Vars: {},
 		index: '',
 		expand: false,
-		expand_icon: 'expand_more', 
+		expand_icon: 'expand_more',
 		model: 'tab-service',
 		disable_form: true,
 		disable_storage: true,
-		params_delete: '', 
+		params_delete: '',
 		show1:false
 	}),
   	methods: {
@@ -283,7 +283,7 @@ export default {
 			$("#"+id+"-tab").addClass("show active")
 		},
 		handleSHOW(){
-		  this.show_spinner = true      
+		  this.show_spinner = true
 		},
 		edit_service(){
 			this.disable_form = false;
@@ -313,8 +313,8 @@ export default {
 				alpine:this.services[index].alpine
 			}
 			window.getApp.$emit('FUNC_OPEN_MANAGEMENT_DIALOG', servInfo)
-		},    
-		deleteFunction(serv, servName) {      
+		},
+		deleteFunction(serv, servName) {
 			this.index = this.services.indexOf(serv);
 			this.params_delete = {deleteService: servName};
 			if (confirm('Are you sure you want to delete this function?')) {
@@ -326,7 +326,7 @@ export default {
 			this.show_spinner == false
 			if (response.status == 204) {
 				this.services.splice(this.index, 1)
-				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${this.params_delete.deleteService} was deleted`, color: 'success' })           
+				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${this.params_delete.deleteService} was deleted`, color: 'success' })
 				window.getApp.$emit('FUNC_GET_FUNCTIONS_LIST')
 			}else{
 				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response, color: 'error' })
@@ -335,7 +335,7 @@ export default {
 		listServicesCallback(response) {
 			if(response.status == 200){
 				this.show_spinner = false;
-				this.services = Object.assign(this.services, response.data); 
+				this.services = Object.assign(this.services, response.data);
 				this.services = response.data.map((serv) => {
 					return {
 						service: serv.name,
@@ -344,23 +344,24 @@ export default {
 						cpu: serv.cpu,
 						logLevel: serv.log_level,
 						envVars: serv.environment,
-						annotations: serv.annotations, 
+						annotations: serv.annotations,
 						labels: serv.labels,
 						memory: serv.memory,
 						inputs: serv.input,
 						outputs: serv.output,
 						storage: serv.storage_providers,
-						script: serv.script
+						script: serv.script,
+            total_cpu: serv.total_cpu,
+            total_memory: serv.total_memory,
+            alpine: serv.alpine
 					}
-				})				
-				this.loading = false;   
+				})
+				this.loading = false;
 
 			}else{
 				this.show_alert = true;
 				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response.data, color: 'error' })
-
 			}
-				
 		},
 		goLogs(service_name){
 			this.$router.push({name: "Logs", params:{serviceName: service_name}})
@@ -372,7 +373,7 @@ export default {
 			const bottomOfPage = visible + scrollY >= pageHeight
 			return bottomOfPage || pageHeight < visible
         },
-		
+
   	},
 	created: function () {
 		window.getApp.$on('FUNC_GET_FUNCTIONS_LIST', () => {
@@ -380,7 +381,7 @@ export default {
 		})
 	},
 	mounted: function () {
-		$('.div-list-content').scroll(function () { 
+		$('.div-list-content').scroll(function () {
                 // this.bottom = this.bottomVisible()
             }.bind(this));
 		this.listServicesCall(this.listServicesCallback)
