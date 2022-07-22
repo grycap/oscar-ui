@@ -13,12 +13,13 @@
               <h5 slot="activator" dark class="mb-2"  style="color:#ff9966;font-size:1rem">
                 Terms of Use
               </h5>
-              <v-card  >
+              <v-card >
+                  <div  style="padding:50px">
                   <div style="float: right">
                   <v-btn  @click="term = false">Close</v-btn>
                 </div>
-                <div >
-                  <h1>Terms of Use</h1>
+
+                  <h1 >Terms of Use</h1>
                     <p>
                     Thank you for visiting the <b>OSCAR</b> website provided by the <a href="http://www.grycap.upv.es">GRyCAP</a> research group from the <a href="http://www.i3m.upv.es/">Instituto de Instrumentación para Imagen Molecular (I3M)</a> at the <a href="http://www.upv.es">Universitat Politécnica de València (UPV)</a>, located at Camino de Vera S/N, Spain (the “Provider”). These Terms of Use (“TOU”) represent a binding legal contract between you and the Provider. The TOU mandate your access to and the use of Provider’s website, together with all content, services available at or through any service linking to this TOU (the “Services”).
                     </br></br>
@@ -98,18 +99,19 @@
         </v-card>
       </v-dialog>
       &nbsp; &nbsp; &nbsp;
-      <v-dialog id="vdiag" lazy v-model="privacy" persistent :fullscreen="$vuetify.breakpoint.xs" max-width="70%">
+      <v-dialog id="vdiag" lazy v-model="privacy"  :fullscreen="$vuetify.breakpoint.xs" max-width="70%" >
         <h5 slot="activator" dark class="mb-2"  style="color:#ff9966;font-size:1rem">
           Privacy Policy
         </h5>
-          <v-card >
-
+          <v-card  >
+            <div style="padding:50px">
               <div style="float: right">
               <v-btn  @click="privacy = false"> Close</v-btn>
-              </div>
-              <h1>Privacy Policy</h1>
+            </div >
 
-            <table>
+              <h1 >Privacy Policy</h1>
+
+            <table >
              <tr>
                <td>Name of the service</td>
                <td>OSCAR</td>
@@ -117,8 +119,6 @@
              <tr>
                <td>URLs of the service</td>
                <td>https://appsgrycap.i3m.upv.es:31443/im-web/
-               </br>
-                    https://appsgrycap.i3m.upv.es:31443/im-dashboard/
                </td>
              </tr>
              <tr>
@@ -209,6 +209,7 @@
               </td>
              </tr>
            </table>
+         </div>
           </v-card>
         </v-dialog>
       </v-flex>
