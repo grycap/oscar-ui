@@ -20,7 +20,7 @@
                 <div >
                   <h1>Terms of Use</h1>
                     <p>
-                    Thank you for visiting the <b>Infrastructure Manager</b> website provided by the <a href="http://www.grycap.upv.es">GRyCAP</a> research group from the <a href="http://www.i3m.upv.es/">Instituto de Instrumentación para Imagen Molecular (I3M)</a> at the <a href="http://www.upv.es">Universitat Politécnica de València (UPV)</a>, located at Camino de Vera S/N, Spain (the “Provider”). These Terms of Use (“TOU”) represent a binding legal contract between you and the Provider. The TOU mandate your access to and the use of Provider’s website, together with all content, services available at or through any service linking to this TOU (the “Services”).
+                    Thank you for visiting the <b>OSCAR</b> website provided by the <a href="http://www.grycap.upv.es">GRyCAP</a> research group from the <a href="http://www.i3m.upv.es/">Instituto de Instrumentación para Imagen Molecular (I3M)</a> at the <a href="http://www.upv.es">Universitat Politécnica de València (UPV)</a>, located at Camino de Vera S/N, Spain (the “Provider”). These Terms of Use (“TOU”) represent a binding legal contract between you and the Provider. The TOU mandate your access to and the use of Provider’s website, together with all content, services available at or through any service linking to this TOU (the “Services”).
                     </br></br>
                     <b>IMPORTANT:</b> Please read the TOU carefully before using any of the Services. Using any of the Services states that you accept and agree to be bound by the TOU.  Services must not be used unless you accept the TOU.  The Provider may change or modify the Services or the TOU at any time.  Such changes, revisions, or modifications shall be effective immediately upon being posted in relation to the Services.  Any use of the Services by you after we post changes to the TOU constitutes your acceptance of those changes.
                     </br></br>
@@ -112,7 +112,7 @@
             <table>
              <tr>
                <td>Name of the service</td>
-               <td>Infrastructure Manager (IM)</td>
+               <td>OSCAR</td>
              </tr>
              <tr>
                <td>URLs of the service</td>
@@ -139,10 +139,6 @@
                Spain
              </br>
                email: products@grycap.upv.es</td>
-             </tr>
-             <tr>
-               <td>Name of the service</td>
-               <td>Infrastructure Manager (IM)</td>
              </tr>
              <tr>
                <td>Jurisdiction</td>
@@ -182,7 +178,8 @@
              <tr>
                <td>How to access,
                rectify and delete
-               the personal data</td>
+               the personal data
+             </td>
                <td>Contact the email: products@grycap.upv.es. To rectify the data
                released by your Home Organisation, contact your Home
                Organisation's IT helpdesk</td>
