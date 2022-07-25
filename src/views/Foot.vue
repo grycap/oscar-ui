@@ -9,7 +9,7 @@
             </v-flex>
             <v-flex xs2  v-show="env.deploy_container === 'false'">
 
-            <v-dialog  id="vdiag" lazy v-model="term" persistent :fullscreen="$vuetify.breakpoint.xs" max-width="70%">
+            <v-dialog  id="vdiag" lazy v-model="term"  :fullscreen="$vuetify.breakpoint.xs" max-width="70%">
               <h5 slot="activator" dark class="mb-2"  style="color:#ff9966;font-size:1rem">
                 Terms of Use
               </h5>
