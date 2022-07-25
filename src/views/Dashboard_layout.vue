@@ -7,25 +7,21 @@
             <router-view></router-view>
         </div>
 
-        <v-footer app color="teal darken-2">
-            <v-layout row wrap align-center>
-            <v-flex xs12>
-                <div class="white--text ml-4">
-                    <h5>© 2020, <a style="color:#ff9966;font-size:1rem" href="https://www.grycap.upv.es">GRyCAP-I3M-UPV</a>, Universitat Politècnica de Valéncia, Spain.</h5>               
-                </div>
-            </v-flex>
-            </v-layout>
-        </v-footer>
+    <foot></foot>
+
     </div>
- 
+
 </template>
 <script>
 import AppDrawer from '@/components/AppDrawer'
 import AppToolbar from '@/components/AppToolbar'
+import env from '@/env'
+import Foot from '@/views/Foot'
 export default {
 	components: {
 		AppDrawer,
-		AppToolbar,    
+		AppToolbar,
+    Foot,
     },
 }
 </script>

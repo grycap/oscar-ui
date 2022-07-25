@@ -8,7 +8,7 @@
               <v-card-text>
                 <div class="layout column align-center">
                   <img src="@/assets/logo.png" alt="Vue Material Admin" width="120" height="120">
-                  <h1 class="flex my-4 teal--text">OSCAR ADMIN</h1>
+                  <h1 class="flex my-4 teal--text">OSCAR UI</h1>
                 </div>
                 <v-form v-if= "env.deploy_container == 'false'" >
                   <v-text-field  append-icon="language" name="password" label="Endpoint" id="password" type="text"
@@ -54,7 +54,7 @@
 
 
               </v-card-actions>
-
+              <foot ></foot>
             </v-card>
           </v-flex>
         </v-layout>
@@ -66,7 +66,11 @@
 <script>
 import Services from '../components/services.js';
 import env from '../env';
+import Foot from '@/views/Foot'
 export default {
+  components: {
+    Foot,
+    },
   mixins:[Services],
   data: () => ({
     loading: false,
