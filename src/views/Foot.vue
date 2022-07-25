@@ -118,15 +118,12 @@
              </tr>
              <tr>
                <td>URLs of the service</td>
-               <td>https://appsgrycap.i3m.upv.es:31443/im-web/
+               <td>https://ui.oscar.grycap.net/
                </td>
              </tr>
              <tr>
                <td>Description of the service</td>
-               <td>Infrastructure Manager (IM) is an open-source tool that deploys
-               complex and customized virtual infrastructures on multiple Cloud
-               back-ends. The IM automates the deployment, configuration, software
-               installation, monitoring and update of virtual infrastructures. </td>
+               <td>OSCAR is an open-source platform to support the Functions as a Service (FaaS) computing model for file-processing applications. It can be automatically deployed on multi-Clouds in order to create highly-parallel event-driven file-processing serverless applications that execute on customized runtime environments provided by Docker containers than run on an elastic Kubernetes cluster. </td>
              </tr>
              <tr>
                <td>Data controller </td>
@@ -147,27 +144,13 @@
              <tr>
                <td>Personal data
                processed</td>
-               <td>A. Following data is retrieved from your Identity Provider (only in
-               case of using EGI-Checking):
-               a. User's ID.
-               b. Name
-               c. Given Name.
-               d. Family Name.
-               e. VOs affiliation.
-               f. User’s email.
-               B. Following data is gathered from yourself:
-               a. Cloud providers credentials.
-               b. User’s email.</td>
+               <td>None</td>
              </tr>
              <tr>
                <td>Purpose of the
                processing of
                personal data</td>
-               <td>Personal data are used to contact Cloud Providers, on behalf of the
-               user, enabling the IM service the creation of the requested virtual
-               resources.
-               Log files containing personal data are maintained, for traceability
-               reasons, for a limited period of time (at least 1 month)</td>
+               <td>None</td>
              </tr>
              <tr>
                <td>Third parties to
