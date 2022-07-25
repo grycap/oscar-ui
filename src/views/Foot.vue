@@ -9,7 +9,7 @@
             </v-flex>
             <v-flex xs2  v-show="env.deploy_container === 'false'">
 
-            <v-dialog  id="vdiag" lazy v-model="term" persistent :fullscreen="$vuetify.breakpoint.xs" max-width="70%">
+            <v-dialog  id="vdiag" lazy v-model="term"  :fullscreen="$vuetify.breakpoint.xs" max-width="70%">
               <h5 slot="activator" dark class="mb-2"  style="color:#ff9966;font-size:1rem">
                 Terms of Use
               </h5>
@@ -169,12 +169,12 @@
              </tr>
              <tr>
                <td>Data retention</td>
-               <td>Personal data is deleted on request of the user</td>
+               <td>No personal data is retained</td>
              </tr>
              <tr>
                <td>Data Protection
                Code of Conduct</td>
-               <td>Your personal data will be protected according to the
+               <td>Your personal data, if any, will be protected according to the
                  <a target="_blank" href="http://www.geant.net/uri/dataprotection-code-of-conduct/v1">Code of Conduct
                for Service Providers</a>, a common standard for the research and higher
                education sector to protect your privacy</td>
