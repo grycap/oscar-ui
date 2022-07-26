@@ -169,12 +169,12 @@
              </tr>
              <tr>
                <td>Data retention</td>
-               <td>Personal data is deleted on request of the user</td>
+               <td>No personal data is retained</td>
              </tr>
              <tr>
                <td>Data Protection
                Code of Conduct</td>
-               <td>Your personal data will be protected according to the
+               <td>Your personal data, if any, will be protected according to the
                  <a target="_blank" href="http://www.geant.net/uri/dataprotection-code-of-conduct/v1">Code of Conduct
                for Service Providers</a>, a common standard for the research and higher
                education sector to protect your privacy</td>
