@@ -2018,23 +2018,25 @@ export default {
 			if(localStorage.getItem('yunikorn_enable') == "true" && data.total_cpu !=''){
 				this.form.total_cpu=data.total_cpu
 			}
-			if(localStorage.getItem('yunikorn_enable') == "true" && data.total_memory !=''){
-				var total_value_select = "1"
-				if(data.total_memory === undefined){
+			if(localStorage.getItem('yunikorn_enable') == "true" && data.total_memory !=undefined){
+				if(data.total_memory == ""){
 					this.form.total_memory = ''
+					var total_value_select = "1"
 				}else{
 					var total_memory_split = []
 					total_memory_split = data.total_memory.match(/[a-z]+|[^a-z]+/gi);
 					this.form.total_memory = total_memory_split[0]
 					if (total_memory_split[1] == "Gi"){
-						total_value_select = "2"
+						var total_value_select = "2"
+					}else {
+						var total_value_select = "1"
 					}
 				}
-				setTimeout(function(){
-					$('#classmemory').val(value_select)
-					$('#total_classmemory').val(total_value_select)
-				},100)
 			}
+			setTimeout(function(){
+				$('#classmemory').val(value_select)
+				$('#total_classmemory').val(total_value_select)
+			},100)
 			var key=''
 			var values= ''
 			key = Object.keys(data.envVars.Variables)
