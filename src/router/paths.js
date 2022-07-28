@@ -58,7 +58,7 @@ export default [
 		),
 	},
 	{
-		path: '/termofuse',
+		path: '/terms-of-use',
 		meta: {
 		public: true
 		},
@@ -70,7 +70,7 @@ export default [
 		),
 	},
 	{
-		path: '/privacy',
+		path: '/privacy-policy',
 		meta: {
 		public: true
 		},
