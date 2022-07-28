@@ -1,12 +1,7 @@
 .DS_Store
-/vue_app/node_modules
-/vue_app/dist
-/node_server/node_modules
-/vue_app/package-lock.json
-/node_server/package-lock.json
-
-/vue_app/tests/e2e/reports/
-selenium-debug.log
+/node_modules
+/dist
+/package-lock.json
 
 # local env files
 .env.local
