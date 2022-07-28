@@ -55,7 +55,31 @@ export default [
 		/* webpackChunkName: "routes" */
 		/* webpackMode: "lazy" */
 		`@/views/Login.vue`
-		),    
+		),
+	},
+	{
+		path: '/termofuse',
+		meta: {
+		public: true
+		},
+		name: 'TermOfUse',
+		component: () => import(
+		/* webpackChunkName: "routes" */
+		/* webpackMode: "lazy" */
+		`@/views/TermOfUse.vue`
+		),
+	},
+	{
+		path: '/privacy',
+		meta: {
+		public: true
+		},
+		name: 'Privacy',
+		component: () => import(
+		/* webpackChunkName: "routes" */
+		/* webpackMode: "lazy" */
+		`@/views/Privacy.vue`
+		),
 	},
 	{
 		path: '/',
@@ -132,5 +156,5 @@ export default [
 				},
 		]
 	},
-	
+
 ]
