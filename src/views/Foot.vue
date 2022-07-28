@@ -2,22 +2,22 @@
     <div>
         <v-footer app color="teal darken-2">
             <v-layout row wrap align-center>
-            <v-flex xs9>
+            <v-flex xs10>
                 <div class="white--text ml-4">
                     <h5>© 2022, <a style="color:#ff9966;font-size:1rem" href="https://www.grycap.upv.es">GRyCAP-I3M-UPV</a>, Universitat Politècnica de Valéncia, Spain.</h5>
                 </div>
             </v-flex>
-            <v-flex xs3  v-show="env.deploy_container === 'false'">
+            <v-flex xs2 v-show="env.deploy_container === 'false'">
                 <h5 style="display: inline">
-                <v-btn  dark style="color:#ff9966;font-size:1rem;" @click.native="termofuse()">
+                <a  style="color:#ff9966;font-size:1rem;" @click="termofuse()">
                 Terms of Use
-                </v-btn>
+              </a>
               </h5>
               &nbsp; &nbsp; &nbsp;
               <h5 style="display: inline">
-                <v-btn  dark style="color:#ff9966;font-size:1rem;" @click.native="privacy()">
+                <a  dark style="color:#ff9966;font-size:1rem;" @click="privacy()">
                 Privacy Policy
-              </v-btn>
+              </a>
               </h5>
           </v-flex>
         </v-layout>
