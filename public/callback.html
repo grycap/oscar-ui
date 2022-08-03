@@ -84,20 +84,19 @@
               }).then(function (response) {
                   var port=getPort(response.data.minio_provider.endpoint)
                   var endpoint_host = getHost(response.data.minio_provider.endpoint)
-									if(endpoint_host ==env.response_default_minio){
-						        localStorage.setItem("endpoint",env.minio_local_endpoint)
-						        localStorage.setItem("port",env.minio_local_port)
-						      }else{
-						        localStorage.setItem("endpoint",endpoint_host)
-						        localStorage.setItem("port",port)
-						      }
-						      if(response.data.minio_provider.verify && endpoint_host !=env.response_default_minio){
-						        localStorage.setItem("useSSL",response.data.minio_provider.verify)
-						      }else{
-						        localStorage.setItem("useSSL",env.minio_local_ssl)
-						      }
+                  if(localStorage.getItem('api').includes('localhost')){
+                    localStorage.setItem("endpoint",'localhost')
+                    localStorage.setItem("useSSL",false)
+                    localStorage.setItem("port",30300)
+                  }else{
+                    localStorage.setItem("endpoint",endpoint_host)
+                    localStorage.setItem("useSSL",response.data.minio_provider.useSSL)
+                    localStorage.setItem("port",port)
+                  }
+
                   localStorage.setItem("accessKey",response.data.minio_provider.access_key)
                   localStorage.setItem("secretKey",response.data.minio_provider.secret_key)
+
                   localStorage.setItem("authenticated", true);
                   localStorage.setItem("yunikorn_enable",response.data.yunikorn_enable);
                   var url_redirect = window.location.origin + "/#/services"
