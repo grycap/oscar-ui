@@ -44,6 +44,7 @@
         const token_endpoint = localStorage.getItem('token_endpoint');;
         const userinfo_endpoint = localStorage.getItem('url_user_info');;
         const scope = 'openid profile email eduperson_entitlement';
+				import env from '../src/env';
 
         const q = new URLSearchParams(location.search);
         var tokens;
