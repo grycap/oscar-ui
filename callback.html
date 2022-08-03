@@ -34,7 +34,7 @@
       <div>
     </div>
   </div>
-  
+
   <script>
         const baseUrl = localStorage.getItem('provider_url');
         const client_id = localStorage.getItem('client_id');
@@ -75,37 +75,29 @@
         };
           const r = await fetch(`${userinfo_endpoint}`, options);
           const users = await r.json();
-          localStorage.setItem("session", JSON.stringify({ user: { 'access_token': tokens['access_token'], info:users, authenticated: true } }));          
+          localStorage.setItem("session", JSON.stringify({ user: { 'access_token': tokens['access_token'], info:users, authenticated: true } }));
           axios({
                 method: 'get',
-                url: localStorage.getItem('api')+'/system/config',   
+                url: localStorage.getItem('api')+'/system/config',
                 headers: {Authorization: `Bearer ${tokens.access_token}` }
 
               }).then(function (response) {
                   var port=getPort(response.data.minio_provider.endpoint)
                   var endpoint_host = getHost(response.data.minio_provider.endpoint)
-                  if(localStorage.getItem('api').includes('localhost')){
-                    localStorage.setItem("endpoint",'localhost')
-                  }else{
-                    localStorage.setItem("endpoint",endpoint_host)
-                    }
-
+									if(endpoint_host ==env.response_default_minio){
+						        localStorage.setItem("endpoint",env.minio_local_endpoint)
+						        localStorage.setItem("port",env.minio_local_port)
+						      }else{
+						        localStorage.setItem("endpoint",endpoint_host)
+						        localStorage.setItem("port",port)
+						      }
+						      if(response.data.minio_provider.verify && endpoint_host !=env.response_default_minio){
+						        localStorage.setItem("useSSL",response.data.minio_provider.verify)
+						      }else{
+						        localStorage.setItem("useSSL",env.minio_local_ssl)
+						      }
                   localStorage.setItem("accessKey",response.data.minio_provider.access_key)
                   localStorage.setItem("secretKey",response.data.minio_provider.secret_key)
-                  if(response.data.minio_provider.useSSL){
-                    if(localStorage.getItem('api').includes('localhost')){
-                      localStorage.setItem("useSSL",false)
-                    }else{
-                      localStorage.setItem("useSSL",response.data.minio_provider.useSSL)
-                    }
-                  }else{
-                    localStorage.setItem("useSSL",true)
-                  }
-                  if(localStorage.getItem('api').includes('localhost')){
-                    localStorage.setItem("port",30300)
-                  }else{
-                    localStorage.setItem("port",port)
-                  }
                   localStorage.setItem("authenticated", true);
                   localStorage.setItem("yunikorn_enable",response.data.yunikorn_enable);
                   var url_redirect = window.location.origin + "/#/services"
