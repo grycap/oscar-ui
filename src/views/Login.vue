@@ -113,6 +113,7 @@ export default {
       this.loading_egi = true;
       if(this.model.endpoint == ''){
         window.getApp.$emit('APP_SHOW_SNACKBAR', { text: "Endpoint is required", color: 'error' })
+        this.loading_egi = false;
       }else{
         this.model.endpoint = this.model.endpoint.endsWith('/') ? this.model.endpoint.slice(0, -1) : this.model.endpoint;
         localStorage.setItem("api", this.model.endpoint);
