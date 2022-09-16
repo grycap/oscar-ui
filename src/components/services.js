@@ -134,11 +134,7 @@ export default {
             if(if_token){
                 axios({
                     method: 'get',
-                    url: this.api+'/system/logs/'+serviceName,
-                    auth: {
-                        username: this.username_auth,
-                        password: this.password_auth
-                    }
+                    url: this.api+'/system/logs/'+serviceName
                 }).then(function (response) {
                     callBackHandler(response.data);
                 }.bind(this)).catch(function (error) {
