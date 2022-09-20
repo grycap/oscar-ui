@@ -24,7 +24,9 @@ window.axios.interceptors.request.use(function (config) {
   var session = JSON.parse(localStorage.getItem("session"))
   if(session && session['user'] && session['user']['access_token']){
     const AUTH_TOKEN = session.user.access_token
-    config.headers.common['Authorization'] = `Bearer ${AUTH_TOKEN}`
+    if(!config["url"].startsWith("https://minio")){
+      config.headers.common['Authorization'] = `Bearer ${AUTH_TOKEN}`
+    }
 
   }
   return config;
