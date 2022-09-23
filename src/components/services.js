@@ -385,7 +385,10 @@ export default {
                     if (err){
                         callBackHandler(err)
                     }else{
-                        axios({url:presignedUrl,method:'GET',responseType: params.response_type})
+                        axios({url:presignedUrl,method:'GET',responseType: params.response_type, transformRequest: (data, headers) => {
+                            delete headers.common['Authorization'];
+                            return data;
+                          }})
                         .then(response => {
                             callBackHandler(response)
                         })
