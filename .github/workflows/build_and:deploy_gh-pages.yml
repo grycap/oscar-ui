@@ -11,8 +11,8 @@ jobs:
 
       - name: Set EGI Check-in issuer and client ID
         run: |
-          sed -i -e "s/$EGI_CHECKIN_ISSUER/${{ secrets.EGI_CHECKIN_ISSUER }}/g" src/env.js
-          sed -i -e "s/$EGI_CHECKIN_CLIENT_ID/${{ secrets.EGI_CHECKIN_CLIENT_ID }}/g" src/env.js
+          sed -i -e "s|\$EGI_CHECKIN_ISSUER|${{ secrets.EGI_CHECKIN_ISSUER }}|g" src/env.js
+          sed -i -e "s|\$EGI_CHECKIN_CLIENT_ID|${{ secrets.EGI_CHECKIN_CLIENT_ID }}|g" src/env.js
 
       - name: Install and Build
         run: |
