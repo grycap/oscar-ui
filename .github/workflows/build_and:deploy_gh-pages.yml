@@ -9,10 +9,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2.3.1
 
+      - name: Set EGI Check-in issuer and client ID
+        run: |
+          sed -i -e "s|\$EGI_CHECKIN_ISSUER|${{ secrets.EGI_CHECKIN_ISSUER }}|g" src/env.js
+          sed -i -e "s|\$EGI_CHECKIN_CLIENT_ID|${{ secrets.EGI_CHECKIN_CLIENT_ID }}|g" src/env.js
+
       - name: Install and Build
         run: |
           npm install
           npm run build
+
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@4.1.0
         with:
