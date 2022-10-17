@@ -405,15 +405,22 @@
 														<v-flex class="text-center" xs12 sm5 style="padding-top:10px; margin-left: 10px;">
 															<div>
 																<span class="v-label theme--light" aria-hidden="true"
-																	style="left: 0px;
-																			right: auto;
-																			margin-right: 10px;" >
+																	style="left: 0px; right: auto; margin-right: 10px;" >
 																			Is your image based on Alpine?
 																</span>
 																<v-switch  v-model="form.alpine" style="display:inline-block;"></v-switch>
 															</div>
 														</v-flex>
-
+														
+														<v-flex v-show="getGpu_available== 'true'" class="text-left" xs12 sm5 style="padding-top:10px; margin-left: 0px;">
+															<div>
+																<span class="v-label theme--light" aria-hidden="true"
+																	style="left: 0px; right: auto; margin-right: 10px;" >
+																			Does your service need GPU?
+																</span>
+																<v-switch  v-model="form.enable_gpu" style="display:inline-block;"></v-switch>
+															</div>
+														</v-flex>
 
 													</v-layout>
 												</v-container>
@@ -1259,7 +1266,7 @@ export default {
 				total_cpu:'',
 				total_memory:'',
 				alpine:false,
-
+				enable_gpu:false,
 
 			},
 			progress: {
@@ -1921,6 +1928,7 @@ export default {
 				'script': this.base64String,
 				'storage_providers': this.form.storage_provider,
 				'alpine':this.form.alpine,
+				'enable_gpu':this.form.enable_gpu,
 			}
 			if(localStorage.getItem('yunikorn_enable') == "true"){
 				if(this.form.total_memory != ''){
@@ -1993,6 +2001,9 @@ export default {
 		getYunikorn_option () {
 			return localStorage.getItem('yunikorn_enable')
 		},
+		getGpu_available() {
+			return localStorage.getItem('gpu_available')
+		},
 
 	},
 
@@ -2015,6 +2026,9 @@ export default {
 				var value_select = "2"
 			}
 			this.form.alpine=data.alpine
+			if(localStorage.getItem('gpu_available')== "true" && data.enable_gpu !='' ){
+				this.form.enable_gpu=data.enable_gpu
+			}
 			if(localStorage.getItem('yunikorn_enable') == "true" && data.total_cpu !=''){
 				this.form.total_cpu=data.total_cpu
 			}
