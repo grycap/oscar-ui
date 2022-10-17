@@ -354,7 +354,8 @@ export default {
 						script: serv.script,
             total_cpu: serv.total_cpu,
             total_memory: serv.total_memory,
-            alpine: serv.alpine
+            alpine: serv.alpine,
+			enable_gpu: serv.enable_gpu
 					}
 				})
 				this.loading = false;

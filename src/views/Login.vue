@@ -170,6 +170,7 @@ export default {
       localStorage.setItem("user", this.model.username);
       localStorage.setItem("password", this.model.password);
       localStorage.setItem("yunikorn_enable",response.data.yunikorn_enable);
+      localStorage.setItem("gpu_available",response.data.gpu_available);
     },
     checkLoginCallback(response){
       if(response == 200){

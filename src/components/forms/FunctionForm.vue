@@ -2026,7 +2026,7 @@ export default {
 				var value_select = "2"
 			}
 			this.form.alpine=data.alpine
-			if(localStorage.getItem('gpu_available')== "true" && data.enable_gpu !='' ){
+			if(localStorage.getItem('gpu_available')== "true" && data.enable_gpu != undefined ){
 				this.form.enable_gpu=data.enable_gpu
 			}
 			if(localStorage.getItem('yunikorn_enable') == "true" && data.total_cpu !=''){
