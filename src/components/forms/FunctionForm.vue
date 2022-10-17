@@ -416,7 +416,7 @@
 															<div>
 																<span class="v-label theme--light" aria-hidden="true"
 																	style="left: 0px; right: auto; margin-right: 10px;" >
-																			Does your service need GPU?
+																		Enable GPU?
 																</span>
 																<v-switch  v-model="form.enable_gpu" style="display:inline-block;"></v-switch>
 															</div>
