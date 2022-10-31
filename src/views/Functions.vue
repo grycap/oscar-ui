@@ -310,7 +310,8 @@ export default {
 				storage_provider: this.services[index].storage,
 				total_memory:this.services[index].total_memory,
 				total_cpu:this.services[index].total_cpu,
-				alpine:this.services[index].alpine
+				alpine:this.services[index].alpine,
+				enable_gpu:this.services[index].enable_gpu
 			}
 			window.getApp.$emit('FUNC_OPEN_MANAGEMENT_DIALOG', servInfo)
 		},
@@ -353,7 +354,8 @@ export default {
 						script: serv.script,
             total_cpu: serv.total_cpu,
             total_memory: serv.total_memory,
-            alpine: serv.alpine
+            alpine: serv.alpine,
+			enable_gpu: serv.enable_gpu
 					}
 				})
 				this.loading = false;
