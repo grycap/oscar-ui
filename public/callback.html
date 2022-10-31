@@ -90,8 +90,12 @@
                     localStorage.setItem("port",30300)
                   }else{
                     localStorage.setItem("endpoint",endpoint_host)
-                    localStorage.setItem("useSSL",response.data.minio_provider.verify)
                     localStorage.setItem("port",port)
+                    if (response.data.minio_provider.endpoint.indexOf("http://") == 0) {
+                      localStorage.setItem("useSSL",false)
+                    } else {
+                      localStorage.setItem("useSSL",true)
+                    }
                   }
 
                   localStorage.setItem("accessKey",response.data.minio_provider.access_key)

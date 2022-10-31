@@ -159,8 +159,12 @@ export default {
         localStorage.setItem("endpoint",endpoint_host)
         localStorage.setItem("port",port)
       }
-      if(response.data.minio_provider.verify && endpoint_host !=env.response_default_minio){
-        localStorage.setItem("useSSL",response.data.minio_provider.verify)
+      if(endpoint_host !=env.response_default_minio){
+        if (response.data.minio_provider.endpoint.indexOf("http://") == 0) {
+          localStorage.setItem("useSSL",false)
+        } else {
+          localStorage.setItem("useSSL",true)
+        }
       }else{
         localStorage.setItem("useSSL",env.minio_local_ssl)
       }
