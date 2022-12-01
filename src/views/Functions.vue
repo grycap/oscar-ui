@@ -209,8 +209,12 @@
 				</template>
 
 				 <template v-slot:no-data>
-					<v-alert :value="true" color="error" icon="warning">
-					Sorry, there are no services to display here :(
+					<v-alert :value="true" type="info" color="#83C3FA"  style="color:black;">
+					There are no services deployed. 
+					If you did not create a service, follow the 
+					<a style="color:black; text-decoration: underline;" href="https://docs.oscar.grycap.net/usage/#deploying-services">
+						deployment instructions 
+					</a> to deploy an example service.
 					</v-alert>
             	</template>
 
