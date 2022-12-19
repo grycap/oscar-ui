@@ -24,23 +24,53 @@
 				v-show="!show_spinner"
 			>
 				<template v-slot:items="props">
-				<tr >
-					<td class="text-xs-center">{{ props.item.service }}</td>
-					<td class="text-xs-center">{{ props.item.container }}</td>
-					<td class="text-xs-center">{{ props.item.cpu }}</td>
-					<td class="text-xs-center">{{ props.item.memory }}</td>
-					<td class="justify-center layout px-0">
-						<v-icon small class="mr-2" @click="editFunction(props.item)">edit</v-icon>
-						<v-icon small class="mr-2" @click="deleteFunction(props.item,props.item.service)">delete</v-icon>
-					</td>
-					<td class="text-xs-center">
-						<v-btn small outline color="indigo" @click="goLogs(props.item.service)">LOGS</v-btn>
-					</td>
-					<td class="text-xs-center">
-						<v-icon  medium v-show="props.expanded" @click="props.expanded = !props.expanded">expand_less</v-icon>
-						<v-icon  medium v-show="!props.expanded" @click="props.expanded = !props.expanded;showEnvVars(props.item.envVars.Variables)">expand_more</v-icon>
-					</td>
-				</tr>
+					<tr >
+						<td class="text-xs-center">{{ props.item.service }}</td>
+						<td class="text-xs-center">{{ props.item.container }}</td>
+						<td class="text-xs-center">{{ props.item.cpu }}</td>
+						<td class="text-xs-center">{{ props.item.memory }}</td>
+						<div class="text-xs-center">
+							<v-menu>
+							<template v-slot:activator="{ on, attrs }">
+								<v-btn v-bind="attrs" v-on="on"
+								outline color="indigo"
+								>
+								More Options
+								</v-btn>
+							</template>
+							<v-list >
+								
+								<v-btn class="buttom-options" 	outline @click="editFunction(props.item)" >
+									<v-icon small class="mr-2">edit</v-icon>
+								Edit
+								</v-btn>
+								<br>
+								
+								<v-btn class="buttom-options" outline @click="goLogs(props.item.service)">
+									<v-icon small class="mr-2" >visibility</v-icon>
+								Logs
+								</v-btn>
+
+								<br>
+								<v-btn class="buttom-options" outline @click="goInvoke(props.item.service)">
+									<v-icon small class="mr-2" >sync_alt</v-icon>
+								Invoke
+								</v-btn>
+								<br>
+								<v-btn class="buttom-options" color="red" outline @click="deleteFunction(props.item,props.item.service)">
+									<v-icon small class="mr-2" >delete</v-icon>
+								Delete
+								</v-btn>
+								<br>
+							</v-list>
+							</v-menu>
+						</div>
+
+						<td class="text-xs-center">
+							<v-icon  medium v-show="props.expanded" @click="props.expanded = !props.expanded">expand_less</v-icon>
+							<v-icon  medium v-show="!props.expanded" @click="props.expanded = !props.expanded;showEnvVars(props.item.envVars.Variables)">expand_more</v-icon>
+						</td>
+					</tr>
 				</template>
 
 				<template v-slot:expand="props" style="margin-top:1rem">
@@ -356,14 +386,13 @@ export default {
 						outputs: serv.output,
 						storage: serv.storage_providers,
 						script: serv.script,
-            total_cpu: serv.total_cpu,
-            total_memory: serv.total_memory,
-            alpine: serv.alpine,
-			enable_gpu: serv.enable_gpu
+						total_cpu: serv.total_cpu,
+						total_memory: serv.total_memory,
+						alpine: serv.alpine,
+						enable_gpu: serv.enable_gpu
 					}
 				})
 				this.loading = false;
-
 			}else{
 				this.show_alert = true;
 				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response.data, color: 'error' })
@@ -371,6 +400,9 @@ export default {
 		},
 		goLogs(service_name){
 			this.$router.push({name: "Logs", params:{serviceName: service_name}})
+		},
+		goInvoke(service_name){
+			this.$router.push({name: "Invoke", params:{serviceName: service_name}})
 		},
 		bottomVisible() {
 			const scrollY = window.scrollY
@@ -408,6 +440,10 @@ export default {
 	overflow-y: auto;
 }
 
+.buttom-options{
+	width:85%;
+	color:indigo;
+}
 .btn-circle {
     width: 30px;
     height: 30px;
@@ -417,6 +453,7 @@ export default {
     font-size: 12px;
     line-height: 1.42857;
 }
+
 
   .media
     &-cotent--wrap

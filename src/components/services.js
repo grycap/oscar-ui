@@ -296,6 +296,63 @@ export default {
 
             }
         },
+        getTokenService(service,callBackHandler){
+            var if_token = this.checkIfToken();
+            var token="";
+            if(if_token){
+                axios({
+                    method: 'get',
+                    url: this.api+'/system/services/'+service,
+                }).then(function(response){
+                    callBackHandler(response)
+                }).catch(function(error){
+                    callBackHandler(error)
+                })
+            }else{
+                axios({
+                    method: 'get',
+                    url: this.api+'/system/services/'+service,
+                    auth: {
+                        username: this.username_auth,
+                        password: this.password_auth
+                    },
+                }).then(function(response){
+                    callBackHandler(response)
+                }).catch(function(error){
+                    callBackHandler(error)
+                })
+            }
+        },
+        
+        
+
+        synchronousCall(params, callBackHandler){
+            var if_token = this.checkIfToken();
+            if(if_token){
+                axios({
+                    method: 'post',
+                    url: this.api+'/run/'+params.serviceName,
+                    headers:{ Authorization: token },
+                    data: params.data
+                }).then(function(response){
+                    callBackHandler(response)
+                }).catch(function(error){
+                    callBackHandler(error)
+                })
+            }else{
+                axios({
+                    method: 'post',
+                    url: this.api+'/run/'+params.serviceName,
+                    headers:{ Authorization: params.token },
+                    data: params.data
+                }).then(function(response){
+                    callBackHandler(response)
+                }).catch(function(error){
+                    callBackHandler(error)
+                })
+
+            }
+        },
 
         //******Minio's Call********/
 
