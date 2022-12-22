@@ -136,7 +136,7 @@ export default {
                     method: 'get',
                     url: this.api+'/system/logs/'+serviceName
                 }).then(function (response) {
-                    callBackHandler(response.data);
+                    callBackHandler(response);
                 }.bind(this)).catch(function (error) {
                     callBackHandler(error);
                 })
@@ -149,7 +149,7 @@ export default {
                         password: this.password_auth
                     }
                 }).then(function (response) {
-                    callBackHandler(response.data);
+                    callBackHandler(response);
                 }.bind(this)).catch(function (error) {
                     callBackHandler(error);
                 })

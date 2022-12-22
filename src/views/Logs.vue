@@ -217,23 +217,28 @@ export default {
             
         },
         listJobsCallback(response){
-            if(Object.keys(response).length > 0){
+            if(response.status == 200){
+                if(Object.keys(response.data).length > 0){
                 this.show_spinner = false;
-				this.jobs =  Object.keys(response).map((key,index) => {
+				this.jobs =  Object.keys(response.data).map((key,index) => {
 					return {
 						name: key,
-						status: response[key].status,
-						creation: Date.parse(response[key].creation_time),
-						start: response[key].start_time,
-						finish: response[key].finish_time,
+						status: response.data[key].status,
+						creation: Date.parse(response.data[key].creation_time),
+						start: response.data[key].start_time,
+						finish: response.data[key].finish_time,
 					}
 				})
 				this.loading = false;
+                }else{
+                    this.show_spinner=false
+                    this.loading = false
+                    this.jobs = []
+                }
             }else{
-                this.show_spinner=false
-                this.loading = false
-                this.jobs = []
+                this.listJobsCall(this.serviceName, this.listJobsCallback);
             }
+
         },
 		
 	},

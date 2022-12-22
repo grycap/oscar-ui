@@ -36,25 +36,53 @@
 											<div style="width:100%;padding: 0px 10px;">
 												<v-flex xs12>
 													<v-text-field
-														v-model="form.image"
-														:rules="form.imageRules"
-														:counter="200"
-														label="Docker image:"
-														required
-													></v-text-field>
-												</v-flex>
-
-												<v-flex xs12>
-													<v-text-field
 														v-model="form.name"
 														:rules="form.nameRules"
 														:counter="26"
 														maxlength="26"
 														label="Function name"
 														required
-														:disabled="this.editionMode"
 													></v-text-field>
 												</v-flex>
+												<v-flex xs12>
+													<v-text-field
+														v-model="form.image"
+														:rules="form.imageRules"
+														:counter="200"
+														label="Docker image:"
+														style="padding-right: 5px;"
+														required
+													></v-text-field>
+												</v-flex>
+												<div class="form-group" style="width:100%">
+													<div class="input-group">
+														<v-flex xs8  md10  >
+															<v-text-field id="text-secret"	:counter="200"	label="Docker secret:"	></v-text-field>
+														</v-flex>
+														<v-flex xs2  md2  >
+															<v-btn color="primary"  @click="addSecret()">Add secret</v-btn>
+														</v-flex>
+														<v-flex xs12 sm6 offset-sm3 v-show="form.image_pull_secrets.length != 0">
+															<input type="file" id="envs" hidden="true" multiple />
+															<v-list subheader dense>
+																<v-subheader inset>Secrets</v-subheader>
+																<v-list-tile
+																v-for="(secret) in form.image_pull_secrets"
+																:key="secret" >
+																		<v-list-tile-content>
+																			<v-list-tile-title>{{secret}}</v-list-tile-title>
+																		</v-list-tile-content>
+
+																		<v-list-tile-action>
+																			<v-btn icon ripple @click="deleteSecret(key)">
+																			<v-icon color="red lighten-1">remove_circle_outline</v-icon>
+																			</v-btn>
+																		</v-list-tile-action>
+																</v-list-tile>
+															</v-list>
+														</v-flex>
+													</div>
+												</div>
 											</div>
 											<div class="row" style="width:100%;padding: 0px 10px;">
 												<v-flex xs12  md5 text-xs-center>
@@ -1192,6 +1220,7 @@ export default {
 			limits_mem: '',
 			total_mem:'',
 			request_mem: '',
+			initialName:'',
 			select_logLevel: '',
 			ONEDATA_DICT:{},
 			S3_DICT:{},
@@ -1220,6 +1249,7 @@ export default {
 			form: {
 				valid: false,
 				image: '',
+				image_pull_secrets: [],
 				imageRules: [
 				v => !!v || 'Docker image is required',
 				// v => (v && v.includes('/')) || 'The Docker image must comply with the nomenclature of Docker Hub images'
@@ -1921,6 +1951,7 @@ export default {
 				'environment': {
 					"Variables":this.envVars
 				},
+				'image_pull_secrets':this.form.image_pull_secrets,
 				'annotations':this.annotations,
 				'labels': this.labels,
 				'input': this.inputs,
@@ -1958,14 +1989,26 @@ export default {
 				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response, color: 'error' })
 			}
 			this.progress.active = false
+			this.disabled_submit = false;
+
 
 		},
 		editFunction () {
 			var params =this.prepareFunction()
 			this.progress.active = true;
 			this.disabled_submit = true;
-			this.editServiceCall(params, this.editServiceCallBack)
-
+			if(this.initialName != this.form.name){
+				this.deleteServiceCall(this.initialName,this.deleteServiceToUpdateCallBack);
+			}else{
+				this.editServiceCall(params, this.editServiceCallBack)
+			}
+		},
+		deleteServiceToUpdateCallBack(response){
+			if (response.status == 204) {
+				this.newFunction()
+			}else{
+				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response, color: 'error' })
+			}
 		},
 		editServiceCallBack(response){
 			if(response.status == 204){
@@ -1973,7 +2016,6 @@ export default {
 				this.dialog = false;
 				this.clear()
 				this.updateFunctionsGrid()
-
 			}else {
 				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response, color: 'error' })
 			}
@@ -1985,7 +2027,14 @@ export default {
 		updateFunctionsGrid () {
 			window.getApp.$emit('FUNC_GET_FUNCTIONS_LIST')
 			window.getApp.$emit('REFRESH_BUCKETS_LIST')
-		}
+		},
+		addSecret() {
+			var newSecret=document.getElementById('text-secret').value
+      		this.form.image_pull_secrets.push(newSecret);
+    	},
+		deleteSecret(newSecret) {
+      		this.form.image_pull_secrets.pop(newSecret);
+    	},
 	},
 	computed: {
 
@@ -2013,7 +2062,9 @@ export default {
 			this.dialog = true
 			this.editionMode = data.editionMode
 			this.form.name = data.name
+			this.initialName = data.name
 			this.form.image = data.image
+			this.form.image_pull_secrets = data.image_pull_secrets ? data.image_pull_secrets : [];
 			this.inputs = data.input
 			this.outputs = data.output
 			this.form.limits_cpu = data.cpu
