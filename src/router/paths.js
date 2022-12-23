@@ -129,6 +129,18 @@ export default [
 				)
 			},
 			{
+				path: '/invoke/:serviceName',
+				meta: {
+					public: false
+				},
+				name: 'Invoke',
+				component: () => import(
+				/* webpackChunkName: "routes" */
+				/* webpackMode: "lazy" */
+				`@/views/Invoke.vue`
+				)
+			},
+			{
 				path: '/settings',
 				meta: {
 				public: false
