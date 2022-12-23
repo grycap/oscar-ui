@@ -59,9 +59,12 @@
                 </div>
             </template>
              <template v-slot:no-data>
-                <v-alert :value="true" color="error" icon="warning">
-                   Sorry, there are no logs to display here :(
-                </v-alert>
+                <v-alert :value="true" type="info" color="#83C3FA"  style="color:black;">
+					There are no logs. If you do not know how to invoke a service, follow the 
+					<a style="color:black; text-decoration: underline;" target="_blank" href="https://docs.oscar.grycap.net/usage/#minio-storage-tab">
+						MinIO Storage Tab documentation.
+					</a>
+				</v-alert>
             </template>
             <v-alert slot="no-results" :value="true" color="error" icon="warning">
                         Your search for "{{ search }}" found no results.
