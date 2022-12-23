@@ -7,10 +7,22 @@
       <div v-show="!show_spinner" > 
         <div class="inputclass">
           <h3>Input</h3>
-          <input label="" type="file"  @change="selectFile" />
-          <v-btn  color="green lighten-2" dark @click="invokeSynchronous()" >
-            Invocation
-          </v-btn>
+          <v-flex xs12 sm12 md6 justify-center>
+            <v-btn 
+              color="primary"
+              class="white--text"
+              @click="addFiles()"
+            >
+              Select file
+              <v-icon right dark>note_add</v-icon>
+            </v-btn>
+            <v-flex xs12 sm12 md6 v-show="false" id="selectedList">
+                <input type="file" id="files" ref="files" @change="selectFile"/>
+            </v-flex>
+            <v-btn  color="green lighten-2" dark @click="invokeSynchronous()" >
+              Invocation
+            </v-btn>
+          </v-flex>
           <v-divider > </v-divider>
           <textarea  class='textbox' v-model="inputData"  rows="15" placeholder="Introduce here your input as a text"></textarea>
         </div>
@@ -105,10 +117,8 @@ export default {
         selectFile(event) {
           this.fileinput=event.target.files
           let reader = new FileReader();
-            reader.onload = e => {
-              this.inputData= e.target.result;
-            };
-            reader.readAsBinaryString(this.fileinput[0]);
+          reader.onload = e => { this.inputData= e.target.result; };
+          reader.readAsBinaryString(this.fileinput[0]);
 
         },
 
@@ -169,6 +179,9 @@ export default {
 			
           }
         },
+        addFiles() {     
+          this.$refs.files.click()
+        }, 
 	},
     created: function () {
       if(this.$route.params.serviceName){
