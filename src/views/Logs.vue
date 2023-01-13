@@ -128,18 +128,18 @@ export default {
 	methods: {
         customSort(items, index, isDesc) {
             items.sort((a, b) => {
-                if (index === "create_time") {
+                if (index === "create_time" || index === "start_time" || index === "finish_time") {
                     if (!isDesc) {
                         return a.creation - b.creation;
                     } else {
                         return b.creation - a.creation;
                     }
                 } else {
-                if (!isDesc) {
-                    return a[index] < b[index] ? -1 : 1;
-                } else {
-                    return b[index] < a[index] ? -1 : 1;
-                }
+                    if (!isDesc) {
+                        return a[index] < b[index] ? -1 : 1;
+                    } else {
+                        return b[index] < a[index] ? -1 : 1;
+                    }
                 }
             });
             return items;

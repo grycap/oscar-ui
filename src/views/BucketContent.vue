@@ -25,13 +25,14 @@
 			max-width="890"
 		>
 			<v-card>
-				<v-card-title
+				<v-card-title  class="text-h5 grey lighten-2"
 					primary-title
 				>
 					Preview
 				</v-card-title>
 			<v-card-actions>
-				<v-img :src="url_image"></v-img>
+				<v-img v-if="this.type_dialog_photo=='Image'" :src="url_image"></v-img>
+				<textarea v-if="this.type_dialog_photo=='Text'" class='view' rows="25" v-model="this.url_image" :disabled="true"></textarea>
 			</v-card-actions>
 			<v-card-actions style="justify-content:center">
 			
@@ -297,6 +298,7 @@ export default {
 		allData:[],
 		paths:[],
 		dialog_photo: false,
+		type_dialog_photo: "",
 		url_image:"",
 		path_to:'',
 		tabs_input_output: 'tab-input',
@@ -411,10 +413,33 @@ export default {
 			this.previewFileCall(params_preview,this.previewFileCallBack)
 		},
 		previewFileCallBack(response){
-			this.url_image=response
+			let extension=this.getFileExtension1(response).split("?")[0]
+			if(extension=="json" ||  extension=="txt" || extension == "sh"){
+				let bucketName= response.split("?")[0].replace("//","-").split("/")[1]
+				let parts=response.split("?")[0].replace("//","-").split("/")
+				let name=""
+				for(let i=2; i< parts.length;i++){
+					name+=parts[i]+"/"
+				}
+				let fileName= name.substring(0,name.length-1)
+				var params = {'bucketName': bucketName.replace("%20"," "), "fileName": [fileName.replace("%20"," ")], "select": '1', "response_type": 'blob'}
+				this.downloadFileCall(params,this.fileAstringCallBack)
+				this.type_dialog_photo = "Text"
+			}else if(extension == 'jpg' || extension == 'jpeg' || extension == 'png' ){
+				this.url_image=response
+				this.type_dialog_photo= "Image"
+			}
 			this.dialog_photo = true
 		},
-
+		fileAstringCallBack(response){
+			const blb = new Blob([response.data]).text()
+			blb.then((successMessage) => {
+			console.log(successMessage)
+			this.url_image =successMessage
+			console.log(this.url_image)
+			});
+			
+		},
 		findFilesize(item){
 			if(item == ""){
 				return ""
@@ -593,7 +618,7 @@ export default {
                         var extension = this.getFileExtension1(first_path)
                         var icon_file = ''
                         var color_file = ''
-                        if(extension == 'jpg' || extension == 'jpeg' || extension == 'png'){
+                        if(extension == 'jpg' || extension == 'jpeg' || extension == 'png' || extension =="json" || extension == "txt" || extension == "sh"){
                             icon_file = 'insert_photo'
                             color_file = 'blue'
                         }else{
@@ -913,6 +938,9 @@ export default {
   	.md-speed-dial {
     	margin: 0 24px 0 8px;
   	}
+	.view{
+		width: 100%;
+	}
 	  .fixed-dial{
 		position: fixed !important;
 		bottom: 40px;
