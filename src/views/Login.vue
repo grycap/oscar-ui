@@ -224,7 +224,6 @@ export default {
       const urlParams = new URLSearchParams(queryString);
       const username = urlParams.get('username')
       const endpoint = urlParams.get('endpoint')
-      console.log(username, endpoint)
       if (username !== null){
         this.model.username = username;
       }

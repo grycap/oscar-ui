@@ -6,9 +6,9 @@
     </v-btn>
     
     <div class="rightside">
-      <div class="aux">
+      <div class="seconddiv">
         <div class="identifieruser">
-          <p >{{user}}</p>
+          <strong >{{showinfo}}</strong>
         </div>
         <v-btn class="fullscreen" icon @click="handleFullScreen()">
           <v-icon>fullscreen</v-icon>
@@ -27,7 +27,7 @@ export default {
     NotificationList
   },
   data: () => ({
-    user:localStorage.getItem("user"),
+    showinfo:  (localStorage.getItem("user")?localStorage.getItem("user"):"EGI Authentication")+" - " + localStorage.getItem("api") ,
     mini: false,
     items: [
       {
@@ -81,16 +81,17 @@ export default {
 .rightside{
   width: 100%;
 }
-.aux{
+.seconddiv{
   float: right;
 }
 .identifieruser{
   display: inline;
   
 }
-.identifieruser p{
+.identifieruser strong{
+  font-family:  Roboto;
   display: inline;
-  font-size: 19px;
+  font-size: 15px;
   vertical-align: middle;
 }
 
