@@ -66,6 +66,15 @@ export default {
   },
   created () {
     this.auth = localStorage.getItem("authenticated")
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    if(this.auth == "true" && null != urlParams.get('endpoint') && 
+      localStorage.getItem("api") != urlParams.get('endpoint')){
+      console.log(localStorage.getItem("api"))
+      console.log(urlParams.get('endpoint'))
+      localStorage.clear();
+      this.$router.push({name: "Login"})
+    }
     AppEvents.forEach(item => {
       this.$on(item.name, item.callback)
     })

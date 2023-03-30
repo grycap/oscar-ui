@@ -70,17 +70,14 @@ window.axios.interceptors.response.use(
       setTimeout(() => {
         window.Swal.fire({
           title: 'Authentication error!',
-          text: 'Your session expired.',
+          text: 'Username or password are incorrect',
           icon: 'error',
           confirmButtonText: `OK`,
           confirmButtonColor: '#d33',
         }).then(result => {
           if (result.isConfirmed) {
             localStorage.clear();
-            window.location = `${location.origin}/login`;
-                        
-
-        
+            this.$router.push({name: "Login"})
           }
         });
       }, 50);

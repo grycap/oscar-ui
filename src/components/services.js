@@ -69,8 +69,8 @@ export default {
                     // _this.username_auth = params.user
                     // _this.password_auth = params.password
                     callBackHandler(response.status);
-                }.bind(this)).catch(function (error) {
-                    callBackHandler(error.response.status);
+                }.bind(this)).catch(function (response) {
+                    callBackHandler(response.status);
                 })
             }
 

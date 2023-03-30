@@ -4,10 +4,17 @@
     <v-btn icon @click.stop="handleDrawerMini">
       <v-icon v-html="mini ? 'chevron_right' : 'chevron_left'"></v-icon>
     </v-btn>
-    <v-spacer></v-spacer>
-    <v-btn icon @click="handleFullScreen()">
-      <v-icon>fullscreen</v-icon>
-    </v-btn>
+    
+    <div class="rightside">
+      <div class="aux">
+        <div class="identifieruser">
+          <p >{{user}}</p>
+        </div>
+        <v-btn class="fullscreen" icon @click="handleFullScreen()">
+          <v-icon>fullscreen</v-icon>
+        </v-btn>
+      </div>
+    </div>
   </v-toolbar>
 </template>
 <script>
@@ -20,6 +27,7 @@ export default {
     NotificationList
   },
   data: () => ({
+    user:localStorage.getItem("user"),
     mini: false,
     items: [
       {
@@ -68,3 +76,22 @@ export default {
   }
 }
 </script>
+<style>
+
+.rightside{
+  width: 100%;
+}
+.aux{
+  float: right;
+}
+.identifieruser{
+  display: inline;
+  
+}
+.identifieruser p{
+  display: inline;
+  font-size: 19px;
+  vertical-align: middle;
+}
+
+</style>
