@@ -94,7 +94,7 @@ export default {
   },
 
   methods: {
-    login () {
+    login() {
       if(env.deploy_container == "true"){
         this.model.endpoint = env.api
       }
@@ -202,14 +202,10 @@ export default {
               })
 
             }
-
-
       }else if (response == 401){
         this.loading = false
-        window.getApp.$emit('APP_SHOW_SNACKBAR', { text: "Username or password is incorrect", color: 'error' })
       }else{
         this.loading = false
-        window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response, color: 'error' })
       }
     },
     validateURL(link)
