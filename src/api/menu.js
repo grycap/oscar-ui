@@ -23,6 +23,12 @@ const Menu = [
     name: 'Functions'
   },
   {
+    title: 'Info',
+    group: 'apps',
+    icon: 'info',
+    name: 'Info'
+  },
+  {
     title: 'Settings',
     group: 'apps',
     icon: 'settings',

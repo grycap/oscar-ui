@@ -65,6 +65,12 @@
 					</template>
 				</v-flex>
 				<v-flex row xs12 >				
+					<v-btn id="btn_info" depressed round flat block small @click.native="collapse('btn_info')" >		
+						<v-icon  left style="padding-right:12px">info</v-icon>
+						<span v-show="this.mini==false">Info</span>						
+					</v-btn>
+				</v-flex>
+				<v-flex row xs12 >				
 					<v-btn id="btn_logout" depressed round flat block small @click.native="collapse('btn_logout')" >		
 						<v-icon  left style="padding-right:12px">exit_to_app</v-icon>
 						<span v-show="this.mini==false">Log Out</span>						
@@ -145,6 +151,8 @@ export default {
 			$("#btn_storage").css("color","#0056b3")
 			$("#name_buckets").css("display", "block")
 			
+		}else if(_this.$route.name  == 'Info'){
+			$("#btn_info").css("color","#0056b3")
 		}
 		})
 				
@@ -160,6 +168,7 @@ export default {
 		$("#btn_sett").css("color","#000!important")
 		$("#btn_logout").css("color","#000!important")
 		$("#btn_storage").css("color","#000!important")
+		$("#btn_info").css("color","#000!important")
 		
 		
 		if(id == "btn_dash"){
@@ -188,7 +197,9 @@ export default {
 			}else if (this.drawer2 == false){
 				this.expand_sto = "expand_more"		
 			}
-		}			
+		}else if(id == "btn_info"){
+			this.$router.push({name: "Info"})
+		}		
 		},
 	
     cleanfield(){
@@ -280,7 +291,7 @@ export default {
 }
 
 
-#btn_storage,#btn_dash,#btn_funct,#btn_sett,#btn_logout {
+#btn_storage,#btn_dash,#btn_funct,#btn_sett,#btn_logout, #btn_info {
 	text-transform:capitalize;
 	font-size:13px;	
 	padding-left:30px;
@@ -289,11 +300,11 @@ export default {
 	font-weight:400;
 }
 
-#btn_storage:hover,#btn_dash:hover,#btn_funct:hover,#btn_sett:hover,#btn_logout:hover {
+#btn_storage:hover,#btn_dash:hover,#btn_funct:hover,#btn_sett:hover,#btn_logout:hover , #btn_info:hover{
     color: #0056b3;    
 }
 
-#btn_dash .v-btn__content,  #btn_funct .v-btn__content, #btn_sett .v-btn__content,#btn_logout .v-btn__content{
+#btn_dash .v-btn__content,  #btn_funct .v-btn__content, #btn_sett .v-btn__content,#btn_logout .v-btn__content, #btn_info .v-btn__content{
     justify-content: left!important;
 	
 }
