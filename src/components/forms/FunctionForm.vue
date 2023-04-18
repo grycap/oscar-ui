@@ -816,6 +816,11 @@
 											>
 												S3
 											</v-tab>
+											<v-tab
+											:href="`#tab-dcache`"
+											>
+												dcache
+											</v-tab>
 										</v-tabs>
 
 										<v-tabs-items v-model="model_create" >
@@ -1142,6 +1147,108 @@
 
 												</v-container>
 											</v-tab-item>
+											<v-tab-item  :value="`tab-dcache`">
+												<v-container>
+													<v-layout row style="padding:0px,10px;justify-content: center;">
+														<img src="../../img/dcache.png" height="110px" alt="">
+													</v-layout>
+													<br>
+													<v-flex xs12 text-xs-center>
+														<span v-show="showErrorDcache" style="color: #cc3300; font-size: 12px;"><b>To add a storage option you must complete all the information.</b></span>
+													</v-flex>
+													<br>
+													<v-layout row style="padding:0px,10px;">
+														<v-flex xs12 sm8 offset-sm2>
+															<v-text-field
+																v-model="dcache.id"
+																:counter="200"
+																label="ID"
+															></v-text-field>
+														</v-flex>
+													</v-layout>
+
+													<v-layout row style="padding:0px,10px;">
+														<v-flex xs12 sm8 offset-sm2>
+															<v-text-field
+																v-model="dcache.endpoint"
+								
+																:counter="200"
+																label="ENDPOINT"
+															></v-text-field>
+														</v-flex>
+													</v-layout>
+
+													<v-layout row style="padding:0px,10px;">
+														<v-flex xs12 sm8 offset-sm2>
+															<v-text-field
+																v-model="dcache.user"
+																:append-icon="showDcacheUser ? 'visibility_off' : 'visibility'"
+																:type="showDcacheUser ? 'text' : 'password'"
+																:counter="200"
+																label="USER"
+																@click:append="showDcacheUser = !showDcacheUser"
+															></v-text-field>
+														</v-flex>
+													</v-layout>
+													<v-layout row style="padding:0px,10px;">
+														<v-flex xs12 sm8 offset-sm2>
+															<v-text-field
+																v-model="dcache.password"
+																:append-icon="showDcachePassword ? 'visibility_off' : 'visibility'"
+																:type="showDcachePassword ? 'text' : 'password'"
+																:counter="200"
+																label="PASSWORD"
+																@click:append="showDcachePassword = !showDcachePassword"
+															></v-text-field>
+														</v-flex>
+													</v-layout>
+
+													<v-flex xs12 text-xs-center>
+														<span v-show="envrequiretoken" style="color: #cc3300; font-size: 12px;"><b>ACCESS TOKEN is required</b></span>
+													</v-flex>
+
+
+
+													<v-flex xs12 sm6 offset-sm3 v-show="showDcache">
+														<input type="file" id="s3" hidden="true" multiple />
+														<v-list subheader dense>
+															<v-subheader inset>DCACHE</v-subheader>
+															<v-list-tile
+															v-for="(id,key) in DCACHE_DICT"
+															:key="key"
+															avatar
+															@click.stop=""
+															style="margin-bottom:40px;"
+															>
+
+
+																	<v-list-tile-content style="height:80px;">
+																		<v-list-tile-title style="padding-bottom:20px;">ID: {{key}}</v-list-tile-title>
+																		<v-list-tile-title style="padding-bottom:20px;">ENDPOINT: <span class="hide_text">{{id.endpoint}}</span></v-list-tile-title>
+																		<v-list-tile-title style="padding-bottom:20px;">USER: <span class="hide_text">*********</span></v-list-tile-title>
+																		<v-list-tile-title style="padding-bottom:20px;">PASSWORD: "*********</v-list-tile-title>
+																		<!-- <v-list-tile-title>{{key}}</v-list-tile-title> -->
+																	</v-list-tile-content>
+
+																	<v-list-tile-action>
+																		<v-btn icon ripple @click="removeDcache(key)">
+																		<v-icon color="red lighten-1">remove_circle_outline</v-icon>
+																		</v-btn>
+																	</v-list-tile-action>
+															</v-list-tile>
+														</v-list>
+													</v-flex>
+
+													<v-card-actions class="text-md-center" >
+														<v-spacer></v-spacer>
+														<v-btn @click="includeDcache()"  color="info">ADD</v-btn>
+
+													</v-card-actions>
+
+													
+												</v-container>
+
+											</v-tab-item>
 										</v-tabs-items>
 									</v-card>
 								</div>
@@ -1204,9 +1311,13 @@ export default {
 			showOneData: false,
 			showMinio: false,
 			showS3: false,
+			showDcache:false,
+			showDcacheUser:false,
+			showDcachePassword:false,
 			showErrorMinio:false,
 			showErrorOneData:false,
 			showErrorS3:false,
+			showErrorDcache:false,
 			showErrorInput:false,
 			showErrorOutput:false,
 			filerequire : false,
@@ -1224,6 +1335,7 @@ export default {
 			select_logLevel: '',
 			ONEDATA_DICT:{},
 			S3_DICT:{},
+			DCACHE_DICT:{},
 			MINIO_DICT:{},
 			 minio:{
 				id:'',
@@ -1244,6 +1356,12 @@ export default {
 				oneprovider_host: '',
 				token: '',
 				space: ''
+			},
+			dcache:{
+				id:'',
+				endpoint:'',
+				user: '',
+				password:''
 			},
 
 			form: {
@@ -1647,6 +1765,40 @@ export default {
 			}
 
 		},
+		includeDcache(){
+			if(this.dcache.id=='' || this.dcache.endpoint=='' || this.dcache.user=='' || this.dcache.password==''){
+				this.showErrorDcache = true
+			}else{
+				this.showErrorDcache = false
+				this.showDcache = true;
+				var value_dcache = {
+					"endpoint": this.dcache.endpoint,
+					"user": this.dcache.user,
+					"password": this.dcache.password
+				}
+				this.DCACHE_DICT[this.dcache.id]=value_dcache;
+				if (this.isEmpty(this.DCACHE_DICT)) {
+					this.showDcache = false
+				}
+				this.storages_all.push("dcache."+this.dcache.id)
+				value_dcache = ''
+				this.cleanfieldDcache()
+			}
+
+		},
+		cleanfieldDcache(){
+			this.dcache.id=''
+			this.dcache.endpoint = ''
+			this.dcache.user = ''
+			this.dcache.password = ''
+		},
+		removeDcache(item){
+			this.$delete(this.DCACHE_DICT,item)
+			if (this.isEmpty(this.DCACHE_DICT)) {
+				this.showDcache = false
+			}
+
+		},
 		isEmpty(obj) {
 			for(var key in obj) {
 				if(obj.hasOwnProperty(key))
@@ -1895,6 +2047,7 @@ export default {
 			this.ONEDATA_DICT={}
 			this.MINIO_DICT={}
 			this.S3_DICT={}
+			this.DCACHE_DICT={}
 			this.showOneData=false
 			this.showMinio=false
 			this.showS3=false
@@ -1915,6 +2068,9 @@ export default {
 			}
 			if (this.isEmpty(this.ONEDATA_DICT)==false){
 				this.form.storage_provider["onedata"]=this.ONEDATA_DICT
+			}
+			if (this.isEmpty(this.DCACHE_DICT)==false){
+				this.form.storage_provider["webdav"]=this.DCACHE_DICT
 			}
 
 			var value = $("#classmemory option:selected").text();
@@ -2145,6 +2301,7 @@ export default {
 			this.MINIO_DICT=data.storage_provider.minio
 			this.ONEDATA_DICT=data.storage_provider.onedata
 			this.S3_DICT=data.storage_provider.s3
+			this.DCACHE_DICT=data.storage_provider.webdav
 			this.storages_all=[]
 			if (this.isEmpty(this.MINIO_DICT)) {
 				this.showMinio = false
@@ -2163,6 +2320,13 @@ export default {
 			}else{
 				this.S3_DICT = true
 				this.storages_all.push('s3.'+Object.keys(this.S3_DICT))
+
+			}
+			if (this.isEmpty(this.DCACHE_DICT)) {
+				this.showDcache = false
+			}else{
+				this.showDcache = true
+				this.storages_all.push('webdav.'+Object.keys(this.DCACHE_DICT))
 
 			}
 		})
