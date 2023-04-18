@@ -58,7 +58,7 @@
                     <v-card-text style="display:flex;width: 50%" >
                       <strong style="margin-right: 5px">Secret Key: </strong>
                       <v-text-field  style="width: 10%!important;padding-top: 0px!important;margin-top: -12px!important;"
-                      :value="password"
+                      :value="secretKey"
                       :append-icon="showpasswordminio ?  'visibility' : 'visibility_off'"
                       :type="showpasswordminio ? 'text' : 'password'"
                       name="input-10-1"
