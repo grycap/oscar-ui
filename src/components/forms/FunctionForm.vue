@@ -40,7 +40,7 @@
 														:rules="form.nameRules"
 														:counter="26"
 														maxlength="26"
-														label="Function name"
+														label="Function name (min. 3 letters):"
 														required
 													></v-text-field>
 												</v-flex>
@@ -49,7 +49,7 @@
 														v-model="form.image"
 														:rules="form.imageRules"
 														:counter="200"
-														label="Docker image:"
+														label="Docker image (min. 3 letters):"
 														style="padding-right: 5px;"
 														required
 													></v-text-field>
@@ -1170,10 +1170,10 @@
 													<v-layout row style="padding:0px,10px;">
 														<v-flex xs12 sm8 offset-sm2>
 															<v-text-field
-																v-model="dcache.endpoint"
+																v-model="dcache.hostname"
 								
 																:counter="200"
-																label="ENDPOINT"
+																label="HOSTNAME"
 															></v-text-field>
 														</v-flex>
 													</v-layout>
@@ -1206,9 +1206,6 @@
 													<v-flex xs12 text-xs-center>
 														<span v-show="envrequiretoken" style="color: #cc3300; font-size: 12px;"><b>ACCESS TOKEN is required</b></span>
 													</v-flex>
-
-
-
 													<v-flex xs12 sm6 offset-sm3 v-show="showDcache">
 														<input type="file" id="s3" hidden="true" multiple />
 														<v-list subheader dense>
@@ -1220,11 +1217,9 @@
 															@click.stop=""
 															style="margin-bottom:40px;"
 															>
-
-
 																	<v-list-tile-content style="height:80px;">
 																		<v-list-tile-title style="padding-bottom:20px;">ID: {{key}}</v-list-tile-title>
-																		<v-list-tile-title style="padding-bottom:20px;">ENDPOINT: <span class="hide_text">{{id.endpoint}}</span></v-list-tile-title>
+																		<v-list-tile-title style="padding-bottom:20px;">HOSTNAME: <span class="hide_text">{{id.hostname}}</span></v-list-tile-title>
 																		<v-list-tile-title style="padding-bottom:20px;">USER: <span class="hide_text">*********</span></v-list-tile-title>
 																		<v-list-tile-title style="padding-bottom:20px;">PASSWORD: "*********</v-list-tile-title>
 																		<!-- <v-list-tile-title>{{key}}</v-list-tile-title> -->
@@ -1337,7 +1332,7 @@ export default {
 			S3_DICT:{},
 			DCACHE_DICT:{},
 			MINIO_DICT:{},
-			 minio:{
+			minio:{
 				id:'',
 				endpoint: '' ,
 				region: '',
@@ -1359,7 +1354,7 @@ export default {
 			},
 			dcache:{
 				id:'',
-				endpoint:'',
+				hostname:'',
 				user: '',
 				password:''
 			},
@@ -1766,13 +1761,13 @@ export default {
 
 		},
 		includeDcache(){
-			if(this.dcache.id=='' || this.dcache.endpoint=='' || this.dcache.user=='' || this.dcache.password==''){
+			if(this.dcache.id=='' || this.dcache.hostname=='' || this.dcache.user=='' || this.dcache.password==''){
 				this.showErrorDcache = true
 			}else{
 				this.showErrorDcache = false
 				this.showDcache = true;
 				var value_dcache = {
-					"endpoint": this.dcache.endpoint,
+					"hostname": this.dcache.hostname,
 					"user": this.dcache.user,
 					"password": this.dcache.password
 				}
@@ -1780,7 +1775,7 @@ export default {
 				if (this.isEmpty(this.DCACHE_DICT)) {
 					this.showDcache = false
 				}
-				this.storages_all.push("dcache."+this.dcache.id)
+				this.storages_all.push("webdav."+this.dcache.id)
 				value_dcache = ''
 				this.cleanfieldDcache()
 			}
@@ -1788,7 +1783,7 @@ export default {
 		},
 		cleanfieldDcache(){
 			this.dcache.id=''
-			this.dcache.endpoint = ''
+			this.dcache.hostname = ''
 			this.dcache.user = ''
 			this.dcache.password = ''
 		},
@@ -1951,11 +1946,16 @@ export default {
 				}
 				return obj;
 		},
+		validate(){
+			if(this.form.name.length < 3 || this.form.image.length < 3){
+				return false
+			}
+			return true
+		},
 		submit () {
-
 			if(this.$refs.form.validate() && this.editionMode == true && this.base64String != ''){
-					this.editFunction()
-			}else if (this.$refs.form.validate() && this.files.length != 0) {
+				this.editFunction()
+			}else if (this.validate() && this.files.length != 0) {
 				this.progress.active = true
 				this.editionMode ? this.editFunction() : this.newFunction()
 				this.envrequirehost = false
@@ -2076,14 +2076,14 @@ export default {
 			var value = $("#classmemory option:selected").text();
 
 
-			if (this.form.limits_memory == ""){
+			if (this.form.limits_memory == "" || this.form.limits_memory == undefined){
 				this.limits_mem = ''
 			}else{
 				this.limits_mem = this.form.limits_memory + value;
 			}
 
 			var total_value = $("#total_classmemory option:selected").text();
-			if (this.form.total_memory == ""){
+			if (this.form.total_memory == "" || this.form.total_memory == undefined){
 				this.total_mem = ''
 			}else{
 				this.total_mem = this.form.total_memory + total_value;
@@ -2298,10 +2298,30 @@ export default {
 				this.showselectOutput = true
 			}
 			this.base64String = data.script
-			this.MINIO_DICT=data.storage_provider.minio
-			this.ONEDATA_DICT=data.storage_provider.onedata
-			this.S3_DICT=data.storage_provider.s3
-			this.DCACHE_DICT=data.storage_provider.webdav
+
+			if(data.storage_provider.minio == undefined){
+				this.MINIO_DICT={}
+			}else{
+				this.MINIO_DICT=data.storage_provider.minio
+			}
+
+			if(data.storage_provider.onedata == undefined){
+				this.ONEDATA_DICT={}
+			}else{
+				this.ONEDATA_DICT=data.storage_provider.onedata
+			}
+
+			if(data.storage_provider.s3 == undefined){
+				this.S3_DICT={}
+			}else{
+				this.S3_DICT=data.storage_provider.s3
+			}
+
+			if(data.storage_provider.webdav == undefined){
+				this.DCACHE_DICT={}
+			}else{
+				this.DCACHE_DICT=data.storage_provider.webdav
+			}
 			this.storages_all=[]
 			if (this.isEmpty(this.MINIO_DICT)) {
 				this.showMinio = false
