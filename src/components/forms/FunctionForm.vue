@@ -1181,11 +1181,11 @@
 													<v-layout row style="padding:0px,10px;">
 														<v-flex xs12 sm8 offset-sm2>
 															<v-text-field
-																v-model="dcache.user"
+																v-model="dcache.login"
 																:append-icon="showDcacheUser ? 'visibility_off' : 'visibility'"
 																:type="showDcacheUser ? 'text' : 'password'"
 																:counter="200"
-																label="USER"
+																label="LOGIN"
 																@click:append="showDcacheUser = !showDcacheUser"
 															></v-text-field>
 														</v-flex>
@@ -1761,14 +1761,14 @@ export default {
 
 		},
 		includeDcache(){
-			if(this.dcache.id=='' || this.dcache.hostname=='' || this.dcache.user=='' || this.dcache.password==''){
+			if(this.dcache.id=='' || this.dcache.hostname=='' || this.dcache.login=='' || this.dcache.password==''){
 				this.showErrorDcache = true
 			}else{
 				this.showErrorDcache = false
 				this.showDcache = true;
 				var value_dcache = {
 					"hostname": this.dcache.hostname,
-					"user": this.dcache.user,
+					"login": this.dcache.login,
 					"password": this.dcache.password
 				}
 				this.DCACHE_DICT[this.dcache.id]=value_dcache;
@@ -1784,7 +1784,7 @@ export default {
 		cleanfieldDcache(){
 			this.dcache.id=''
 			this.dcache.hostname = ''
-			this.dcache.user = ''
+			this.dcache.login = ''
 			this.dcache.password = ''
 		},
 		removeDcache(item){

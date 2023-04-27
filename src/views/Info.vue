@@ -96,8 +96,8 @@
                         </ul>
                         <li v-show="service.outputs.length>0"><strong>Outputs:</strong></li>
                         <ul>
-                          <li v-for="inputs in service.outputs">
-                            {{inputs.storage_provider}}: {{inputs.path}} 
+                          <li v-for="outputs in service.outputs">
+                            {{outputs.storage_provider}}: {{outputs.path}} 
                           </li>
                         </ul>
                       </ul>
