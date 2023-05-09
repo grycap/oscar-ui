@@ -4,10 +4,17 @@
     <v-btn icon @click.stop="handleDrawerMini">
       <v-icon v-html="mini ? 'chevron_right' : 'chevron_left'"></v-icon>
     </v-btn>
-    <v-spacer></v-spacer>
-    <v-btn icon @click="handleFullScreen()">
-      <v-icon>fullscreen</v-icon>
-    </v-btn>
+    
+    <div class="rightside">
+      <div class="seconddiv">
+        <div class="identifieruser">
+          <strong >{{showinfo}}</strong>
+        </div>
+        <v-btn class="fullscreen" icon @click="handleFullScreen()">
+          <v-icon>fullscreen</v-icon>
+        </v-btn>
+      </div>
+    </div>
   </v-toolbar>
 </template>
 <script>
@@ -20,6 +27,7 @@ export default {
     NotificationList
   },
   data: () => ({
+    showinfo:  (localStorage.getItem("user")?localStorage.getItem("user"):"EGI Authentication")+" - " + localStorage.getItem("api") ,
     mini: false,
     items: [
       {
@@ -68,3 +76,23 @@ export default {
   }
 }
 </script>
+<style>
+
+.rightside{
+  width: 100%;
+}
+.seconddiv{
+  float: right;
+}
+.identifieruser{
+  display: inline;
+  
+}
+.identifieruser strong{
+  font-family:  Roboto;
+  display: inline;
+  font-size: 15px;
+  vertical-align: middle;
+}
+
+</style>

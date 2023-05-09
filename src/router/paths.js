@@ -166,6 +166,19 @@ export default [
 				),
 				props: true
 				},
+			{
+				path: '/info',
+				meta: {
+				public: false
+				},
+				name: 'Info',
+				component: () => import(
+				/* webpackChunkName: "routes" */
+				/* webpackMode: "lazy" */
+				`@/views/Info.vue`
+				),
+				props: true
+				},
 		]
 	},
 
