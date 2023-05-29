@@ -173,13 +173,13 @@ export default {
 		
 		if(id == "btn_dash"){
 			// $("#btn_dash").css("color","#0056b3")
-			this.$router.push({name: "Dashboard"}) 
+			this.$router.push({name: "Dashboard"}).catch(err => {}) 
 		}else if (id == "btn_funct"){
 			// $("#btn_funct").css("color","#0056b3")
-			this.$router.push({name: "Functions"}) 
+			this.$router.push({name: "Functions"}).catch(err => {}) 
 		}else if (id == "btn_sett"){
 			// $("#btn_sett").css("color","#0056b3")
-			this.$router.push({name: "Settings"})  
+			this.$router.push({name: "Settings"}).catch(err => {})  
 		}else if (id == "btn_logout"){
 			// $("#btn_logout").css("color","#0056b3")
 			this.$router.push({name: "Login"})
@@ -198,7 +198,7 @@ export default {
 				this.expand_sto = "expand_more"		
 			}
 		}else if(id == "btn_info"){
-			this.$router.push({name: "Info"})
+			this.$router.push({name: "Info"}).catch(err => {})
 		}		
 		},
 	
@@ -252,18 +252,22 @@ export default {
       return {name: subItem.name}
 	},
 	getBucketListCallBack(response){
-		this.buckets = response.map((bucket) => {
-          return {
-            title: bucket.name,
-			      to: `/buckets/${bucket.name}`,
-		      	active: false
-          }
-		})
-		this.menus.find((obj) => {
-          if (obj.title === 'Storage') {
-            obj.items = this.buckets
-          }
-		})
+		try{
+			this.buckets = response.map((bucket) => {
+			return {
+				title: bucket.name,
+					to: `/buckets/${bucket.name}`,
+					active: false
+			}
+			})
+			this.menus.find((obj) => {
+			if (obj.title === 'Storage') {
+				obj.items = this.buckets
+			}
+			})
+		}catch(err) {
+      		console.error("ERROR with list buckets "+err);
+		}
 	},
     getBucketsList () {
 		this.getBucketListCall(this.getBucketListCallBack)
