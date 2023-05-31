@@ -12,7 +12,7 @@
                 </div>
                 <v-form v-if= "env.deploy_container == 'false'" >
                   <v-text-field  append-icon="language" name="password" label="Endpoint" id="password" type="text"
-                                v-model="model.endpoint" hide-details=true></v-text-field>
+                                v-model="model.endpoint" :hide-details=true></v-text-field>
                   <div class="text-right">
                     <span style="color:red; font-size:10px;">Required</span>
 
@@ -36,9 +36,12 @@
                 <v-form v-show="env.deploy_container == 'false'">
                   <div   class="text-center">
                     <v-btn color="indigo" dark @click.native="login_egi()" :loading="loading_egi">EGI Check-in</v-btn>
-
                   </div>
-
+                </v-form>
+                <v-form v-show="env.deploy_container == 'true'">
+                  <div   class="text-center">
+                    <v-btn color="indigo" dark @click.native="use_ui()" :loading="loading_egi">ui.oscar.grycap</v-btn>
+                  </div>
                 </v-form>
               </v-card-text>
               <v-card-actions>
@@ -124,6 +127,9 @@ export default {
         localStorage.setItem("token_endpoint", this.env.token_endpoint);
         window.location.replace(this.env.redirect_uri);
       }
+    },
+    use_ui(){
+      window.location.href = this.env.external_ui+this.endpoint
     },
     getPort(url) {
         url = url.match(/^(([a-z]+:)?(\/\/)?[^\/]+).*$/)[1] || url;
@@ -229,7 +235,7 @@ export default {
       }
 
       if(endpoint !== null) {
-        console.log(this.validateURL(endpoint))
+        //console.log(this.validateURL(endpoint))
         this.model.endpoint= this.validateURL(endpoint)?endpoint:'https://'+endpoint;
       }
     }

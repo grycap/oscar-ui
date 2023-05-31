@@ -353,7 +353,7 @@ export default {
 		deleteFunction(serv, servName) {
 			this.index = this.services.indexOf(serv);
 			this.params_delete = {deleteService: servName};
-			if (confirm('Are you sure you want to delete this function?')) {
+			if (confirm('Are you sure you want to delete "'+servName+'" service?')) {
 				this.deleteServiceCall(servName,this.deleteServiceCallBack);
 				this.show_spinner = true
 			}
