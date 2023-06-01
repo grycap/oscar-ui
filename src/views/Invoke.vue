@@ -135,7 +135,6 @@ export default {
         getTokenCallback(response){
             if (response.status==200) {   //check response
                 this.token="Bearer "+response.data.token
-                console.log(this.token)
               }
         },
         invokeSynchronousCallback(response){
