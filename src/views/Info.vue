@@ -177,19 +177,20 @@ export default {
     
     },
     changeview(index){
-      console.log(index)
-      console.log(this.showservices)
       this.showservices[index]=!this.showservices[index]
-      console.log(this.showservices)
     },
     getBucketListCallBack(response){
-      this.buckets = response.map((bucket) => {
-            return {
-              title: bucket.name,
-              to: `/buckets/${bucket.name}`,
-              active: false
-            }
-      })
+      try{
+        this.buckets = response.map((bucket) => {
+              return {
+                title: bucket.name,
+                to: `/buckets/${bucket.name}`,
+                active: false
+              }
+        })
+      }catch(err) {
+            console.error("ERROR with list buckets "+err);
+      }
       this.menus.find((obj) => {
             if (obj.title === 'Storage') {
               obj.items = this.buckets

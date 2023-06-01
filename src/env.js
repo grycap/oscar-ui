@@ -10,5 +10,6 @@ module.exports = {
     "minio_local_endpoint" :"localhost",
     "minio_local_port": "30300",
     "minio_local_ssl": false ,
-    "response_default_minio": "minio.minio"
+    "response_default_minio": "minio.minio",
+    "external_ui": "https://ui.oscar.grycap.net/?endpoint="
 }

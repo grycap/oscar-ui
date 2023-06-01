@@ -298,7 +298,6 @@ export default {
         },
         getTokenService(service,callBackHandler){
             var if_token = this.checkIfToken();
-            var token="";
             if(if_token){
                 axios({
                     method: 'get',
