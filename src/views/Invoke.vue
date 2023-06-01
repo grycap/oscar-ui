@@ -125,7 +125,6 @@ export default {
         invokeSynchronous(){
           this.show_spinner=true
           let inputDataaux=window.btoa(this.inputData)
-          console.log(this.token)
           var params = {
             serviceName: this.serviceName,
             token:this.token,
@@ -136,6 +135,7 @@ export default {
         getTokenCallback(response){
             if (response.status==200) {   //check response
                 this.token="Bearer "+response.data.token
+                console.log(this.token)
               }
         },
         invokeSynchronousCallback(response){
