@@ -125,6 +125,7 @@ export default {
         invokeSynchronous(){
           this.show_spinner=true
           let inputDataaux=window.btoa(this.inputData)
+          console.log(this.token)
           var params = {
             serviceName: this.serviceName,
             token:this.token,
