@@ -331,7 +331,7 @@ export default {
                 axios({
                     method: 'post',
                     url: this.api+'/run/'+params.serviceName,
-                    headers:{ Authorization: token },
+                    headers:{ Authorization: params.token },
                     data: params.data
                 }).then(function(response){
                     callBackHandler(response)
