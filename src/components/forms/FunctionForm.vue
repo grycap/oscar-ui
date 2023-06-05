@@ -2336,9 +2336,9 @@ export default {
 				this.storages_all.push('onedata.'+Object.keys(this.ONEDATA_DICT))
 			}
 			if (this.isEmpty(this.S3_DICT)) {
-				this.S3_DICT = false
+				this.showS3 = false
 			}else{
-				this.S3_DICT = true
+				this.showS3 = true
 				this.storages_all.push('s3.'+Object.keys(this.S3_DICT))
 
 			}

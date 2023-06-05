@@ -298,7 +298,6 @@ export default {
         },
         getTokenService(service,callBackHandler){
             var if_token = this.checkIfToken();
-            var token="";
             if(if_token){
                 axios({
                     method: 'get',
@@ -332,7 +331,7 @@ export default {
                 axios({
                     method: 'post',
                     url: this.api+'/run/'+params.serviceName,
-                    headers:{ Authorization: token },
+                    headers:{ Authorization: params.token },
                     data: params.data
                 }).then(function(response){
                     callBackHandler(response)
