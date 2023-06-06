@@ -1,5 +1,5 @@
 <template>
-  <v-app id="login" class="teal darken-1">
+  <v-app id="login" class="light-blue">
     <v-content>
       <v-container fluid fill-height>
         <v-layout align-center justify-center>
@@ -8,27 +8,30 @@
               <v-card-text>
                 <div class="layout column align-center">
                   <img src="@/assets/logo.png" alt="Vue Material Admin" width="120" height="120">
-                  <h1 class="flex my-4 teal--text">En que proyecto estas?</h1>
+                  <img src="https://ai4eosc.eu/wp-content/uploads/sites/10/2022/09/horizontal-transparent.png" alt="Vue Material Admin" width="248" height="88">
                 </div>
 
                 <v-form v-if= "env.deploy_container == 'false'" >
                   <v-select 
                     v-model="select"
                     :items="env.ai4eosc_servers"
-                    label="Select a favorite activity or create a new one"
+                    label="Select a server favorite activity or create a new one"
                   ></v-select>
-                  <v-text-field  append-icon="language" name="password" label="Other" id="password" type="text"
+                  <v-text-field  name="password" label="Insert other server endpoint" id="password" type="text"
                                         v-model="model.endpoint" :hide-details=true></v-text-field>
 
-                </v-form>
                 <v-divider v-if= "env.deploy_container == 'false'" class='mt-5 mb-5'></v-divider>
                 
-                <v-form v-show="env.deploy_container == 'false'">
                   <div   class="text-center">
                     <v-btn color="indigo" dark @click.native="login_egi()" :loading="loading_egi">EGI Check-in</v-btn>
                   </div>
                 </v-form>
-               
+                <div v-if= "env.deploy_container == 'true'" class="text-center">
+                  <h1>Sorry this options is not available in a container</h1>
+                  <div   class="text-center">
+                    <v-btn color="indigo" dark @click.native="use_ui()" :loading="loading_egi">ui.oscar.grycap</v-btn>
+                  </div>
+                </div>
               </v-card-text>
               <v-card-actions>
               </v-card-actions>
@@ -56,6 +59,7 @@ export default {
     loading: false,
     loading_egi: false,
     model: {
+      endpoint:""
     },
     select: env.ai4eosc_servers[0],    
   }),
@@ -70,90 +74,23 @@ export default {
 
   methods: {
     login_egi(){
-      loginEGI.login_egi(this.model.endpoint)
-    },
-
-    getPort(url) {
-        url = url.match(/^(([a-z]+:)?(\/\/)?[^\/]+).*$/)[1] || url;
-        var parts = url.split(':'),
-            port = parseInt(parts[parts.length - 1], 10);
-        return port;
-    },
-    getHost(url) {
-       var hostname;
-        //find & remove protocol (http, ftp, etc.) and get hostname
-
-        if (url.indexOf("//") > -1) {
-            hostname = url.split('/')[2];
-        }
-        else {
-            hostname = url.split('/')[0];
-        }
-
-        //find & remove port number
-        hostname = hostname.split(':')[0];
-        //find & remove "?"
-        hostname = hostname.split('?')[0];
-
-        return hostname;
-    },
-    getloginResponse(response){
-      var port=this.getPort(response.data.minio_provider.endpoint)
-      var endpoint_host = this.getHost(response.data.minio_provider.endpoint)
-      if(endpoint_host ==env.response_default_minio){
-        localStorage.setItem("endpoint",env.minio_local_endpoint)
-        localStorage.setItem("port",env.minio_local_port)
+      if(this.model.endpoint == ""){
+        loginEGI.login_egi(this.select)
       }else{
-        localStorage.setItem("endpoint",endpoint_host)
-        localStorage.setItem("port",port)
+        loginEGI.login_egi(this.model.endpoint)
       }
-      if(response.data.minio_provider.verify && endpoint_host !=env.response_default_minio){
-        localStorage.setItem("useSSL",response.data.minio_provider.verify)
-      }else{
-        localStorage.setItem("useSSL",env.minio_local_ssl)
-      }
-      localStorage.setItem("accessKey",response.data.minio_provider.access_key)
-      localStorage.setItem("secretKey",response.data.minio_provider.secret_key)
-      localStorage.setItem("authenticated", true);
-      localStorage.setItem("user", this.model.username);
-      localStorage.setItem("password", this.model.password);
-      localStorage.setItem("yunikorn_enable",response.data.yunikorn_enable);
-      localStorage.setItem("gpu_available",response.data.gpu_available);
     },
-    checkLoginCallback(response){
-      if(response == 200){
-        var _this = this
-         var if_token = this.checkIfToken();
-            if(if_token){
-                axios({
-                method: 'get',
-                url: this.model.endpoint+'/system/config',
-              }).then(function (response) {
-                  _this.getloginResponse(response)
-                  _this.$router.push({name: "Functions"})
-              }).catch(function (error) {
-                  console.log(error)
-              })
-            }else{
-              axios({
-                method: 'get',
-                url: this.model.endpoint+'/system/config',
-                auth: {
-                    username: this.model.username,
-                    password: this.model.password
-                }
-              }).then(function (response) {
-                  _this.getloginResponse(response)
-                  _this.$router.push({name: "Functions"})
-              }).catch(function (error) {
-                  console.log(error)
-              })
-
-            }
-      }else if (response == 401){
-        this.loading = false
-      }else{
-        this.loading = false
+    use_ui(){
+      window.location.href = this.env.external_ui+this.endpoint
+    },
+    autoLogin(){
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      const endpoint = urlParams.get('endpoint')
+      if(endpoint !== null && !env.ai4eosc_servers.includes(endpoint) ) {
+        this.model.endpoint= this.validateURL(endpoint)?endpoint:'https://'+endpoint;
+      }else if(env.ai4eosc_servers.includes(endpoint)){
+        this.select=endpoint
       }
     },
     validateURL(link)
@@ -166,20 +103,6 @@ export default {
             console.log("The link doesn't have http or https.");
             return false;
         }
-    },
-    autoLogin(){
-      const queryString = window.location.search;
-      const urlParams = new URLSearchParams(queryString);
-      const username = urlParams.get('username')
-      const endpoint = urlParams.get('endpoint')
-      if (username !== null){
-        this.model.username = username;
-      }
-
-      if(endpoint !== null) {
-        //console.log(this.validateURL(endpoint))
-        this.model.endpoint= this.validateURL(endpoint)?endpoint:'https://'+endpoint;
-      }
     }
   }
 
@@ -187,7 +110,7 @@ export default {
 </script>
 <style scoped lang="css">
   #login {
-    height: 50%;
+    height: 40%;
     width: 100%;
     position: absolute;
     top: 0;
