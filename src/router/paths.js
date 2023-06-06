@@ -58,6 +58,18 @@ export default [
 		),
 	},
 	{
+		path: '/go',
+		meta: {
+		public: true
+		},
+		name: 'Go',
+		component: () => import(
+		/* webpackChunkName: "routes" */
+		/* webpackMode: "lazy" */
+		`@/views/Go.vue`
+		),
+	},
+	{
 		path: '/terms-of-use',
 		meta: {
 		public: true
