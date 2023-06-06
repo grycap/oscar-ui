@@ -12,5 +12,5 @@ module.exports = {
     "minio_local_ssl": false ,
     "response_default_minio": "minio.minio",
     "external_ui": "https://ui.oscar.grycap.net/?endpoint=",
-    "ai4eosc_servers": ["a","b","c"],
+    "ai4eosc_servers": ["https://vigilant-gates9.im.grycap.net/","https://vigilant-gates10.im.grycap.net/"],
 }
