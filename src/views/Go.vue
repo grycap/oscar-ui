@@ -8,54 +8,29 @@
               <v-card-text>
                 <div class="layout column align-center">
                   <img src="@/assets/logo.png" alt="Vue Material Admin" width="120" height="120">
-                  <h1 class="flex my-4 teal--text">OSCAR UI</h1>
+                  <h1 class="flex my-4 teal--text">En que proyecto estas?</h1>
                 </div>
-                <v-form v-if= "env.deploy_container == 'false'" >
-                  <v-text-field  append-icon="language" name="password" label="Endpoint" id="password" type="text"
-                                v-model="model.endpoint" :hide-details=true></v-text-field>
-                  <div class="text-right">
-                    <span style="color:red; font-size:10px;">Required</span>
 
-                  </div>
+                <v-form v-if= "env.deploy_container == 'false'" >
+                  <v-select 
+                    v-model="select"
+                    :items="env.ai4eosc_servers"
+                    label="Select a favorite activity or create a new one"
+                  ></v-select>
+                  <v-text-field  append-icon="language" name="password" label="Other" id="password" type="text"
+                                        v-model="model.endpoint" :hide-details=true></v-text-field>
 
                 </v-form>
                 <v-divider v-if= "env.deploy_container == 'false'" class='mt-5 mb-5'></v-divider>
-                <div class="text-center">
-                  <h3 style="color:#8C8786">Log in with:</h3>
-                </div>
-                <v-form>
-                   <v-text-field  append-icon="person" name="user" label="User" type="text"
-                                v-model="model.username"></v-text-field>
-                  <v-text-field  append-icon="lock" name="password" label="Password" id="password" type="password"
-                                v-model="model.password"></v-text-field>
-                  <div class="text-center">
-                    <v-btn color="teal" dark @click.native="login()" :loading="loading">Basic auth</v-btn>
-                  </div>
-                </v-form>
-                <v-divider class='mt-5 mb-5'></v-divider>
+                
                 <v-form v-show="env.deploy_container == 'false'">
                   <div   class="text-center">
                     <v-btn color="indigo" dark @click.native="login_egi()" :loading="loading_egi">EGI Check-in</v-btn>
                   </div>
                 </v-form>
-                <v-form v-show="env.deploy_container == 'true'">
-                  <div   class="text-center">
-                    <v-btn color="indigo" dark @click.native="use_ui()" :loading="loading_egi">ui.oscar.grycap</v-btn>
-                  </div>
-                </v-form>
+               
               </v-card-text>
               <v-card-actions>
-                <!-- <v-btn icon>
-                  <v-icon color="blue">fa fa-facebook-square fa-lg</v-icon>
-                </v-btn>
-                <v-btn icon>
-                  <v-icon color="red">fa fa-google fa-lg</v-icon>
-                </v-btn>
-                <v-btn icon>
-                  <v-icon color="light-blue">fa fa-twitter fa-lg</v-icon>
-                </v-btn> -->
-
-
               </v-card-actions>
               <foot ></foot>
             </v-card>
@@ -69,8 +44,9 @@
 <script>
 import Services from '../components/services.js';
 import env from '../env';
-import loginEGI from '../loginEGI.js';
 import Foot from '@/views/Foot'
+import loginEGI from '../loginEGI.js';
+
 export default {
   components: {
     Foot,
@@ -80,13 +56,8 @@ export default {
     loading: false,
     loading_egi: false,
     model: {
-      username: '',
-      password: '',
-      endpoint: ''
     },
-    user: "admin",
-    pass: "admin",
-
+    select: env.ai4eosc_servers[0],    
   }),
   created(){
     localStorage.clear();
@@ -98,41 +69,10 @@ export default {
   },
 
   methods: {
-    login() {
-      if(env.deploy_container == "true"){
-        this.model.endpoint = env.api
-      }
-      this.loading = true
-      var params = {
-        'user': this.model.username,
-        'password': this.model.password,
-        'api': this.model.endpoint
-      }
-      this.model.endpoint = this.model.endpoint.endsWith('/') ? this.model.endpoint.slice(0, -1) : this.model.endpoint;
-      localStorage.setItem("api", this.model.endpoint);
-      this.checkLoginCall(params,this.checkLoginCallback);
-
-    },
     login_egi(){
       loginEGI.login_egi(this.model.endpoint)
-      /*this.loading_egi = true;
-      if(this.model.endpoint == ''){
-        window.getApp.$emit('APP_SHOW_SNACKBAR', { text: "Endpoint is required", color: 'error' })
-        this.loading_egi = false;
-      }else{
-        this.model.endpoint = this.model.endpoint.endsWith('/') ? this.model.endpoint.slice(0, -1) : this.model.endpoint;
-        localStorage.setItem("api", this.model.endpoint);
-        localStorage.setItem("client_id", this.env.client_id);
-        localStorage.setItem("provider_url", this.env.provider_url);
-        localStorage.setItem("url_authorize", this.env.url_authorize);
-        localStorage.setItem("url_user_info", this.env.url_user_info);
-        localStorage.setItem("token_endpoint", this.env.token_endpoint);
-        window.location.replace(this.env.redirect_uri);
-      }*/
     },
-    use_ui(){
-      window.location.href = this.env.external_ui+this.endpoint
-    },
+
     getPort(url) {
         url = url.match(/^(([a-z]+:)?(\/\/)?[^\/]+).*$/)[1] || url;
         var parts = url.split(':'),
