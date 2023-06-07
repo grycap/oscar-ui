@@ -58,15 +58,15 @@ export default [
 		),
 	},
 	{
-		path: '/go',
+		path: '/ai4eosc',
 		meta: {
 		public: true
 		},
-		name: 'Go',
+		name: 'ai4eosc',
 		component: () => import(
 		/* webpackChunkName: "routes" */
 		/* webpackMode: "lazy" */
-		`@/views/Go.vue`
+		`@/views/landingpages/ai4eosc.vue`
 		),
 	},
 	{
