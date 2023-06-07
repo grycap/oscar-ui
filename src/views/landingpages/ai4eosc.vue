@@ -15,7 +15,7 @@
                   <v-select 
                     v-model="select"
                     :items="env.ai4eosc_servers"
-                    label="Select a server favorite activity or create a new one"
+                    label="Select a server:"
                   ></v-select>
                   <v-text-field  name="password" label="Insert other server endpoint" id="password" type="text"
                                         v-model="model.endpoint" :hide-details=true></v-text-field>
@@ -29,7 +29,7 @@
                 <div v-if= "env.deploy_container == 'true'" class="text-center">
                   <h1>Sorry this options is not available in a container</h1>
                   <div   class="text-center">
-                    <v-btn color="indigo" dark @click.native="use_ui()" :loading="loading_egi">ui.oscar.grycap</v-btn>
+                    <v-btn color="indigo" dark @click.native="use_ui()" :loading="loading_egi">ai4eosc oscar ui</v-btn>
                   </div>
                 </div>
               </v-card-text>
@@ -45,10 +45,10 @@
 </template>
 
 <script>
-import Services from '../components/services.js';
-import env from '../env';
+import Services from '../../components/services.js';
+import env from '../../env';
 import Foot from '@/views/Foot'
-import loginEGI from '../loginEGI.js';
+import loginEGI from '../../loginEGI.js';
 
 export default {
   components: {
@@ -81,7 +81,12 @@ export default {
       }
     },
     use_ui(){
-      window.location.href = this.env.external_ui+this.endpoint
+      if(this.model.endpoint == ""){
+        window.location.href = this.env.external_ui+this.select+"#/ai4eosc" 
+      }else{
+        window.location.href = this.env.external_ui+this.model.endpoint+"/ai4eosc"
+      }
+     
     },
     autoLogin(){
       const queryString = window.location.search;
