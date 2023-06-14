@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@sideway/address": "^5.0.0",
-    "aws-sdk": "^2.307.0",
+    "aws-sdk": "^2.1394.0",
     "axios": "^0.21.1",
     "epic-spinners": "^1.0.3",
     "file-saver": "^2.0.2",

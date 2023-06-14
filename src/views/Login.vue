@@ -59,6 +59,11 @@
               </v-card-actions>
               <foot ></foot>
             </v-card>
+
+            <v-card  class="layout column align-center" style="margin-top: 100px">
+              <h1 style="margin-top: 50px;"> Projects</h1>
+              <img style="margin-bottom: 50px;" @click="project('\ai4eosc')" src="https://ai4eosc.eu/wp-content/uploads/sites/10/2022/09/horizontal-transparent.png" alt="Vue Material Admin" width="248" height="88">
+            </v-card>
           </v-flex>
         </v-layout>
       </v-container>
@@ -129,6 +134,9 @@ export default {
         localStorage.setItem("token_endpoint", this.env.token_endpoint);
         window.location.replace(this.env.redirect_uri);
       }*/
+    },
+    project(id){
+      this.$router.push(id)
     },
     use_ui(){
       window.location.href = this.env.external_ui+this.endpoint
