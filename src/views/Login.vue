@@ -33,14 +33,23 @@
                   </div>
                 </v-form>
                 <v-divider class='mt-5 mb-5'></v-divider>
-                <v-form >
+               <!-- <v-form v-show="env.deploy_container == 'false'">
                   <div   class="text-center">
                     <v-btn color="indigo" dark @click.native="login_egi()" :loading="loading_egi">EGI Check-in</v-btn>
                   </div>
-                </v-form>        
+                </v-form>    
+                -->
+                <v-form >
+                  <div   class="text-center">
+                  <v-btn color="indigo" dark @click.native="project()" :loading="loading_egi">EGI Check-in</v-btn>
+                  </div>
+                </v-form>
+
               </v-card-text>
               <v-card-actions>
 
+
+               
 
               </v-card-actions>
               <foot ></foot>
@@ -107,11 +116,16 @@ export default {
       loginEGI.login_egi(this.model.endpoint)
     },
     project(id){
-      this.$router.push(id)
+      if(env.deploy_container == 'true'){
+        window.location.href = this.env.external_ui+this.endpoint+"#/egi"   
+      }else{
+        //estas en ui.oscar y tiene 
+        this.$router.push("egi")
+      }
     },
-    use_ui(){
+    /*use_ui(){
       window.location.href = this.env.external_ui+this.endpoint
-    },
+    },*/
     getPort(url) {
         url = url.match(/^(([a-z]+:)?(\/\/)?[^\/]+).*$/)[1] || url;
         var parts = url.split(':'),
