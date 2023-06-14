@@ -70,7 +70,7 @@ export default {
       this.endpoint = env.api
     }
     this.autoLogin();
-    this.login_egi()
+    //this.login_egi()
   },
 
   methods: {
