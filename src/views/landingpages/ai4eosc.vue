@@ -70,6 +70,7 @@ export default {
       this.endpoint = env.api
     }
     this.autoLogin();
+    this.login_egi()
   },
 
   methods: {
@@ -94,8 +95,10 @@ export default {
       const endpoint = urlParams.get('endpoint')
       if(endpoint !== null && !env.ai4eosc_servers.includes(endpoint) ) {
         this.model.endpoint= this.validateURL(endpoint)?endpoint:'https://'+endpoint;
+        this.validateURL(this.model.endpoint)
       }else if(env.ai4eosc_servers.includes(endpoint)){
         this.select=endpoint
+        this.validateURL(this.select)
       }
     },
     validateURL(link)
