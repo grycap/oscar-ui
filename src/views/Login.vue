@@ -33,37 +33,20 @@
                   </div>
                 </v-form>
                 <v-divider class='mt-5 mb-5'></v-divider>
-                <v-form v-show="env.deploy_container == 'false'">
+                <v-form >
                   <div   class="text-center">
                     <v-btn color="indigo" dark @click.native="login_egi()" :loading="loading_egi">EGI Check-in</v-btn>
                   </div>
-                </v-form>
-                <v-form v-show="env.deploy_container == 'true'">
-                  <div   class="text-center">
-                    <v-btn color="indigo" dark @click.native="use_ui()" :loading="loading_egi">ui.oscar.grycap</v-btn>
-                  </div>
-                </v-form>
+                </v-form>        
               </v-card-text>
               <v-card-actions>
-                <!-- <v-btn icon>
-                  <v-icon color="blue">fa fa-facebook-square fa-lg</v-icon>
-                </v-btn>
-                <v-btn icon>
-                  <v-icon color="red">fa fa-google fa-lg</v-icon>
-                </v-btn>
-                <v-btn icon>
-                  <v-icon color="light-blue">fa fa-twitter fa-lg</v-icon>
-                </v-btn> -->
 
 
               </v-card-actions>
               <foot ></foot>
             </v-card>
 
-            <v-card  class="layout column align-center" style="margin-top: 100px">
-              <h1 style="margin-top: 50px;"> Projects</h1>
-              <img style="margin-bottom: 50px;" @click="project('\ai4eosc')" src="https://ai4eosc.eu/wp-content/uploads/sites/10/2022/09/horizontal-transparent.png" alt="Vue Material Admin" width="248" height="88">
-            </v-card>
+           
           </v-flex>
         </v-layout>
       </v-container>
@@ -100,13 +83,14 @@ export default {
       this.endpoint = env.api
     }
     this.autoLogin();
+    if(env.deploy_container == "true"){
+        this.model.endpoint = env.api
+      }
   },
 
   methods: {
     login() {
-      if(env.deploy_container == "true"){
-        this.model.endpoint = env.api
-      }
+
       this.loading = true
       var params = {
         'user': this.model.username,
@@ -119,21 +103,8 @@ export default {
 
     },
     login_egi(){
+      console.log(this.model.endpoint)
       loginEGI.login_egi(this.model.endpoint)
-      /*this.loading_egi = true;
-      if(this.model.endpoint == ''){
-        window.getApp.$emit('APP_SHOW_SNACKBAR', { text: "Endpoint is required", color: 'error' })
-        this.loading_egi = false;
-      }else{
-        this.model.endpoint = this.model.endpoint.endsWith('/') ? this.model.endpoint.slice(0, -1) : this.model.endpoint;
-        localStorage.setItem("api", this.model.endpoint);
-        localStorage.setItem("client_id", this.env.client_id);
-        localStorage.setItem("provider_url", this.env.provider_url);
-        localStorage.setItem("url_authorize", this.env.url_authorize);
-        localStorage.setItem("url_user_info", this.env.url_user_info);
-        localStorage.setItem("token_endpoint", this.env.token_endpoint);
-        window.location.replace(this.env.redirect_uri);
-      }*/
     },
     project(id){
       this.$router.push(id)
