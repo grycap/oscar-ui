@@ -11,6 +11,6 @@ module.exports = {
     "minio_local_port": "30300",
     "minio_local_ssl": false ,
     "response_default_minio": "minio.minio",
-    "external_ui": "https://ui-devel.oscar.grycap.net/?endpoint=",
+    "external_ui": "https://ui.oscar.grycap.net/?endpoint=",
     "ai4eosc_servers": ["https://inference.cloud.ai4eosc.eu"],
 }
