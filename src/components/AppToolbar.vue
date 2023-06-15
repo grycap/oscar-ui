@@ -27,7 +27,7 @@ export default {
     NotificationList
   },
   data: () => ({
-    showinfo:  (localStorage.getItem("user")?localStorage.getItem("user"): localStorage.getItem("session").info.name  )+" - " + localStorage.getItem("api") ,
+    showinfo:  (localStorage.getItem("user")?localStorage.getItem("user"): JSON.parse(localStorage.getItem("session")).user.info.name  )+" - " + localStorage.getItem("api") ,
     mini: false,
     items: [
       {
