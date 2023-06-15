@@ -26,7 +26,7 @@
                     <v-btn color="indigo" dark @click.native="login_egi()" :loading="loading_egi">EGI Check-in</v-btn>
                   </div>
                 </v-form>
-                <div v-if= "env.deploy_container == 'true'" class="text-center">
+                <div v-if= "model.location == 'http://localhost:8080/#/ai4eosc'" class="text-center">
                   <h1>Sorry this options is not available in a container</h1>
                   <div   class="text-center">
                     <v-btn color="indigo" dark @click.native="use_ui()" :loading="loading_egi">ai4eosc oscar ui</v-btn>
@@ -59,7 +59,9 @@ export default {
     loading: false,
     loading_egi: false,
     model: {
-      endpoint:""
+      endpoint:"",
+      location: window.location.href,
+      
     },
     select: env.ai4eosc_servers[0],    
   }),
