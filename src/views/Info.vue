@@ -82,8 +82,19 @@
                   <v-card-text>
                   <ul >
                     <li v-for="service in services">
-                    <h5>{{ service.service }}</h5>
-                      <ul  >
+                      <div style="display: inline-flex;">
+                        <h5 >{{ service.service }}</h5>
+                        <v-menu>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-icon  style="position:relative; top: -3px;" v-bind="attrs" v-on="on" small class="iconclass" >more_vert</v-icon>
+                        </template>
+                        <v-list style="padding-left: 10px;padding-right: 10px;" >
+                            <v-icon small class="iconclass" @click="goLogs(service.service)" >visibility</v-icon>
+                            <v-icon small class="iconclass" @click="goInvoke(service.service)"> sync_alt</v-icon>
+                        </v-list>
+                        </v-menu>
+                      </div>
+                      <ul style="padding-bottom: 30px;" >
                         <li ><strong>Image:</strong> {{ service.container }}</li>
                         <li ><strong>CPUs:</strong> {{ service.cpu }}</li>
                         <li ><strong>Memory:</strong> {{ service.memory }}</li>
@@ -91,13 +102,16 @@
                         <li  v-show="service.inputs.length>0"><strong>Inputs:</strong></li>
                         <ul>
                           <li v-for="inputs in service.inputs">
-                            {{inputs.storage_provider}}: {{inputs.path}} 
+                            <p v-if="inputs.storage_provider == 'minio' " @click="goBucket(inputs.path)"> {{inputs.storage_provider}}: {{inputs.path}} </p>
+                            <p v-else>{{inputs.storage_provider}}: {{inputs.path}} </p>
+                            
                           </li>
                         </ul>
                         <li v-show="service.outputs.length>0"><strong>Outputs:</strong></li>
                         <ul>
                           <li v-for="outputs in service.outputs">
-                            {{outputs.storage_provider}}: {{outputs.path}} 
+                            <p v-if="outputs.storage_provider == 'minio' " @click="goBucket(outputs.path)"> {{outputs.storage_provider}}: {{outputs.path}} </p>
+                            <p v-else>{{outputs.storage_provider}}: {{outputs.path}}  </p>                            
                           </li>
                         </ul>
                       </ul>
@@ -176,6 +190,15 @@ export default {
     submit () {
     
     },
+    goLogs(service){
+      this.$router.push({name: "Logs", params:{serviceName: service}})
+    },
+    goInvoke(service){
+			this.$router.push({name: "Invoke", params:{serviceName: service}})
+		},
+    goBucket(bucket){
+			this.$router.push({name: "BucketContent", params:{bucketName: bucket.split("/")[0] }})
+		},
     changeview(index){
       this.showservices[index]=!this.showservices[index]
     },
@@ -240,5 +263,10 @@ export default {
   .textinfo{
     margin-bottom: 0px;
     padding-top: 5px;
+  }
+  .iconclass{
+    margin-right: 0px;
+    padding: 5px;
+    color: rgb(0, 0, 0);
   }
 </style>

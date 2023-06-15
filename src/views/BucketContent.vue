@@ -187,13 +187,7 @@
 					</td>
 					</tr>
 				</template>
-				<template slot="no-data">
-					
-					<v-alert v-show="show_alert" :value="true" color="error" icon="warning">
-						Sorry, there are no files to display in this bucket :(
-					</v-alert>
-					
-				</template>
+				
 				<v-alert slot="no-results" :value="true" color="error" icon="warning">
 					Your search for "{{ search }}" found no results.
 				</v-alert>
