@@ -33,12 +33,7 @@
                   </div>
                 </v-form>
                 <v-divider class='mt-5 mb-5'></v-divider>
-               <!-- <v-form v-show="env.deploy_container == 'false'">
-                  <div   class="text-center">
-                    <v-btn color="indigo" dark @click.native="login_egi()" :loading="loading_egi">EGI Check-in</v-btn>
-                  </div>
-                </v-form>    
-                -->
+
                 <v-form >
                   <div   class="text-center">
                   <v-btn color="indigo" dark @click.native="oscar_ui_egi()" :loading="loading_egi">EGI Check-in</v-btn>
@@ -47,10 +42,6 @@
 
               </v-card-text>
               <v-card-actions>
-
-
-               
-
               </v-card-actions>
               <foot ></foot>
             </v-card>
@@ -111,10 +102,7 @@ export default {
       this.checkLoginCall(params,this.checkLoginCallback);
 
     },
-    login_egi(){
-      console.log(this.model.endpoint)
-      loginEGI.login_egi(this.model.endpoint)
-    },
+  
     oscar_ui_egi(){
         window.location.href = this.env.external_ui+this.model.endpoint+"#/egi"   
     },
@@ -226,7 +214,6 @@ export default {
       }
 
       if(endpoint !== null) {
-        //console.log(this.validateURL(endpoint))
         this.model.endpoint= this.validateURL(endpoint)?endpoint:'https://'+endpoint;
       }
     }
