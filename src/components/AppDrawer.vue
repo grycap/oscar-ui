@@ -7,8 +7,7 @@
 				<span >OSCAR</span>
 			</v-toolbar-title>
 		</v-toolbar>
-		<vue-perfect-scrollbar class="drawer-menu--scroll" :settings="scrollSettings">
-				<v-subheader>Apps</v-subheader>		
+		<vue-perfect-scrollbar class="drawer-menu--scroll" :settings="scrollSettings" style="padding-top: 20px;">
 
 				<v-flex row xs12 >				
 					<v-btn id="btn_funct"  depressed round flat block small @click.native="collapse('btn_funct')" >		

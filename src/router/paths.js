@@ -57,6 +57,30 @@ export default [
 		`@/views/Login.vue`
 		),
 	},
+	//{
+	//	path: '/ai4eosc',
+	//	meta: {
+	//	public: true
+	//	},
+	//	name: 'ai4eosc',
+	//	component: () => import(
+		/* webpackChunkName: "routes" */
+		/* webpackMode: "lazy" */
+	//	`@/views/landingpages/ai4eosc.vue`
+	//	),
+	//},
+	{
+		path: '/egi',
+		meta: {
+		public: true
+		},
+		name: 'egi',
+		component: () => import(
+		/* webpackChunkName: "routes" */
+		/* webpackMode: "lazy" */
+		`@/views/landingpages/egi.vue`
+		),
+	},
 	{
 		path: '/terms-of-use',
 		meta: {

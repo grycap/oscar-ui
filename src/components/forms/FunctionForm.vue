@@ -3,7 +3,7 @@
 		<v-btn flat icon color="blue" @click="handleUpdate()">
       		<v-icon>autorenew</v-icon>
     	</v-btn>
-		<v-dialog id="vdiag" lazy v-model="dialog" persistent :fullscreen="$vuetify.breakpoint.xs" max-width="50%">
+		<v-dialog id="vdiag" lazy v-model="dialog" persistent :fullscreen="$vuetify.breakpoint.xs" max-width="50%" @keydown.esc="closeWithoutSave">
 			<v-btn slot="activator" color="teal" dark class="mb-2">
 				<v-icon left>add_box</v-icon>
 				Deploy New Service
@@ -40,7 +40,7 @@
 														:rules="form.nameRules"
 														:counter="26"
 														maxlength="26"
-														label="Function name (min. 3 letters):"
+														label="Service name (min. 3 letters):"
 														required
 													></v-text-field>
 												</v-flex>
@@ -604,10 +604,10 @@
 													style="margin-bottom:10px;"
 													>
 															<v-list-tile-content>
-																<v-list-tile-title style="padding-bottom:20px;">Path: {{input.path}}</v-list-tile-title>
-																<v-list-tile-title style="padding-bottom:20px;">Storage_provider: {{input.storage_provider}}</v-list-tile-title>
-																<v-list-tile-title style="padding-bottom:20px;">Prefix: {{input.prefix}}</v-list-tile-title>
-																<v-list-tile-title style="padding-bottom:25px;">Suffix: {{input.suffix}}</v-list-tile-title>
+																<v-list-tile-title class="pad-down-def">Path: {{input.path}}</v-list-tile-title>
+																<v-list-tile-title class="pad-down-def">Storage_provider: {{input.storage_provider}}</v-list-tile-title>
+																<v-list-tile-title class="pad-down-def">Prefix: {{input.prefix}}</v-list-tile-title>
+																<v-list-tile-title class="pad-down-def">Suffix: {{input.suffix}}</v-list-tile-title>
 															</v-list-tile-content>
 
 															<v-list-tile-action>
@@ -758,10 +758,10 @@
 												style="margin-bottom:10px;"
 												>
 														<v-list-tile-content>
-															<v-list-tile-title style="padding-bottom:20px;">Path: {{output.path}}</v-list-tile-title>
-															<v-list-tile-title style="padding-bottom:20px;">Storage_provider: {{output.storage_provider}}</v-list-tile-title>
-															<v-list-tile-title style="padding-bottom:20px;">Prefix: {{output.prefix}}</v-list-tile-title>
-															<v-list-tile-title style="padding-bottom:25px;">Suffix: {{output.suffix}}</v-list-tile-title>
+															<v-list-tile-title class="pad-down-def">Path: {{output.path}}</v-list-tile-title>
+															<v-list-tile-title class="pad-down-def">Storage_provider: {{output.storage_provider}}</v-list-tile-title>
+															<v-list-tile-title class="pad-down-def">Prefix: {{output.prefix}}</v-list-tile-title>
+															<v-list-tile-title class="pad-down-def">Suffix: {{output.suffix}}</v-list-tile-title>
 														</v-list-tile-content>
 
 														<v-list-tile-action>
@@ -902,10 +902,10 @@
 
 
 																	<v-list-tile-content style="height:80px;">
-																		<v-list-tile-title style="padding-bottom:20px;">ID: {{key}}</v-list-tile-title>
-																		<v-list-tile-title style="padding-bottom:20px;">ONEPROVIDER HOST: {{id.oneprovider_host}}</v-list-tile-title>
-																		<v-list-tile-title style="padding-bottom:20px;">ACCES TOKEN: <span class="hide_text">*********</span> </v-list-tile-title>
-																		<v-list-tile-title style="padding-bottom:20px;">SPACE: {{id.space}}</v-list-tile-title>
+																		<v-list-tile-title class="pad-down-def">ID: {{key}}</v-list-tile-title>
+																		<v-list-tile-title class="pad-down-def">ONEPROVIDER HOST: {{id.oneprovider_host}}</v-list-tile-title>
+																		<v-list-tile-title class="pad-down-def">ACCES TOKEN: <span class="hide_text">*********</span> </v-list-tile-title>
+																		<v-list-tile-title class="pad-down-def">SPACE: {{id.space}}</v-list-tile-title>
 																		<!-- <v-list-tile-title>{{key}}</v-list-tile-title> -->
 																	</v-list-tile-content>
 
@@ -1019,12 +1019,12 @@
 
 
 																	<v-list-tile-content style="height:120px;margin-top:40px;">
-																		<v-list-tile-title style="padding-bottom:20px;">ID: {{key}}</v-list-tile-title>
-																		<v-list-tile-title style="padding-bottom:20px;">ENDPOINT: {{id.endpoint}}</v-list-tile-title>
-																		<v-list-tile-title style="padding-bottom:20px;">REGION: {{id.region}}</v-list-tile-title>
-																		<v-list-tile-title style="padding-bottom:20px;">SECRET KEY: <span class="hide_text">*********</span></v-list-tile-title>
-																		<v-list-tile-title style="padding-bottom:20px;">ACCESS KEY: <span class="hide_text">*********</span></v-list-tile-title>
-																		<v-list-tile-title style="padding-bottom:20px;">VERIFY: {{id.verify}}</v-list-tile-title>
+																		<v-list-tile-title class="pad-down-def">ID: {{key}}</v-list-tile-title>
+																		<v-list-tile-title class="pad-down-def">ENDPOINT: {{id.endpoint}}</v-list-tile-title>
+																		<v-list-tile-title class="pad-down-def">REGION: {{id.region}}</v-list-tile-title>
+																		<v-list-tile-title class="pad-down-def">SECRET KEY: <span class="hide_text">*********</span></v-list-tile-title>
+																		<v-list-tile-title class="pad-down-def">ACCESS KEY: <span class="hide_text">*********</span></v-list-tile-title>
+																		<v-list-tile-title class="pad-down-def">VERIFY: {{id.verify}}</v-list-tile-title>
 																		<!-- <v-list-tile-title>{{key}}</v-list-tile-title> -->
 																	</v-list-tile-content>
 
@@ -1122,10 +1122,10 @@
 
 
 																	<v-list-tile-content style="height:80px;">
-																		<v-list-tile-title style="padding-bottom:20px;">ID: {{key}}</v-list-tile-title>
-																		<v-list-tile-title style="padding-bottom:20px;">ACCESS KEY: <span class="hide_text">*********</span></v-list-tile-title>
-																		<v-list-tile-title style="padding-bottom:20px;">SECRET TOKEN: <span class="hide_text">*********</span></v-list-tile-title>
-																		<v-list-tile-title style="padding-bottom:20px;">REGION: {{id.region}}</v-list-tile-title>
+																		<v-list-tile-title class="pad-down-def">ID: {{key}}</v-list-tile-title>
+																		<v-list-tile-title class="pad-down-def">ACCESS KEY: <span class="hide_text">*********</span></v-list-tile-title>
+																		<v-list-tile-title class="pad-down-def">SECRET TOKEN: <span class="hide_text">*********</span></v-list-tile-title>
+																		<v-list-tile-title class="pad-down-def">REGION: {{id.region}}</v-list-tile-title>
 																		<!-- <v-list-tile-title>{{key}}</v-list-tile-title> -->
 																	</v-list-tile-content>
 
@@ -1218,10 +1218,10 @@
 															style="margin-bottom:40px;"
 															>
 																	<v-list-tile-content style="height:80px;">
-																		<v-list-tile-title style="padding-bottom:20px;">ID: {{key}}</v-list-tile-title>
-																		<v-list-tile-title style="padding-bottom:20px;">HOSTNAME: <span class="hide_text">{{id.hostname}}</span></v-list-tile-title>
-																		<v-list-tile-title style="padding-bottom:20px;">USER: <span class="hide_text">*********</span></v-list-tile-title>
-																		<v-list-tile-title style="padding-bottom:20px;">PASSWORD: "*********</v-list-tile-title>
+																		<v-list-tile-title class="pad-down-def">ID: {{key}}</v-list-tile-title>
+																		<v-list-tile-title class="pad-down-def">HOSTNAME: <span class="hide_text">{{id.hostname}}</span></v-list-tile-title>
+																		<v-list-tile-title class="pad-down-def">USER: <span class="hide_text">*********</span></v-list-tile-title>
+																		<v-list-tile-title class="pad-down-def">PASSWORD: "*********</v-list-tile-title>
 																		<!-- <v-list-tile-title>{{key}}</v-list-tile-title> -->
 																	</v-list-tile-content>
 
@@ -2421,6 +2421,9 @@ export default {
 	.custom-select{
 		height: calc(2.25rem + 3px);
 		width: 75%
+	}
+	.pad-down-def{
+		padding-bottom:20px;
 	}
 }
 </style>

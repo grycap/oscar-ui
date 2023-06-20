@@ -12,15 +12,15 @@
                   <span class="headline">OSCAR cluster Info</span>
                 </v-card-title>
                 <v-card-text>
-                  <v-card-text class="xs6 textinfo" style="display:flex;margin-right: 5px;padding-bottom: 5px;">
+                  <v-card-text class="xs6 textinfo styleflex" style="margin-right: 5px;padding-bottom: 5px;">
                       <p class="" ><strong>OSCAR Endpoint: </strong> {{api}}</p>
                   </v-card-text>
 
 
-                  <div style="display:flex;" >
+                  <div class="styleflex" >
                   <v-card-text class="xs6" style="width: 25%"> <strong>User: </strong> {{user}}</v-card-text>
 
-                  <v-card-text style="display:flex;width: 50%" >
+                  <v-card-text class="styleflex"  style="width: 50%" >
                     <strong style="margin-right: 5px">Password: </strong>
                     <v-text-field  style="width: 10%!important;padding-top: 0px!important;margin-top: -12px!important;"
                     :value="password"
@@ -33,7 +33,7 @@
                   </v-card-text>
                   </div>
 
-                  <div style="display:flex;" >
+                  <div class="styleflex"  >
                     <v-card-text class="xs6"> <strong>useSSL: </strong> {{useSSL}}</v-card-text>
                     <v-card-text class="xs6"> <strong>GPU available: </strong> {{gpu_available}}</v-card-text>
                     <v-card-text class="xs6"> <strong>yunikorn_enable: </strong> {{yunikorn_enable}}</v-card-text>
@@ -48,14 +48,14 @@
                   <span class="headline">Minio Buckets</span>
                 </v-card-title>
                 <v-card-text>
-                  <v-card-text class="xs6 textinfo" style="display:flex;margin-right: 5px;padding-bottom: 5px;">
+                  <v-card-text class="xs6 textinfo styleflex" style="margin-right: 5px;padding-bottom: 5px;">
                       <p class="" v-if="port=='NaN'" ><strong>MinIO Endpoint: </strong> {{endpoint}}</p>
                       <p class="" v-else><strong>MinIO Endpoint: </strong> {{endpoint}}:{{port}}</p>
                   </v-card-text>
                  
-                  <div style="display:flex;" >
+                  <div class="styleflex"  >
                     <v-card-text class="xs6" style="width: 25%"> <strong>Access Key: </strong> {{accessKey}}</v-card-text>
-                    <v-card-text style="display:flex;width: 50%" >
+                    <v-card-text class="styleflex"  style="width: 50%" >
                       <strong style="margin-right: 5px">Secret Key: </strong>
                       <v-text-field  style="width: 10%!important;padding-top: 0px!important;margin-top: -12px!important;"
                       :value="secretKey"
@@ -67,9 +67,6 @@
                       ></v-text-field>
                     </v-card-text>
                   </div>
-
-
-                  
                 </v-card-text>
               </v-card>
             </v-flex>
@@ -82,8 +79,19 @@
                   <v-card-text>
                   <ul >
                     <li v-for="service in services">
-                    <h5>{{ service.service }}</h5>
-                      <ul  >
+                      <div style="display: inline-flex;">
+                        <h5 >{{ service.service }}</h5>
+                        <v-menu>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-icon   v-bind="attrs" v-on="on"  class="iconclass iconposition" >more_vert</v-icon>
+                        </template>
+                        <v-list style="padding-left: 10px;padding-right: 10px;" >
+                            <v-icon  class="iconclass" @click="goLogs(service.service)" >visibility</v-icon>
+                            <v-icon  class="iconclass" @click="goInvoke(service.service)"> sync_alt</v-icon>
+                        </v-list>
+                        </v-menu>
+                      </div>
+                      <ul style="padding-bottom: 30px;" >
                         <li ><strong>Image:</strong> {{ service.container }}</li>
                         <li ><strong>CPUs:</strong> {{ service.cpu }}</li>
                         <li ><strong>Memory:</strong> {{ service.memory }}</li>
@@ -91,13 +99,19 @@
                         <li  v-show="service.inputs.length>0"><strong>Inputs:</strong></li>
                         <ul>
                           <li v-for="inputs in service.inputs">
-                            {{inputs.storage_provider}}: {{inputs.path}} 
+                            <div class="styleflex" >
+                              <p> {{inputs.storage_provider}}: {{inputs.path}} </p>
+                              <v-icon v-if="inputs.storage_provider == 'minio' " @click="goBucket(inputs.path)"  class="iconclass iconposition"> forward</v-icon>
+                            </div>
                           </li>
                         </ul>
                         <li v-show="service.outputs.length>0"><strong>Outputs:</strong></li>
                         <ul>
                           <li v-for="outputs in service.outputs">
-                            {{outputs.storage_provider}}: {{outputs.path}} 
+                            <div class="styleflex" >
+                              <p> {{outputs.storage_provider}}: {{outputs.path}}  </p> 
+                              <v-icon  v-if="outputs.storage_provider == 'minio' " @click="goBucket(outputs.path)"  class="iconclass iconposition"> forward</v-icon>
+                            </div> 
                           </li>
                         </ul>
                       </ul>
@@ -107,7 +121,6 @@
                 </v-card-title>
               </v-layout>
             </v-flex>
-
             <v-flex xs6>
               <v-layout row>
                 <v-card-title>
@@ -124,7 +137,6 @@
                 </v-card-title>
               </v-layout >
             </v-flex >
-
           </v-layout>
         </v-form>
       </v-card>
@@ -176,6 +188,15 @@ export default {
     submit () {
     
     },
+    goLogs(service){
+      this.$router.push({name: "Logs", params:{serviceName: service}})
+    },
+    goInvoke(service){
+			this.$router.push({name: "Invoke", params:{serviceName: service}})
+		},
+    goBucket(bucket){
+			this.$router.push({name: "BucketContent", params:{bucketName: bucket.split("/")[0] }})
+		},
     changeview(index){
       this.showservices[index]=!this.showservices[index]
     },
@@ -240,5 +261,17 @@ export default {
   .textinfo{
     margin-bottom: 0px;
     padding-top: 5px;
+  }
+  .iconclass{
+    margin-right: 0px;
+    padding: 5px;
+    color: #0056b3;
+  }
+  .iconposition{
+    position:relative;
+    top: -7px;
+  }
+  .styleflex{
+    display: flex;
   }
 </style>
