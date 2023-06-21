@@ -34,11 +34,9 @@
                 </v-form>
                 <v-divider class='mt-5 mb-5'></v-divider>
 
-                <v-form >
                   <div   class="text-center">
                   <v-btn color="indigo" dark @click.native="oscar_ui_egi()" :loading="loading_egi">EGI Check-in</v-btn>
                   </div>
-                </v-form>
 
               </v-card-text>
               <v-card-actions>
@@ -104,7 +102,14 @@ export default {
     },
   
     oscar_ui_egi(){
+      if(env.deploy_container == "true"){
+        const theurl=window.location.origin
+        window.location.href = this.env.external_ui+ theurl+"#/egi"  
+      }else{
         window.location.href = this.env.external_ui+this.model.endpoint+"#/egi"   
+
+      }
+         
     },
     getPort(url) {
         url = url.match(/^(([a-z]+:)?(\/\/)?[^\/]+).*$/)[1] || url;
