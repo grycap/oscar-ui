@@ -1,13 +1,13 @@
 <template>
-	<v-layout row wrap justify-end>
+	<div row wrap >
 		<v-btn flat icon color="blue" @click="handleUpdate()">
       		<v-icon>autorenew</v-icon>
     	</v-btn>
 		<v-dialog id="vdiag" lazy v-model="dialog" persistent :fullscreen="$vuetify.breakpoint.xs" max-width="50%" @keydown.esc="closeWithoutSave">
-			<v-btn slot="activator" color="teal" dark class="mb-2">
+			<v-btn slot="activator" color="teal" dark class="mb-2" @click="show('home')">
 				<v-icon left>add_box</v-icon>
 				Deploy New Service
-			</v-btn>
+			</v-btn>			
 			<v-card >
 				<v-toolbar flat :color="formColor" class="white--text" style="margin-bottom:10px;">
 					<span class="headline" style="width:100%;text-align:center">{{ formTitle }}</span>
@@ -86,7 +86,7 @@
 											</div>
 											<div class="row" style="width:100%;padding: 0px 10px;">
 												<v-flex xs12  md5 text-xs-center>
-													<v-btn color="primary" class="white--text" @click.native="addFiles()"> Select a file<v-icon right dark>note_add</v-icon></v-btn>
+													<v-btn color="primary" class="white--text" @click.native="addFiles()"> Select the script file<v-icon right dark>note_add</v-icon></v-btn>
 												</v-flex>
 
 												<v-flex xs12  md2 class="text-xs-center">
@@ -247,16 +247,14 @@
 															avatar
 															@click.stop=""
 															>
-
-																	<v-list-tile-content>
-																		<v-list-tile-title>{{key}}:{{envVars[key]}}</v-list-tile-title>
-																	</v-list-tile-content>
-
-																	<v-list-tile-action>
-																		<v-btn icon ripple @click="removeEnv(key)">
-																		<v-icon color="red lighten-1">remove_circle_outline</v-icon>
-																		</v-btn>
-																	</v-list-tile-action>
+																<v-list-tile-content>
+																	<v-list-tile-title>{{key}}:{{envVars[key]}}</v-list-tile-title>
+																</v-list-tile-content>
+																<v-list-tile-action>
+																	<v-btn icon ripple @click="removeEnv(key)">
+																	<v-icon color="red lighten-1">remove_circle_outline</v-icon>
+																	</v-btn>
+																</v-list-tile-action>
 															</v-list-tile>
 														</v-list>
 													</v-flex>
@@ -1261,7 +1259,7 @@
 				</v-form>
 			</v-card>
 		</v-dialog>
-	</v-layout>
+	</div>
 </template>
 
 <script>
@@ -2195,6 +2193,7 @@ export default {
 	computed: {
 
 		formTitle () {
+			this.editionMode ? this.show("home"): 'pass'
 			return this.editionMode ? 'Edit Service' : 'New Service'
 		},
 		formColor () {
