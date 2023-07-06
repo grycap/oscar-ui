@@ -183,32 +183,42 @@ export default {
 			}
 			return false
 		},
+		createHeader(){
+			var if_token = this.checkIfToken();
+			let headers = new Headers();
+			if(if_token){
+				const egi_session = localStorage.getItem("session");
+				const json_egi = JSON.parse(egi_session)
+				headers.set('Authorization', 'Bearer ' + json_egi.user.access_token);
+				console.log(json_egi.user.access_token)
+			}else{
+				const username_auth = localStorage.getItem("user");
+				const password_auth = localStorage.getItem("password");
+				headers.set('Authorization', 'Basic ' + window.btoa(username_auth + ":" + password_auth));
+			}
+			return headers
+		},
 		async submit () {
 			if (this.validate()){
-				
-				const username_auth = localStorage.getItem("user");
-        		const password_auth = localStorage.getItem("password");
-
-				let headers = new Headers();
-				//this.allscript=this.form.script
-				headers.set('Authorization', 'Basic ' + window.btoa(username_auth + ":" + password_auth));
-
+				let headers = this.createHeader();
+				var options={
+						method: 'get',
+						headers: headers,
+					}
 				var params=this.prepareFunction()
-				var aux={
-                    method: 'get',
-					headers: headers,
-                    
-                }
-				
-				const response = await fetch(this.api+'/system/services',aux);
+				const response = await fetch(this.api+'/system/services',options);
 				const json = await response.json();
 				let result = json.map(service => service.name);
 				for (let index = 0; index < params.length; index++) {
-					result.includes(params[index].name) ? aux.method="PUT" : aux.method="POST"
-					var typecall
-					aux.method == "POST" ? typecall="created" : typecall="edited"
-					aux.body= JSON.stringify(params[index])
-					const response = await fetch(this.api+'/system/services',aux);
+					if(result.includes(params[index].name)){
+						options.method="PUT"
+						var typecall="created"
+					}else{
+						options.method="POST"
+						var typecall="edited"
+					}
+					options.body= JSON.stringify(params[index])
+					const response = await fetch(this.api+'/system/services',options);
 					if(response.status==204 || response.status==201 ){
 						window.getApp.$emit('APP_SHOW_SNACKBAR', 
 						{ text: `Service ${params[index].name} was successfully ${typecall}.`,
