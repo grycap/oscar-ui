@@ -64,14 +64,19 @@
 									<v-list  style="text-align: center; display: block;"
 									v-for="(value,key) in allscript"
 									:key="key"	avatar @click.stop="">
+									
 										<p style="display: inline;"> {{key}} </p>
 										<v-list-tile-action style="display: inline;">
 											<v-btn icon ripple @click="removeFile(key)">
 											<v-icon color="red lighten-1">remove_circle_outline</v-icon>
 											</v-btn>
 										</v-list-tile-action>
-
 									</v-list>
+
+									
+										<i v-show="form.loading" class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"></i>
+										<v-icon v-show="form.check" style="color: green;">done</v-icon>
+										<v-icon v-show="form.wrong" style="color: red;">warning</v-icon>
 
 								</v-flex>
 							</div>
@@ -102,7 +107,8 @@ export default {
 	name: 'FDLForm',
 	data () {
 		return {
-			dialog: false,	
+			dialog: false,
+			
 			files: [],
 			filescript: [],
 			allscript:{},
@@ -110,6 +116,9 @@ export default {
 				file_content:"",
 				scriptname:"",
 				script:"",
+				loading: false,
+				check: false,
+				wrong: false,
 			},
 			progress: {
 				active: false
@@ -199,6 +208,7 @@ export default {
 		},
 		async submit () {
 			if (this.validate()){
+				this.form.loading=true
 				let headers = this.createHeader();
 				var options={
 						method: 'get',
@@ -222,10 +232,19 @@ export default {
 						window.getApp.$emit('APP_SHOW_SNACKBAR', 
 						{ text: `Service ${params[index].name} was successfully ${typecall}.`,
 						color: 'success', timeout: 5000 })
+						this.form.check=true
+						setTimeout(() => {
+							this.form.check=false
+						}, 5000);
 					}else{
 						window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response, color: 'error' })
+						this.form.wrong=true
+						setTimeout(() => {
+							this.form.wrong=false
+						}, 5000);
 					}
 				}
+				this.form.loading=false
 				this.closeWithoutSave()
 				
 			}
