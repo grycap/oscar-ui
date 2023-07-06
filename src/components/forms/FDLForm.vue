@@ -190,7 +190,6 @@ export default {
 				const egi_session = localStorage.getItem("session");
 				const json_egi = JSON.parse(egi_session)
 				headers.set('Authorization', 'Bearer ' + json_egi.user.access_token);
-				console.log(json_egi.user.access_token)
 			}else{
 				const username_auth = localStorage.getItem("user");
 				const password_auth = localStorage.getItem("password");
