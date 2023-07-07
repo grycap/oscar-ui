@@ -1,15 +1,21 @@
 <template>
-  <v-app id="login" class="teal darken-1">
+  <v-app id="login"  v-bind:class="getClass()">
     <v-content>
       <v-container fluid fill-height>
         <v-layout align-center justify-center>
           <v-flex xs12 sm8 md4 lg4>
             <v-card class="elevation-1 pa-3">
               <v-card-text>
-                <div class="layout column align-center">
-                  <img src="@/assets/logo.png" alt="Vue Material Admin" width="120" height="120">
+                <div class="layout column align-center" >
+                  
+                    <img src="@/assets/logo.png" alt="Vue Material Admin" width="120" height="120">
+           
+                    <img v-if="env.deploy_container=='true' && env.ai4eosc_servers.includes(env.api)"  src="https://ai4eosc.eu/wp-content/uploads/sites/10/2022/09/horizontal-transparent.png" alt="Vue Material Admin" width="50%" height="50%">
+
                   <h1 class="flex my-4 teal--text">OSCAR UI</h1>
                 </div>
+
+
                 <v-form v-if= "env.deploy_container == 'false'" >
                   <v-text-field  append-icon="language" name="password" label="Endpoint" id="password" type="text"
                                 v-model="model.endpoint" :hide-details=true></v-text-field>
@@ -84,6 +90,7 @@ export default {
     if(env.deploy_container == "true"){
         this.model.endpoint = env.api
       }
+
   },
 
   methods: {
@@ -100,7 +107,11 @@ export default {
       this.checkLoginCall(params,this.checkLoginCallback);
 
     },
-  
+    getClass(){
+    if(env.deploy_container=='true' && env.ai4eosc_servers.includes(env.api)){
+      return "ai4eosc"
+    }else return "teal darken-1"
+    },
     oscar_ui_egi(){
       if(env.deploy_container == "true"){
         const theurl=window.location.origin
@@ -231,5 +242,9 @@ export default {
     left: 0;
     content: "";
     z-index: 0;
+  }
+  .ai4eosc{
+    background-color: #09837e;
+    
   }
 </style>

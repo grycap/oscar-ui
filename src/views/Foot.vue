@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-footer app color="teal darken-2">
+        <v-footer app v-bind:class="getClass()">
             <v-layout row wrap align-center>
             <v-flex xs10>
                 <div class="white--text ml-4">
@@ -38,6 +38,12 @@ export default {
       let routeData = this.$router.resolve({name: 'TermOfUse', });
       window.open(routeData.href, '_blank');
     },
+    getClass(){
+      console.log(this.$route.name)
+    if(env.deploy_container=='true' && env.ai4eosc_servers.includes(env.api) && this.$route.name==="Login"){
+      return "ai4eosc"
+    }else return "teal darken-1"
+    },
     privacy(){
       let routeData = this.$router.resolve({name: 'Privacy', });
       window.open(routeData.href, '_blank');
@@ -54,6 +60,8 @@ table, th, td {
   border: 1px solid black;
   border-collapse: collapse;
 }
-
+.ai4eosc{
+    background-color: #09837e;
+  }
 
 </style>
