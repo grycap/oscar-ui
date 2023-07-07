@@ -10,7 +10,8 @@
 					single-line
 				></v-text-field>
 				<v-spacer></v-spacer>
-				<FunctionForm :openFaaS="openFaaS" @SHOWSPINNER="handleSHOW()"></FunctionForm>
+				<FunctionForm :openFaaS="openFaaS" @SHOWSPINNER="handleSHOW()" style="display: inline;"></FunctionForm>
+				<FDLForm :openFaaS="openFaaS" @SHOWSPINNER="handleFDLSHOW()" style="display: inline;"></FDLForm>
 			</v-card-title>
 
 			<v-data-table
@@ -263,6 +264,8 @@
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import axios from 'axios'
 import FunctionForm from '@/components/forms/FunctionForm'
+import FDLForm from '@/components/forms/FDLForm'
+
 import { IntersectingCirclesSpinner } from 'epic-spinners'
 import Services from '../components/services';
 /* eslint-disable */
@@ -270,6 +273,7 @@ export default {
 	mixins:[Services],
 	components: {
 		FunctionForm,
+		FDLForm,
 		VuePerfectScrollbar,
 		IntersectingCirclesSpinner,
 	},
@@ -317,6 +321,9 @@ export default {
 			$("#"+id+"-tab").addClass("show active")
 		},
 		handleSHOW(){
+		  this.show_spinner = true
+		},
+		handleFDLSHOW(){
 		  this.show_spinner = true
 		},
 		edit_service(){
