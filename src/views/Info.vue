@@ -154,7 +154,7 @@ export default {
     openFaaS: {}
   },
   data: () => ({
-    user: username(),
+    user: (localStorage.getItem("user")?localStorage.getItem("user"): JSON.parse(localStorage.getItem("session")).user.info.name  ),
     accessKey:localStorage["accessKey"],
     api:localStorage["api"],
     endpoint:localStorage["endpoint"],
@@ -185,9 +185,6 @@ export default {
     this.listServicesCall(this.listServicesCallback)
   },
   methods: {
-    username () {
-    return localStorage.getItem("user")?localStorage.getItem("user"): JSON.parse(localStorage.getItem("session")).user.info.name 
-    },
     goLogs(service){
       this.$router.push({name: "Logs", params:{serviceName: service}})
     },
