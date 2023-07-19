@@ -12,7 +12,7 @@
            
                     <img v-if="ai4eoscServer()"  src="https://ai4eosc.eu/wp-content/uploads/sites/10/2022/09/horizontal-transparent.png" alt="Vue Material Admin" width="50%" height="50%">
 
-                  <h1 class="flex my-4 teal--text">OSCAR UI</h1>
+                  <h1 class="flex my-4 teal--text">OSCAR</h1>
                 </div>
 
 
@@ -26,9 +26,7 @@
 
                 </v-form>
                 <v-divider v-if= "env.deploy_container == 'false'" class='mt-5 mb-5'></v-divider>
-                <div class="text-center">
-                  <h3 style="color:#8C8786">Log in with:</h3>
-                </div>
+                
                 <v-form>
                    <v-text-field  append-icon="person" name="user" label="User" type="text"
                                 v-model="model.username"></v-text-field>
@@ -127,9 +125,7 @@ export default {
         window.location.href = this.env.external_ui+ theurl+"#/egi"  
       }else{
         window.location.href = this.env.external_ui+this.model.endpoint+"#/egi"   
-
       }
-         
     },
     getPort(url) {
         url = url.match(/^(([a-z]+:)?(\/\/)?[^\/]+).*$/)[1] || url;
