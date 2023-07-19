@@ -54,35 +54,7 @@
 														required
 													></v-text-field>
 												</v-flex>
-												<div class="form-group" style="width:100%">
-													<div class="input-group">
-														<v-flex xs8  md10  >
-															<v-text-field id="text-secret"	:counter="200"	label="Docker secret:"	></v-text-field>
-														</v-flex>
-														<v-flex xs2  md2  >
-															<v-btn color="primary"  @click="addSecret()">Add secret</v-btn>
-														</v-flex>
-														<v-flex xs12 sm6 offset-sm3 v-show="form.image_pull_secrets.length != 0">
-															<input type="file" id="envs" hidden="true" multiple />
-															<v-list subheader dense>
-																<v-subheader inset>Secrets</v-subheader>
-																<v-list-tile
-																v-for="(secret) in form.image_pull_secrets"
-																:key="secret" >
-																		<v-list-tile-content>
-																			<v-list-tile-title>{{secret}}</v-list-tile-title>
-																		</v-list-tile-content>
-
-																		<v-list-tile-action>
-																			<v-btn icon ripple @click="deleteSecret(key)">
-																			<v-icon color="red lighten-1">remove_circle_outline</v-icon>
-																			</v-btn>
-																		</v-list-tile-action>
-																</v-list-tile>
-															</v-list>
-														</v-flex>
-													</div>
-												</div>
+												
 											</div>
 											<div class="row" style="width:100%;padding: 0px 10px;">
 												<v-flex xs12  md5 text-xs-center>
@@ -208,6 +180,46 @@
 											<v-flex xs12 id="panel">
 												<v-container>
 													<v-layout row wrap>
+														<div class="form-group" style="width:100%">
+															<div class="input-group">
+																<v-flex xs8  md10  >
+																	<v-text-field id="text-secret"	:counter="200"	label="Docker secret:"	></v-text-field>
+																</v-flex>
+																<v-flex xs2  md2  >
+																	<v-btn color="primary"  @click="addSecret()">Add secret</v-btn>
+																</v-flex>
+																<v-flex xs12 sm6 offset-sm3 v-show="form.image_pull_secrets.length != 0">
+																	<input type="file" id="envs" hidden="true" multiple />
+																	<v-list subheader dense>
+																		<v-subheader inset>Secrets</v-subheader>
+																		<v-list-tile
+																		v-for="(secret) in form.image_pull_secrets"
+																		:key="secret" >
+																				<v-list-tile-content>
+																					<v-list-tile-title>{{secret}}</v-list-tile-title>
+																				</v-list-tile-content>
+
+																				<v-list-tile-action>
+																					<v-btn icon ripple @click="deleteSecret(key)">
+																					<v-icon color="red lighten-1">remove_circle_outline</v-icon>
+																					</v-btn>
+																				</v-list-tile-action>
+																		</v-list-tile>
+																	</v-list>
+																</v-flex>
+															</div>
+														</div>
+
+														<v-flex  xs12 sm5 style="padding-top:10px; ">
+															<div>
+																<span class="v-label theme--light" aria-hidden="true"
+																	style="left: 0px; right: auto; margin-right: 10px;" >
+																			Do you want to prefetch the docker image?
+																</span>
+																<v-switch  v-model="form.image_prefetch" style="display:inline-block;"></v-switch>
+															</div>
+														</v-flex>
+
 														<div class="form-group" style="width:100%">
 														<div class="input-group">
 															<v-flex xs12 sm5>
@@ -1407,6 +1419,7 @@ export default {
 				total_cpu:'',
 				total_memory:'',
 				alpine:false,
+				image_prefetch:false,
 				enable_gpu:false,
 
 			},
@@ -2113,6 +2126,7 @@ export default {
 				'script': this.base64String,
 				'storage_providers': this.form.storage_provider,
 				'alpine':this.form.alpine,
+				'image_prefetch':this.form.image_prefetch,
 				'enable_gpu':this.form.enable_gpu,
 			}
 			if(localStorage.getItem('yunikorn_enable') == "true"){
@@ -2232,6 +2246,7 @@ export default {
 				var value_select = "2"
 			}
 			this.form.alpine=data.alpine
+			this.form.image_prefetch=data.image_prefetch
 			if(localStorage.getItem('gpu_available')== "true" && data.enable_gpu != undefined ){
 				this.form.enable_gpu=data.enable_gpu
 			}
