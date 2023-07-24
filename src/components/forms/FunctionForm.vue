@@ -429,8 +429,8 @@
 															</select>
 														</v-flex>
 
-
-
+													</v-layout>
+														<v-layout row wrap>
 														<v-flex xs12 sm5 style="padding-top:10px;">
 															<v-select
 																:items="form.log_level"
@@ -459,7 +459,39 @@
 																<v-switch  v-model="form.enable_gpu" style="display:inline-block;"></v-switch>
 															</div>
 														</v-flex>
-
+													</v-layout>
+			
+														<v-layout row wrap>
+															
+														<v-flex xs12 sm5>
+															<v-text-field
+																type="number"
+																v-model="form.expose_options.max_replicas"
+																label="Numer of Replicas"
+																min="0"
+																style="padding-right: 5px;"
+															></v-text-field>
+														</v-flex>
+														<v-flex xs12 sm5>
+															<v-text-field
+																type="number"
+																v-model="form.expose_options.port"
+																label="Port"
+																min="0"
+																max="65535"
+																style="padding-right: 5px;"
+															></v-text-field>
+														</v-flex>
+														<v-flex xs12 sm5>
+															<v-text-field
+																type="number"	
+																v-model="form.expose_options.top_cpu"
+																min="1"
+																max="100"
+																label="CPU Limit %"
+																style="padding-right: 5px;"
+															></v-text-field>
+														</v-flex>
 													</v-layout>
 												</v-container>
 											</v-flex>
@@ -1421,6 +1453,12 @@ export default {
 				alpine:false,
 				image_prefetch:false,
 				enable_gpu:false,
+				expose_options:{
+					max_replicas:'',
+					port:'',
+					top_cpu:'',
+				},
+				
 
 			},
 			progress: {
@@ -2005,6 +2043,9 @@ export default {
 			this.form.limits_memory=''
 			this.form.image=''
 			this.form.name=''
+			this.form.expose_options.max_replicas=""
+			this.form.expose_options.port=''
+			this.form.expose_options.top_cpu=''
 		},
 		clear () {
 			this.files = []
@@ -2128,6 +2169,10 @@ export default {
 				'alpine':this.form.alpine,
 				'image_prefetch':this.form.image_prefetch,
 				'enable_gpu':this.form.enable_gpu,
+				'expose_options':{'max_replicas':parseInt(this.form.expose_options.max_replicas),
+								'port':parseInt(this.form.expose_options.port),
+								'top_cpu':parseInt(this.form.expose_options.top_cpu)}
+
 			}
 			if(localStorage.getItem('yunikorn_enable') == "true"){
 				if(this.form.total_memory != ''){
@@ -2247,6 +2292,9 @@ export default {
 			}
 			this.form.alpine=data.alpine
 			this.form.image_prefetch=data.image_prefetch
+			this.form.expose_options.max_replicas=data.expose_options.max_replicas
+			this.form.expose_options.port=data.expose_options.port
+			this.form.expose_options.top_cpu=data.expose_options.top_cpu
 			if(localStorage.getItem('gpu_available')== "true" && data.enable_gpu != undefined ){
 				this.form.enable_gpu=data.enable_gpu
 			}
