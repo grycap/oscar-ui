@@ -4,10 +4,11 @@
             <v-layout row wrap align-center>
             <v-flex xs10>
                 <div class="white--text ml-4">
-                    <h5>© 2022, <a style="color:#ff9966;font-size:1rem" href="https://www.grycap.upv.es">GRyCAP-I3M-UPV</a>, Universitat Politècnica de València, Spain.</h5>
+                    <h5>Powered by <a  target="_blank" href="https://oscar.grycap.net/" style="color:#ff9966;font-size:1rem">OSCAR</a> © 2023, 
+                      <a style="color:#ff9966;font-size:1rem" href="https://www.grycap.upv.es"  target="_blank">GRyCAP-I3M-UPV</a>, Universitat Politècnica de València, Spain.</h5>
                 </div>
             </v-flex>
-            <v-flex xs2 v-show="env.deploy_container === 'false'">
+            <v-flex xs2 >
                 <h5 style="display: inline">
                 <a  style="color:#ff9966;font-size:1rem;" @click="termofuse()">
                 Terms of Use
@@ -40,9 +41,9 @@ export default {
     },
     getClass(){
       console.log(this.$route.name)
-    if(env.deploy_container=='true' && env.ai4eosc_servers.includes(env.api) && this.$route.name==="Login"){
+    if(env.deploy_container=='true' && env.ai4eosc_servers.includes(window.location.origin) && this.$route.name==="Login"){
       return "ai4eosc"
-    }else return "teal darken-1"
+    }else   return "teal darken-1"
     },
     privacy(){
       let routeData = this.$router.resolve({name: 'Privacy', });

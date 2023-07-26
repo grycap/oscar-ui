@@ -10,9 +10,9 @@
                   
                     <img src="@/assets/logo.png" alt="Vue Material Admin" width="120" height="120">
            
-                    <img v-if="env.deploy_container=='true' && env.ai4eosc_servers.includes(env.api)"  src="https://ai4eosc.eu/wp-content/uploads/sites/10/2022/09/horizontal-transparent.png" alt="Vue Material Admin" width="50%" height="50%">
+                    <img v-if="ai4eoscServer()"  src="https://ai4eosc.eu/wp-content/uploads/sites/10/2022/09/horizontal-transparent.png" alt="Vue Material Admin" width="50%" height="50%">
 
-                  <h1 class="flex my-4 teal--text">OSCAR UI</h1>
+                  <h1 class="flex my-4 teal--text">OSCAR</h1>
                 </div>
 
 
@@ -26,9 +26,7 @@
 
                 </v-form>
                 <v-divider v-if= "env.deploy_container == 'false'" class='mt-5 mb-5'></v-divider>
-                <div class="text-center">
-                  <h3 style="color:#8C8786">Log in with:</h3>
-                </div>
+                
                 <v-form>
                    <v-text-field  append-icon="person" name="user" label="User" type="text"
                                 v-model="model.username"></v-text-field>
@@ -61,7 +59,6 @@
 <script>
 import Services from '../components/services.js';
 import env from '../env';
-import loginEGI from '../loginEGI.js';
 import Foot from '@/views/Foot'
 export default {
   components: {
@@ -86,7 +83,7 @@ export default {
     if(env.deploy_container == 'true'){
       this.endpoint = env.api
     }
-    this.autoLogin();
+    this.autoLogin();   
     if(env.deploy_container == "true"){
         this.model.endpoint = env.api
       }
@@ -95,7 +92,9 @@ export default {
 
   methods: {
     login() {
-
+      if(env.deploy_container == "true"){
+        this.model.endpoint = env.api
+      }
       this.loading = true
       var params = {
         'user': this.model.username,
@@ -103,14 +102,22 @@ export default {
         'api': this.model.endpoint
       }
       this.model.endpoint = this.model.endpoint.endsWith('/') ? this.model.endpoint.slice(0, -1) : this.model.endpoint;
-      localStorage.setItem("api", this.model.endpoint);
+      if(env.deploy_container == "true"){
+        localStorage.setItem("api", window.location.origin);
+      }else{
+        localStorage.setItem("api", this.model.endpoint);
+      }
       this.checkLoginCall(params,this.checkLoginCallback);
 
     },
+    ai4eoscServer(){
+      if(env.deploy_container=='true' && env.ai4eosc_servers.includes(window.location.origin)) return true
+      else return false
+    },
     getClass(){
-    if(env.deploy_container=='true' && env.ai4eosc_servers.includes(env.api)){
-      return "ai4eosc"
-    }else return "teal darken-1"
+      if(this.ai4eoscServer()){
+        return "ai4eosc"
+      }else return "teal darken-1"
     },
     oscar_ui_egi(){
       if(env.deploy_container == "true"){
@@ -118,9 +125,7 @@ export default {
         window.location.href = this.env.external_ui+ theurl+"#/egi"  
       }else{
         window.location.href = this.env.external_ui+this.model.endpoint+"#/egi"   
-
       }
-         
     },
     getPort(url) {
         url = url.match(/^(([a-z]+:)?(\/\/)?[^\/]+).*$/)[1] || url;

@@ -353,6 +353,8 @@ export default {
 				total_memory:this.services[index].total_memory,
 				total_cpu:this.services[index].total_cpu,
 				alpine:this.services[index].alpine,
+				expose_options:this.services[index].expose_options,
+				image_prefetch:this.services[index].image_prefetch,
 				enable_gpu:this.services[index].enable_gpu
 			}
 			window.getApp.$emit('FUNC_OPEN_MANAGEMENT_DIALOG', servInfo)
@@ -398,6 +400,8 @@ export default {
 						total_cpu: serv.total_cpu,
 						total_memory: serv.total_memory,
 						alpine: serv.alpine,
+						image_prefetch: serv.image_prefetch,
+						expose_options:serv.expose_options,
 						enable_gpu: serv.enable_gpu
 					}
 				})
