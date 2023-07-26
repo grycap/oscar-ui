@@ -467,7 +467,7 @@
 															<v-text-field
 																type="number"
 																v-model="form.expose_options.max_replicas"
-																label="Numer of Replicas"
+																label="Number of Replicas"
 																min="0"
 																style="padding-right: 5px;"
 															></v-text-field>
