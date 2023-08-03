@@ -179,6 +179,7 @@
 
 											<v-flex xs12 id="panel">
 												<v-container>
+													<div class="separator" style="margin-top: 0;">Docker</div>
 													<v-layout row wrap>
 														<div class="form-group" style="width:100%">
 															<div class="input-group">
@@ -210,7 +211,7 @@
 															</div>
 														</div>
 
-														<v-flex  xs12 sm5 style="padding-top:10px; ">
+														<v-flex  xs12 sm12 style="padding-top:10px; ">
 															<div>
 																<span class="v-label theme--light" aria-hidden="true"
 																	style="left: 0px; right: auto; margin-right: 10px;" >
@@ -219,7 +220,27 @@
 																<v-switch  v-model="form.image_prefetch" style="display:inline-block;"></v-switch>
 															</div>
 														</v-flex>
+														<v-flex xs12 sm5 style="padding-top:10px;">
+															<v-select
+																:items="form.log_level"
+																label="LOG LEVEL"
+																v-model="select_logLevel"
+															></v-select>
+														</v-flex>
 
+
+														<v-flex class="text-center" xs12 sm5 style="padding-top:10px; margin-left: 10px;">
+															<div>
+																<span class="v-label theme--light" aria-hidden="true"
+																	style="left: 0px; right: auto; margin-right: 10px;" >
+																			Is your image based on Alpine?
+																</span>
+																<v-switch  v-model="form.alpine" style="display:inline-block;"></v-switch>
+															</div>
+														</v-flex>
+													</v-layout>
+													<div class="separator">Enviroment, Annotation, Label</div>
+													<v-layout row wrap>
 														<div class="form-group" style="width:100%">
 														<div class="input-group">
 															<v-flex xs12 sm5>
@@ -378,7 +399,7 @@
 															</v-list-tile>
 														</v-list>
 													</v-flex>
-
+													<div class="separator">CPU, Memory</div>
 													<v-layout row wrap>
 														<v-flex xs12 sm5>
 															<v-text-field
@@ -403,8 +424,10 @@
 																<option value="2">Gi</option>
 															</select>
 														</v-flex>
+													</v-layout>
 
-
+													<div  v-show=" getYunikorn_option == 'true'" class="separator">Yunikorn</div>
+													<v-layout row wrap v-show=" getYunikorn_option == 'true'" >
 														<v-flex v-show=" getYunikorn_option == 'true'" xs10 sm5>
 															<v-text-field
 																v-model="form.total_cpu"
@@ -430,26 +453,9 @@
 														</v-flex>
 
 													</v-layout>
-														<v-layout row wrap>
-														<v-flex xs12 sm5 style="padding-top:10px;">
-															<v-select
-																:items="form.log_level"
-																label="LOG LEVEL"
-																v-model="select_logLevel"
-															></v-select>
-														</v-flex>
-
-
-														<v-flex class="text-center" xs12 sm5 style="padding-top:10px; margin-left: 10px;">
-															<div>
-																<span class="v-label theme--light" aria-hidden="true"
-																	style="left: 0px; right: auto; margin-right: 10px;" >
-																			Is your image based on Alpine?
-																</span>
-																<v-switch  v-model="form.alpine" style="display:inline-block;"></v-switch>
-															</div>
-														</v-flex>
-														
+												
+													<div  v-show=" getGpu_available == 'true'" class="separator">GPU</div>
+													<v-layout row wrap v-show=" getGpu_available == 'true'" >	
 														<v-flex v-show="getGpu_available== 'true'" class="text-left" xs12 sm5 style="padding-top:10px; margin-left: 0px;">
 															<div>
 																<span class="v-label theme--light" aria-hidden="true"
@@ -460,14 +466,24 @@
 															</div>
 														</v-flex>
 													</v-layout>
-			
+													<div class="separator">Expose</div>
 														<v-layout row wrap>
 															
 														<v-flex xs12 sm5>
 															<v-text-field
 																type="number"
-																v-model="form.expose_options.max_replicas"
-																label="Number of Replicas"
+																v-model="form.expose.min_scale"
+																label="Min Scale"
+																min="0"
+																style="padding-right: 5px;"
+															></v-text-field>
+														</v-flex>
+
+														<v-flex xs12 sm5>
+															<v-text-field
+																type="number"
+																v-model="form.expose.max_scale"
+																label="Max Scale"
 																min="0"
 																style="padding-right: 5px;"
 															></v-text-field>
@@ -475,7 +491,7 @@
 														<v-flex xs12 sm5>
 															<v-text-field
 																type="number"
-																v-model="form.expose_options.port"
+																v-model="form.expose.port"
 																label="Port"
 																min="0"
 																max="65535"
@@ -485,7 +501,7 @@
 														<v-flex xs12 sm5>
 															<v-text-field
 																type="number"	
-																v-model="form.expose_options.top_cpu"
+																v-model="form.expose.cpu_threshold"
 																min="1"
 																max="100"
 																label="CPU Limit %"
@@ -1453,10 +1469,11 @@ export default {
 				alpine:false,
 				image_prefetch:false,
 				enable_gpu:false,
-				expose_options:{
-					max_replicas:'',
+				expose:{
+					min_scale:'',
+					max_scale:'',
 					port:'',
-					top_cpu:'',
+					cpu_threshold:'',
 				},
 				
 
@@ -2026,7 +2043,7 @@ export default {
 			this.files = []
 			this.url = ""
 			this.$refs.files.value = null
-			this.showUploading = false
+			this.showUploading = falseform
 			this.showselectEnv = false
 			this.envVars = {}
 			this.expand = "expand_more"
@@ -2043,9 +2060,10 @@ export default {
 			this.form.limits_memory=''
 			this.form.image=''
 			this.form.name=''
-			this.form.expose_options.max_replicas=""
-			this.form.expose_options.port=''
-			this.form.expose_options.top_cpu=''
+			this.form.expose.min_scale=""
+			this.form.expose.max_scale=""
+			this.form.expose.port=''
+			this.form.expose.cpu_threshold=''
 		},
 		clear () {
 			this.files = []
@@ -2169,9 +2187,10 @@ export default {
 				'alpine':this.form.alpine,
 				'image_prefetch':this.form.image_prefetch,
 				'enable_gpu':this.form.enable_gpu,
-				'expose_options':{'max_replicas':parseInt(this.form.expose_options.max_replicas),
-								'port':parseInt(this.form.expose_options.port),
-								'top_cpu':parseInt(this.form.expose_options.top_cpu)}
+				'expose':{ 	'min_scale':parseInt(this.form.expose.min_scale),
+							'max_scale':parseInt(this.form.expose.max_scale),
+							'port':parseInt(this.form.expose.port),
+							'cpu_threshold':parseInt(this.form.expose.cpu_threshold)}
 
 			}
 			if(localStorage.getItem('yunikorn_enable') == "true"){
@@ -2292,9 +2311,18 @@ export default {
 			}
 			this.form.alpine=data.alpine
 			this.form.image_prefetch=data.image_prefetch
-			this.form.expose_options.max_replicas=data.expose_options.max_replicas
-			this.form.expose_options.port=data.expose_options.port
-			this.form.expose_options.top_cpu=data.expose_options.top_cpu
+			if(	data.expose.min_scale == 0 && data.expose.max_scale==0 &&
+				data.expose.port==0 && data.expose.cpu_threshold ==0){
+				this.form.expose.min_scale=''
+				this.form.expose.max_scale=''
+				this.form.expose.port=''
+				this.form.expose.cpu_threshold=''
+			}else{
+				this.form.expose.min_scale=data.expose.min_scale
+				this.form.expose.max_scale=data.expose.max_scale
+				this.form.expose.port=data.expose.port
+				this.form.expose.cpu_threshold=data.expose.cpu_threshold
+			}
 			if(localStorage.getItem('gpu_available')== "true" && data.enable_gpu != undefined ){
 				this.form.enable_gpu=data.enable_gpu
 			}
@@ -2476,7 +2504,7 @@ export default {
 		height: calc(2.25rem + 3px);
 		width: 100%
 	}
-	}
+	}5
 
 /* Extra large devices (large desktops, 1200px and up)*/
 @media (min-width: 1200px) {
@@ -2487,5 +2515,27 @@ export default {
 	.pad-down-def{
 		padding-bottom:20px;
 	}
+}
+
+.separator {
+  margin-top: 6%;
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+
+.separator::before,
+.separator::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #000;
+}
+
+.separator:not(:empty)::before {
+  margin-right: .25em;
+}
+
+.separator:not(:empty)::after {
+  margin-left: .25em;
 }
 </style>
