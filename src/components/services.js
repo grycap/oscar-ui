@@ -378,7 +378,8 @@ export default {
         },
 
         bucketExistCall(params,callBackHandler){
-            this.minioClient.bucketExists(params.name, function(err, exists) {
+            callBackHandler('success')
+            /*this.minioClient.bucketExists(params.name, function(err, exists) {
                 if (err){
                     callBackHandler(err)
                     window.getApp.$emit('APP_SHOW_SNACKBAR', {
@@ -389,7 +390,7 @@ export default {
                     callBackHandler('success')
                 }
 
-            })
+            })*/
         },
 
         getBucketFilesCall(params, callBackHandler){

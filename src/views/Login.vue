@@ -17,7 +17,7 @@
 
 
                 <v-form v-if= "env.deploy_container == 'false'" >
-                  <v-text-field  append-icon="language" name="password" label="Endpoint" id="password" type="text"
+                  <v-text-field  append-icon="language" name="endpoint" label="Endpoint" id="endpoint" type="text"
                                 v-model="model.endpoint" :hide-details=true></v-text-field>
                   <div class="text-right">
                     <span style="color:red; font-size:10px;">Required</span>
