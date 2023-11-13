@@ -7,17 +7,15 @@
             <v-card class="elevation-1 pa-3">
               <v-card-text>
                 <div class="layout column align-center" >
-                  
                     <img src="@/assets/logo.png" alt="Vue Material Admin" width="120" height="120">
-           
-                    <img v-if="ai4eoscServer()"  src="https://ai4eosc.eu/wp-content/uploads/sites/10/2022/09/horizontal-transparent.png" alt="Vue Material Admin" width="50%" height="50%">
-
+                    <img v-if="ai4eoscServer()"  src="@/assets/logo/ai4eosc-logo.png" alt="Vue Material Admin" width="50%" height="50%">
+                    <img v-if="imagineServer()"  src="@/assets/logo/imagine-logo.png" alt="Vue Material Admin" width="25%"  style="margin-top: 30px;">
                   <h1 class="flex my-4 teal--text">OSCAR</h1>
                 </div>
 
 
                 <v-form v-if= "env.deploy_container == 'false'" >
-                  <v-text-field  append-icon="language" name="password" label="Endpoint" id="password" type="text"
+                  <v-text-field  append-icon="language" name="endpoint" label="Endpoint" id="endpoint" type="text"
                                 v-model="model.endpoint" :hide-details=true></v-text-field>
                   <div class="text-right">
                     <span style="color:red; font-size:10px;">Required</span>
@@ -114,9 +112,15 @@ export default {
       if(env.deploy_container=='true' && env.ai4eosc_servers.includes(window.location.origin)) return true
       else return false
     },
+    imagineServer(){
+      if(env.deploy_container=='true' && env.imagine_servers.includes(window.location.origin)) return true
+      else return false
+    },
     getClass(){
       if(this.ai4eoscServer()){
         return "ai4eosc"
+      }else if(this.imagineServer()){
+        return "imagine"
       }else return "teal darken-1"
     },
     oscar_ui_egi(){
@@ -255,5 +259,8 @@ export default {
   .ai4eosc{
     background-color: #09837e;
     
+  }
+  .imagine{
+    background-color: #1561aa;
   }
 </style>

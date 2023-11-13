@@ -40,10 +40,11 @@ export default {
       window.open(routeData.href, '_blank');
     },
     getClass(){
-      console.log(this.$route.name)
-    if(env.deploy_container=='true' && env.ai4eosc_servers.includes(window.location.origin) && this.$route.name==="Login"){
-      return "ai4eosc"
-    }else   return "teal darken-1"
+      if(env.deploy_container=='true' && env.ai4eosc_servers.includes(window.location.origin) && this.$route.name==="Login"){
+        return "ai4eosc"
+      }else if(env.deploy_container=='true' && env.imagine_servers.includes(window.location.origin) && this.$route.name==="Login"){
+        return "imagine"
+      }else   return "teal darken-1"
     },
     privacy(){
       let routeData = this.$router.resolve({name: 'Privacy', });
@@ -64,5 +65,7 @@ table, th, td {
 .ai4eosc{
     background-color: #09837e;
   }
-
+.imagine{
+    background-color: #1561aa;
+  }
 </style>
