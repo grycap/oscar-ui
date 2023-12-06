@@ -20,7 +20,7 @@
                 <input type="file" id="files" ref="files" @change="selectFile"/>
             </v-flex>
             <v-btn  color="green lighten-2" dark @click="invokeSynchronous()" >
-              Invocation
+              Run
             </v-btn>
           </v-flex>
           <v-divider > </v-divider>
