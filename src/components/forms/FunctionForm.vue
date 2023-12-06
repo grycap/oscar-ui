@@ -1146,7 +1146,7 @@
 																:append-icon="showS3SecretKey ? 'visibility_off' : 'visibility'"
 																:type="showS3SecretKey ? 'text' : 'password'"
 																:counter="200"
-																label="SECRET ACESS KEY"
+																label="SECRET ACCESS KEY"
 																@click:append="showS3SecretKey = !showS3SecretKey"
 															></v-text-field>
 														</v-flex>
