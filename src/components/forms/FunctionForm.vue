@@ -1035,7 +1035,7 @@
 																:append-icon="showMinioSecretKey ? 'visibility_off' : 'visibility'"
 																:type="showMinioSecretKey ? 'text' : 'password'"
 																:counter="200"
-																label="SECRET KEY"
+																label="SECRET ACCESS KEY"
 																@click:append="showMinioSecretKey = !showMinioSecretKey"
 															></v-text-field>
 														</v-flex>
@@ -1133,7 +1133,7 @@
 																:append-icon="showS3AccessKey ? 'visibility_off' : 'visibility'"
 																:type="showS3AccessKey ? 'text' : 'password'"
 																:counter="200"
-																label="ACCESS KEY"
+																label="ACCESS KEY ID"
 																@click:append="showS3AccessKey = !showS3AccessKey"
 															></v-text-field>
 														</v-flex>
@@ -1146,7 +1146,7 @@
 																:append-icon="showS3SecretKey ? 'visibility_off' : 'visibility'"
 																:type="showS3SecretKey ? 'text' : 'password'"
 																:counter="200"
-																label="SECRET KEY"
+																label="SECRET ACESS KEY"
 																@click:append="showS3SecretKey = !showS3SecretKey"
 															></v-text-field>
 														</v-flex>
