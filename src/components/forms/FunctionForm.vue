@@ -867,7 +867,7 @@
 											<v-tab
 											:href="`#tab-onedata`"
 											>
-												ONE DATA
+												ONEDATA
 											</v-tab>
 											<v-tab
 											:href="`#tab-s3`"
@@ -877,7 +877,7 @@
 											<v-tab
 											:href="`#tab-dcache`"
 											>
-												dcache
+												DCACHE
 											</v-tab>
 										</v-tabs>
 
