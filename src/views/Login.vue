@@ -31,13 +31,13 @@
                   <v-text-field  append-icon="lock" name="password" label="Password" id="password" type="password"
                                 v-model="model.password"></v-text-field>
                   <div class="text-center">
-                    <v-btn color="teal" dark @click.native="login()" :loading="loading">Basic auth</v-btn>
+                    <v-btn color="teal" dark @click.native="login()" :loading="loading">Sign in</v-btn>
                   </div>
                 </v-form>
                 <v-divider class='mt-5 mb-5'></v-divider>
 
                   <div   class="text-center">
-                  <v-btn color="indigo" dark @click.native="oscar_ui_egi()" :loading="loading_egi">EGI Check-in</v-btn>
+                  <v-btn color="indigo" dark @click.native="oscar_ui_egi()" :loading="loading_egi">Sign in via EGI Check-in</v-btn>
                   </div>
 
               </v-card-text>
