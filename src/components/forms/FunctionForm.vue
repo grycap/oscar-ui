@@ -1048,7 +1048,7 @@
 																:append-icon="showMinioAccessKey ? 'visibility_off' : 'visibility'"
 																:type="showMinioAccessKey ? 'text' : 'password'"
 																:counter="200"
-																label="ACCESS KEY"
+																label="ACCESS KEY ID"
 																@click:append="showMinioAccessKey = !showMinioAccessKey"
 															></v-text-field>
 														</v-flex>
@@ -1080,8 +1080,8 @@
 																		<v-list-tile-title class="pad-down-def">ID: {{key}}</v-list-tile-title>
 																		<v-list-tile-title class="pad-down-def">ENDPOINT: {{id.endpoint}}</v-list-tile-title>
 																		<v-list-tile-title class="pad-down-def">REGION: {{id.region}}</v-list-tile-title>
-																		<v-list-tile-title class="pad-down-def">SECRET KEY: <span class="hide_text">*********</span></v-list-tile-title>
-																		<v-list-tile-title class="pad-down-def">ACCESS KEY: <span class="hide_text">*********</span></v-list-tile-title>
+																		<v-list-tile-title class="pad-down-def">SECRET ACCESS KEY: <span class="hide_text">*********</span></v-list-tile-title>
+																		<v-list-tile-title class="pad-down-def">ACCESS KEY ID: <span class="hide_text">*********</span></v-list-tile-title>
 																		<v-list-tile-title class="pad-down-def">VERIFY: {{id.verify}}</v-list-tile-title>
 																		<!-- <v-list-tile-title>{{key}}</v-list-tile-title> -->
 																	</v-list-tile-content>
