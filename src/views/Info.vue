@@ -34,9 +34,30 @@
                   </div>
 
                   <div class="styleflex"  >
-                    <v-card-text class="xs6"> <strong>useSSL: </strong> {{useSSL}}</v-card-text>
-                    <v-card-text class="xs6"> <strong>GPU available: </strong> {{gpu_available}}</v-card-text>
-                    <v-card-text class="xs6"> <strong>yunikorn_enable: </strong> {{yunikorn_enable}}</v-card-text>
+                    <!--
+                    <v-card-text v-show=" getYunikorn_option == 'true'"  class="custom-padding"> <strong>Yunikorn resources</strong>
+											<ul>
+												<li><strong>CPU: </strong> {{props.item.total_cpu}}</li> 
+												<li><strong> Memory: </strong> {{props.item.total_memory}}</li> 
+											</ul>
+										</v-card-text>
+                    -->
+                    <v-card-text class="xs6"> <strong>useSSL: </strong>
+											<p style="display:inline" v-show="useSSL =='true'" >Yes</p> 
+											<p style="display:inline" v-show="useSSL !='true'" >No</p> 
+                    </v-card-text>
+                    <v-card-text class="xs6"> <strong>GPU Available: </strong>
+                      <p style="display:inline" v-show="gpu_available =='true'" >Yes</p> 
+											<p style="display:inline" v-show="gpu_available !='true'" >No</p> 
+                    </v-card-text>
+                    <v-card-text class="xs6"> <strong>Yunikorn Enable: </strong>
+                      <p style="display:inline" v-show="yunikorn_enable =='true'" >Yes</p> 
+											<p style="display:inline" v-show="yunikorn_enable !='true'" >No</p> 
+                    </v-card-text>
+                    <v-card-text class="xs6"> <strong>InterLink Available: </strong>
+                      <p style="display:inline" v-show="interLink_available =='true'" >Yes</p> 
+											<p style="display:inline" v-show="interLink_available !='true'" >No</p> 
+                    </v-card-text>
                   </div>
                 </v-card-text>
               </v-card>
@@ -96,6 +117,28 @@
                         <li ><strong>CPUs:</strong> {{ service.cpu }}</li>
                         <li ><strong>Memory:</strong> {{ service.memory }}</li>
                         <li ><strong>Log Level:</strong> {{ service.logLevel }}</li>
+                        <li v-show="gpu_available =='true'" ><strong>Does this service use GPU? </strong>
+                          <p style="display:inline" v-show="service.enable_gpu =='true'" >Yes</p> 
+											    <p style="display:inline" v-show="service.enable_gpu !='true'" >No</p> 
+                        </li>
+                        <li v-show="yunikorn_enable =='true'" ><strong>Yunikorn Total CPUs: </strong> 
+                          {{ service.total_cpu }}
+                        </li>
+                        <li v-show="yunikorn_enable =='true'" ><strong>Yunikorn Total Memory: </strong> 
+                          {{ service.total_memory }}
+                        </li>
+                        <li v-show="interLink_available =='true'" ><strong>Does this service use Interlink? </strong> 
+                          <p style="display:inline" v-show="service.enable_InterLink == true" >Yes</p> 
+											    <p style="display:inline" v-show="service.enable_InterLink != true" >No</p> 
+                        </li>
+                        <li ><strong>Does this service use Alpine? </strong>
+                          <p style="display:inline" v-show="service.alpine == true" >Yes</p> 
+											    <p style="display:inline" v-show="service.alpine != true " >No</p> 
+                        </li>
+                        <li ><strong>Does this service is exposed? </strong> 
+                          <p style="display:inline" v-show="service.expose.port != '0'" >Yes</p> 
+											    <p style="display:inline" v-show="service.expose.port == '0'" >No</p> 
+                        </li>
                         <li  v-show="service.inputs.length>0"><strong>Inputs:</strong></li>
                         <ul>
                           <li v-for="inputs in service.inputs">
@@ -164,6 +207,7 @@ export default {
     useSSL:localStorage["useSSL"],
     yunikorn_enable:localStorage["yunikorn_enable"],
     secretKey:localStorage["secretKey"],
+    interLink_available:localStorage["interLink_available"],
     showpassword:false,
     showpasswordminio:false,
     buckets: [],
@@ -241,10 +285,12 @@ export default {
 						total_cpu: serv.total_cpu,
 						total_memory: serv.total_memory,
 						alpine: serv.alpine,
-						enable_gpu: serv.enable_gpu
+						enable_gpu: serv.enable_gpu,
+						enable_InterLink: serv.enable_InterLink,
+						expose: serv.expose
 					}
 				})
-        
+        console.log(this.services)
 				this.loading = false;
 			}
 		},

@@ -181,6 +181,7 @@ export default {
       localStorage.setItem("password", this.model.password);
       localStorage.setItem("yunikorn_enable",response.data.yunikorn_enable);
       localStorage.setItem("gpu_available",response.data.gpu_available);
+      localStorage.setItem("interLink_available",response.data.interLink_available);
     },
     checkLoginCallback(response){
       if(response == 200){

@@ -163,6 +163,7 @@ export default {
               //document.getElementById("myAudio").appendChild(x);
               //this.$refs.output.src = window.atob(response.data);
             }else if(this.outputTypeSelected=='Zip'){
+              console.log(response)
               var element = document.createElement('a');
               element.setAttribute('href', 'data:text/zip;base64,' + response.data);
               element.setAttribute('download', "result.zip");
