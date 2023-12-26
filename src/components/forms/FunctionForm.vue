@@ -1490,7 +1490,7 @@ export default {
 				labelskey:"",
 				labelsvalue:"",*/
 				path_in:"",
-				log_level:['CRITICAL','ERROR','WARNING','INFO','DEBUG','NOTSET'],
+				//log_level:['CRITICAL','ERROR','WARNING','INFO','DEBUG','NOTSET'],
 				storage_provider_in:"",
 				prefix_in:"",
 				suffix_in:"",
@@ -2165,7 +2165,7 @@ export default {
 			this.showselectSuffixOut = false
 			this.showselectInput = false
 			this.showselectOutput = false
-			this.select_logLevel = 'INFO'
+			//this.select_logLevel = 'INFO'
 			this.editScript = false
 			this.storages_all = []
 			this.ONEDATA_DICT={}
@@ -2226,7 +2226,7 @@ export default {
 			this.form.memory=this.limits_mem
 			this.form.input= this.inputs
 			this.form.output= this.outputs
-			this.select_logLevel= 'INFO'
+			
 			if(this.form.expose?.port== 0 || this.form.expose?.port == ""){
 				delete this.form.expose
 			}
@@ -2463,8 +2463,9 @@ export default {
 				this.showselectLabel = false;
 				this.labels = {};
 			}*/
-
-			this.select_logLevel = data.log_level
+			if(this.select_logLevel==''){
+				this.select_logLevel= 'INFO'
+			}else this.select_logLevel = data.log_level
 			if (this.isEmpty(this.inputs)) {
 				this.showselectInput = false
 			}else{
