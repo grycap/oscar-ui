@@ -504,7 +504,7 @@
 																v-model="form.expose.cpu_threshold"
 																min="1"
 																max="100"
-																label="CPU Limit %"
+																label="CPU Threshold %"
 																style="padding-right: 5px;"
 															></v-text-field>
 														</v-flex>
