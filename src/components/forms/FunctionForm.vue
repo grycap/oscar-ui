@@ -867,7 +867,7 @@
 											<v-tab
 											:href="`#tab-onedata`"
 											>
-												ONE DATA
+												ONEDATA
 											</v-tab>
 											<v-tab
 											:href="`#tab-s3`"
@@ -877,7 +877,7 @@
 											<v-tab
 											:href="`#tab-dcache`"
 											>
-												dcache
+												DCACHE
 											</v-tab>
 										</v-tabs>
 
@@ -1035,7 +1035,7 @@
 																:append-icon="showMinioSecretKey ? 'visibility_off' : 'visibility'"
 																:type="showMinioSecretKey ? 'text' : 'password'"
 																:counter="200"
-																label="SECRET KEY"
+																label="SECRET ACCESS KEY"
 																@click:append="showMinioSecretKey = !showMinioSecretKey"
 															></v-text-field>
 														</v-flex>
@@ -1048,7 +1048,7 @@
 																:append-icon="showMinioAccessKey ? 'visibility_off' : 'visibility'"
 																:type="showMinioAccessKey ? 'text' : 'password'"
 																:counter="200"
-																label="ACCESS KEY"
+																label="ACCESS KEY ID"
 																@click:append="showMinioAccessKey = !showMinioAccessKey"
 															></v-text-field>
 														</v-flex>
@@ -1080,8 +1080,8 @@
 																		<v-list-tile-title class="pad-down-def">ID: {{key}}</v-list-tile-title>
 																		<v-list-tile-title class="pad-down-def">ENDPOINT: {{id.endpoint}}</v-list-tile-title>
 																		<v-list-tile-title class="pad-down-def">REGION: {{id.region}}</v-list-tile-title>
-																		<v-list-tile-title class="pad-down-def">SECRET KEY: <span class="hide_text">*********</span></v-list-tile-title>
-																		<v-list-tile-title class="pad-down-def">ACCESS KEY: <span class="hide_text">*********</span></v-list-tile-title>
+																		<v-list-tile-title class="pad-down-def">SECRET ACCESS KEY: <span class="hide_text">*********</span></v-list-tile-title>
+																		<v-list-tile-title class="pad-down-def">ACCESS KEY ID: <span class="hide_text">*********</span></v-list-tile-title>
 																		<v-list-tile-title class="pad-down-def">VERIFY: {{id.verify}}</v-list-tile-title>
 																		<!-- <v-list-tile-title>{{key}}</v-list-tile-title> -->
 																	</v-list-tile-content>
@@ -1133,7 +1133,7 @@
 																:append-icon="showS3AccessKey ? 'visibility_off' : 'visibility'"
 																:type="showS3AccessKey ? 'text' : 'password'"
 																:counter="200"
-																label="ACCESS KEY"
+																label="ACCESS KEY ID"
 																@click:append="showS3AccessKey = !showS3AccessKey"
 															></v-text-field>
 														</v-flex>
@@ -1146,7 +1146,7 @@
 																:append-icon="showS3SecretKey ? 'visibility_off' : 'visibility'"
 																:type="showS3SecretKey ? 'text' : 'password'"
 																:counter="200"
-																label="SECRET KEY"
+																label="SECRET ACCESS KEY"
 																@click:append="showS3SecretKey = !showS3SecretKey"
 															></v-text-field>
 														</v-flex>
