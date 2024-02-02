@@ -223,7 +223,7 @@ export default {
 				}catch(err) {
 					console.error("ERROR with list services "+err);
 					result = null
-					options.method="PUT"
+					options.method="POST"
 					var typecall="created"
 				}
 				console.log(result)
@@ -231,10 +231,10 @@ export default {
 					if(result != null){
 						if(result.includes(params[index].name)){
 						options.method="PUT"
-						var typecall="created"
+						var typecall="edited"
 						}else{
 							options.method="POST"
-							var typecall="edited"
+							var typecall="created"
 						}
 					}
 					options.body= JSON.stringify(params[index])
