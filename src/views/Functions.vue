@@ -22,6 +22,7 @@
 				item-key="name"
 				:search="search"
 				:expand="expand"
+				:rows-per-page-items="item_per_page"
 				v-show="!show_spinner"
 			>
 				<template v-slot:items="props">
@@ -69,7 +70,7 @@
 
 						<td class="text-xs-center">
 							<v-icon  medium v-show="props.expanded" @click="props.expanded = !props.expanded">expand_less</v-icon>
-							<v-icon  medium v-show="!props.expanded" @click="props.expanded = !props.expanded;showEnvVars(props.item.environment)">expand_more</v-icon>
+							<v-icon  medium v-show="!props.expanded" @click="props.expanded = !props.expanded">expand_more</v-icon>
 						</td>
 					</tr>
 				</template>
@@ -130,13 +131,13 @@
 											<p style="display:inline" v-if=" !alpineImage(props.item.alpine)">No</p> 
 										</v-card-text>
 										<v-card-text  class="custom-padding"><strong>Is this service expose? </strong>
-											<p style="display:inline" v-if=" isServiceExpose(props.item.expose.port)">Yes</p> 
-											<p style="display:inline" v-if=" !isServiceExpose(props.item.expose.port)">No</p> 
-											<ul v-if=" isServiceExpose(props.item.expose.port)">
-												<li><strong>min_scale: </strong> {{props.item.expose.min_scale}}</li> 
-												<li><strong> max_scale: </strong> {{props.item.expose.max_scale}}</li> 
-												<li><strong> port: </strong> {{props.item.expose.port}}</li> 
-												<li><strong> cpu_threshold: </strong> {{props.item.expose.cpu_threshold}}</li> 
+											<p style="display:inline" v-if=" isServiceExpose(props.item?.expose?.port)">Yes</p> 
+											<p style="display:inline" v-if=" !isServiceExpose(props.item?.expose?.port)">No</p> 
+											<ul v-if="isServiceExpose(props.item?.expose?.port)">
+												<li><strong>min_scale: </strong> {{props.item?.expose?.min_scale}}</li> 
+												<li><strong> max_scale: </strong> {{props.item?.expose?.max_scale}}</li> 
+												<li><strong> port: </strong> {{props.item?.expose?.port}}</li> 	
+												<li><strong> cpu_threshold: </strong> {{props.item?.expose?.cpu_threshold}}</li> 
 											</ul>
 										</v-card-text>
 										<v-card-text v-show="getInterLink_available"   class="custom-padding"><strong>Does this service use InterLink? </strong>
@@ -340,7 +341,8 @@ export default {
 		disable_form: true,
 		disable_storage: true,
 		params_delete: '',
-		show1:false
+		show1:false,
+		item_per_page: [10,25,50,{"text":"$vuetify.dataIterator.rowsPerPageAll","value":-1}],
 	}),
   	methods: {
 		showEnvVars(value){
@@ -417,7 +419,9 @@ export default {
 		},
 		listServicesCallback(response) {
 			if(response.status == 200){
+				
 				this.show_spinner = false;
+				if (response.data !== null) {
 				this.services = Object.assign(this.services, response.data);
 				console.log(response.data)
 				this.services = response.data.map((serv) => {
@@ -446,6 +450,7 @@ export default {
 						enable_InterLink: serv.enable_InterLink
 					}*/
 				})
+				}
 				this.loading = false;
 			}else{
 				this.show_alert = true;
@@ -475,7 +480,7 @@ export default {
 			return value
 		},
 		isServiceExpose(portValue){
-			if(portValue != 0){
+			if(portValue !== 0){
 				return true
 			}
 			return false
