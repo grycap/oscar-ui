@@ -216,6 +216,7 @@ export default {
 					}
 				var params=this.prepareFunction()
 				const response = await fetch(this.api+'/system/services',options);
+				let result =""
 				try{
 					const json = await response.json();
 					let result = json.map(service => service.name);
