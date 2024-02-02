@@ -252,18 +252,20 @@ export default {
 	},
 	getBucketListCallBack(response){
 		try{
-			this.buckets = response.map((bucket) => {
-			return {
-				title: bucket.name,
-					to: `/buckets/${bucket.name}`,
-					active: false
+			if(response.status ==200){
+				this.buckets = response.map((bucket) => {
+				return {
+					title: bucket.name,
+						to: `/buckets/${bucket.name}`,
+						active: false
+				}
+				})
+				this.menus.find((obj) => {
+				if (obj.title === 'Storage') {
+					obj.items = this.buckets
+				}
+				})
 			}
-			})
-			this.menus.find((obj) => {
-			if (obj.title === 'Storage') {
-				obj.items = this.buckets
-			}
-			})
 		}catch(err) {
       		console.error("ERROR with list buckets "+err);
 		}
