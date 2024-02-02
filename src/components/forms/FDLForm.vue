@@ -216,15 +216,22 @@ export default {
 					}
 				var params=this.prepareFunction()
 				const response = await fetch(this.api+'/system/services',options);
-				const json = await response.json();
-				let result = json.map(service => service.name);
+				if (response != null){
+					const json = await response.json();
+					let result = json.map(service => service.name);
+				}else{
+					options.method="PUT"
+					var typecall="created"
+				}
 				for (let index = 0; index < params.length; index++) {
-					if(result.includes(params[index].name)){
-						options.method="PUT"
-						var typecall="created"
-					}else{
-						options.method="POST"
-						var typecall="edited"
+					if (response != null){
+						if( result.includes(params[index].name)){
+							options.method="PUT"
+							var typecall="created"
+						}else{
+							options.method="POST"
+							var typecall="edited"
+						}
 					}
 					options.body= JSON.stringify(params[index])
 					const response = await fetch(this.api+'/system/services',options);
