@@ -219,10 +219,10 @@ export default {
 				let result =""
 				try{
 					const json = await response.json();
-					let result = json.map(service => service.name);
+					result = json.map(service => service.name);
 				}catch(err) {
 					console.error("ERROR with list services "+err);
-					let result = null
+					result = null
 					options.method="PUT"
 					var typecall="created"
 				}
