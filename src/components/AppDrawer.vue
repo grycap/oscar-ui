@@ -252,7 +252,6 @@ export default {
 	},
 	getBucketListCallBack(response){
 		try{
-			if(response.status ==200){
 				this.buckets = response.map((bucket) => {
 				return {
 					title: bucket.name,
@@ -265,7 +264,6 @@ export default {
 					obj.items = this.buckets
 				}
 				})
-			}
 		}catch(err) {
       		console.error("ERROR with list buckets "+err);
 		}
