@@ -163,8 +163,8 @@
 													<div class="summernote" style="white-space: pre-wrap;"></div>
 													<!-- <div v-show="editScript==true" style="white-space: pre-wrap;" class="click2edit text-left"></div>				 -->
 												</v-flex>
-
-												<v-flex xs12>
+							
+												<!--<v-flex xs12>
 														<v-btn
 														outline color="indigo"
 														round
@@ -175,9 +175,47 @@
 														<v-icon right dark>{{expand}}</v-icon>
 													</v-btn>
 												</v-flex>
+												-->
 											</div>
 
-											<v-flex xs12 id="panel">
+											
+											<div  style="width:100%;padding: 0px 10px;">
+
+												<v-layout row wrap style="margin: 0px">
+												<v-flex xs6 sm5>
+													<v-text-field
+														v-model="form.cpu"
+														:counter="10"
+														label="CPU"
+														style="padding-right: 5px;"
+													></v-text-field>
+												</v-flex>
+
+												<v-flex xs5 sm5>
+													<v-text-field
+														v-model="form.limits_memory"
+														:counter="10"
+														label="Memory RAM"
+														style="padding-right: 5px;"
+													></v-text-field>
+												</v-flex>
+												<v-flex xs1 sm2 style="padding-top:10px;">
+													<select id="classmemory" class="custom-select" >
+														<option selected value="1">Mi</option>
+														<option value="2">Gi</option>
+													</select>
+												</v-flex>
+												<v-flex xs12 sm5 style="padding-top:10px;">
+															<v-select
+																:items="log_level"
+																label="LOG LEVEL"
+																v-model="select_logLevel"
+															></v-select>
+														</v-flex>
+											</v-layout>
+											
+											</div>
+											<!--<v-flex xs12 id="panel">
 												<v-container>
 													<div class="separator" style="margin-top: 0;">Docker</div>
 													<v-layout row wrap>
@@ -468,6 +506,9 @@
 													</v-layout>
 													<div class="separator">Expose</div>
 														<v-layout row wrap>
+														<v-layout row wrap>
+															
+													<v-layout row wrap>
 															
 														<v-flex xs12 sm5>
 															<v-text-field
@@ -509,8 +550,18 @@
 															></v-text-field>
 														</v-flex>
 													</v-layout>
+													<div v-show=" getInterLink_available == 'true'"  class="separator">InterLink</div>
+													<v-layout v-show=" getInterLink_available == 'true'"  row wrap>
+														<div>
+															<span  class="v-label theme--light" aria-hidden="true"
+																style="left: 0px; right: auto; margin-right: 10px;" >
+																	Enable Inter Link?
+															</span>
+															<v-switch  v-model="form.enable_InterLink" style="display:inline-block;"></v-switch>
+														</div>
+													</v-layout>
 												</v-container>
-											</v-flex>
+											</v-flex>-->
 										</v-layout>
 								</v-card-text>
 								<v-card-actions style="background-color:white;">
@@ -1377,15 +1428,17 @@ export default {
 			envrequirehost: false,
 			envrequiretoken : false,
 			envrequirespace : false,
-			envVars:{},
-			annotations:{},
-			labels:{},
-			envVarsAll:{},
+			//envVars:{},
+			//annotations:{},
+			//labels:{},
+			//envVarsAll:{},
 			limits_mem: '',
 			total_mem:'',
 			request_mem: '',
 			initialName:'',
-			select_logLevel: '',
+			select_logLevel: 'INFO',
+			log_level:['CRITICAL','ERROR','WARNING','INFO','DEBUG','NOTSET'],
+
 			ONEDATA_DICT:{},
 			S3_DICT:{},
 			DCACHE_DICT:{},
@@ -1430,14 +1483,14 @@ export default {
 				nameRules: [
 				v => !!v || 'Function name is required'
 				],
-				envVarskey: "",
+				/*envVarskey: "",
 				envVarsValue: "",
 				annotkey:"",
 				annotvalue:"",
 				labelskey:"",
-				labelsvalue:"",
+				labelsvalue:"",*/
 				path_in:"",
-				log_level:['CRITICAL','ERROR','WARNING','INFO','DEBUG','NOTSET'],
+				//log_level:['CRITICAL','ERROR','WARNING','INFO','DEBUG','NOTSET'],
 				storage_provider_in:"",
 				prefix_in:"",
 				suffix_in:"",
@@ -1457,18 +1510,19 @@ export default {
 					// 	space: ''
 					// },
 				},
-				limits_cpu: '',
+				cpu: '',
 				limits_memory: '',
-				regAuth: '',
+				/*regAuth: '',
 				request_cpu: '',
 				request_memory: '',
-				secrets: '',
+				secrets: '',*/
 				script: '',
-				total_cpu:'',
+				/*total_cpu:'',
 				total_memory:'',
 				alpine:false,
 				image_prefetch:false,
 				enable_gpu:false,
+				enable_InterLink:false,*/
 				expose:{
 					min_scale:'',
 					max_scale:'',
@@ -1574,7 +1628,7 @@ export default {
 		cleanfield(){
 			this.url=""
 		},
-		cleanfieldenv(){
+		/*cleanfieldenv(){
 			this.form.envVarskey=""
 			this.form.envVarsValue=""
 		},
@@ -1585,7 +1639,7 @@ export default {
 		cleanfieldLabels(){
 			this.form.labelskey=""
 			this.form.labelsvalue=""
-		},
+		},*/
 		cleanfieldInput(){
 			this.form.path_in=""
 			this.form.storage_provider_in=""
@@ -1692,7 +1746,7 @@ export default {
 				}
 			}
 		},
-		includeEnv(){
+		/*includeEnv(){
 			if(this.form.envVarskey != null && this.form.envVarskey != '' && this.form.envVarsValue != null && this.form.envVarsValue != ''){
 				this.showselectEnv=true
 				var key= this.form.envVarskey.replace(" ", "")
@@ -1718,7 +1772,7 @@ export default {
 				this.labels[key]=value
 				this.cleanfieldLabels()
 			}
-		},
+		},*/
 		includeOneData(){
 			if(this.onedata.id=='' || this.onedata.oneprovider_host=='' || this.onedata.token=='' || this.onedata.space==''){
 				this.showErrorOneData = true
@@ -1867,7 +1921,7 @@ export default {
 			}
 			return true;
 		},
-		removeEnv (key) {
+		/*removeEnv (key) {
 			this.$delete(this.envVars,key)
 			if (this.isEmpty(this.envVars)) {
 				this.showselectEnv = false
@@ -1884,7 +1938,7 @@ export default {
 			if (this.isEmpty(this.labels)) {
 				this.showselectLabel = false
 			}
-		},
+		},*/
 		removeInput (key) {
 			this.$delete(this.inputs,key)
 			if (this.isEmpty(this.inputs)) {
@@ -1921,7 +1975,7 @@ export default {
 				this.showselectSuffixOut = false
 			}
 		},
-		collapse(){
+		/*collapse(){
 			this.drawer = (!this.drawer)
 			if (this.drawer == true){
 				this.expand = "expand_less"
@@ -1931,7 +1985,7 @@ export default {
 				this.expand = "expand_more"
 				$("#panel").slideUp("slow");
 			}
-		},
+		},*/
 		addFiles () {
 			this.$refs.files.click()
 		},
@@ -2006,12 +2060,12 @@ export default {
 			this.dialog = false
 			this.clear()
 		},
-		extend(obj, src) {
+		/*extend(obj, src) {
 				for (var key in src) {
 					if (src.hasOwnProperty(key)) obj[key] = src[key];
 				}
 				return obj;
-		},
+		},*/
 		validate(){
 			if(this.form.name.length < 3 || this.form.image.length < 3){
 				return false
@@ -2054,16 +2108,16 @@ export default {
 			$("#input_output").removeClass("show active")
 			$("#profile-tab").removeClass("show active")
 			$("#profile").removeClass("show active")
-			this.select_logLevel = 'INFO'
+			//this.select_logLevel = 'INFO'
 			this.editScript = false
-			this.form.limits_cpu=''
+			this.form.cpu=''
 			this.form.limits_memory=''
 			this.form.image=''
 			this.form.name=''
-			this.form.expose.min_scale=""
+			/*this.form.expose.min_scale=""
 			this.form.expose.max_scale=""
 			this.form.expose.port=''
-			this.form.expose.cpu_threshold=''
+			this.form.expose.cpu_threshold=''*/
 		},
 		clear () {
 			this.files = []
@@ -2111,7 +2165,7 @@ export default {
 			this.showselectSuffixOut = false
 			this.showselectInput = false
 			this.showselectOutput = false
-			this.select_logLevel = 'INFO'
+			//this.select_logLevel = 'INFO'
 			this.editScript = false
 			this.storages_all = []
 			this.ONEDATA_DICT={}
@@ -2131,16 +2185,16 @@ export default {
 		},
 		prepareFunction(){
 			if (this.isEmpty(this.MINIO_DICT)==false) {
-				this.form.storage_provider["minio"]=this.MINIO_DICT
+				this.form.storage_providers["minio"]=this.MINIO_DICT
 			}
 			if (this.isEmpty(this.S3_DICT)==false){
-				this.form.storage_provider["s3"]=this.S3_DICT
+				this.form.storage_providers["s3"]=this.S3_DICT
 			}
 			if (this.isEmpty(this.ONEDATA_DICT)==false){
-				this.form.storage_provider["onedata"]=this.ONEDATA_DICT
+				this.form.storage_providers["onedata"]=this.ONEDATA_DICT
 			}
 			if (this.isEmpty(this.DCACHE_DICT)==false){
-				this.form.storage_provider["webdav"]=this.DCACHE_DICT
+				this.form.storage_providers["webdav"]=this.DCACHE_DICT
 			}
 
 			var value = $("#classmemory option:selected").text();
@@ -2167,7 +2221,18 @@ export default {
 				}
 			}
 
-			var params = {
+			this.form.log_level= this.select_logLevel
+			this.form.script=this.base64String
+			this.form.memory=this.limits_mem
+			this.form.input= this.inputs
+			this.form.output= this.outputs
+			
+			if(this.form.expose?.port== 0 || this.form.expose?.port == ""){
+				delete this.form.expose
+			}
+			return this.form
+
+			/*var params = {
 
 				'name': this.form.name,
 				'image': this.form.image,
@@ -2187,6 +2252,7 @@ export default {
 				'alpine':this.form.alpine,
 				'image_prefetch':this.form.image_prefetch,
 				'enable_gpu':this.form.enable_gpu,
+				'enable_InterLink':this.form.enable_InterLink,
 				'expose':{ 	'min_scale':parseInt(this.form.expose.min_scale),
 							'max_scale':parseInt(this.form.expose.max_scale),
 							'port':parseInt(this.form.expose.port),
@@ -2203,7 +2269,7 @@ export default {
 
 			}
 
-			return params
+			return params*/
 		},
 		newFunction () {
 			var params =this.prepareFunction()
@@ -2260,13 +2326,13 @@ export default {
 			window.getApp.$emit('FUNC_GET_FUNCTIONS_LIST')
 			window.getApp.$emit('REFRESH_BUCKETS_LIST')
 		},
-		addSecret() {
+		/*addSecret() {
 			var newSecret=document.getElementById('text-secret').value
       		this.form.image_pull_secrets.push(newSecret);
     	},
 		deleteSecret(newSecret) {
       		this.form.image_pull_secrets.pop(newSecret);
-    	},
+    	},*/
 	},
 	computed: {
 
@@ -2280,27 +2346,35 @@ export default {
 		showSelectedFiles () {
 			return this.files.length > 0
 		},
-		getYunikorn_option () {
+		/*getYunikorn_option () {
 			return localStorage.getItem('yunikorn_enable')
 		},
 		getGpu_available() {
 			return localStorage.getItem('gpu_available')
 		},
+		getInterLink_available(){
+			return localStorage.getItem('interLink_available')
+		}*/
 
 	},
 
 	created: function () {
-		this.select_logLevel = 'INFO';
+		//this.select_logLevel = 'INFO';
 		window.getApp.$on('FUNC_OPEN_MANAGEMENT_DIALOG', (data) => {
+			console.log(data)
 			this.dialog = true
+			console.log(this)
+			
+			this.form=Object.assign({}, data);
+
 			this.editionMode = data.editionMode
-			this.form.name = data.name
+			//this.form.name = data.name
 			this.initialName = data.name
-			this.form.image = data.image
-			this.form.image_pull_secrets = data.image_pull_secrets ? data.image_pull_secrets : [];
+			//this.form.image = data.image
+			//this.form.image_pull_secrets = data.image_pull_secrets ? data.image_pull_secrets : [];
 			this.inputs = data.input
 			this.outputs = data.output
-			this.form.limits_cpu = data.cpu
+			///this.form.limits_cpu = data.cpu
 			var memory_split = []
 			memory_split = data.memory.match(/[a-z]+|[^a-z]+/gi);
 			this.form.limits_memory = memory_split[0]
@@ -2309,9 +2383,12 @@ export default {
 			}else{
 				var value_select = "2"
 			}
-			this.form.alpine=data.alpine
-			this.form.image_prefetch=data.image_prefetch
-			if(	data.expose.min_scale == 0 && data.expose.max_scale==0 &&
+			setTimeout(function(){
+				$('#classmemory').val(value_select)
+			},100)
+			//this.form.alpine=data.alpine
+			//this.form.image_prefetch=data.image_prefetch
+			/*if(	data.expose.min_scale == 0 && data.expose.max_scale==0 &&
 				data.expose.port==0 && data.expose.cpu_threshold ==0){
 				this.form.expose.min_scale=''
 				this.form.expose.max_scale=''
@@ -2322,14 +2399,17 @@ export default {
 				this.form.expose.max_scale=data.expose.max_scale
 				this.form.expose.port=data.expose.port
 				this.form.expose.cpu_threshold=data.expose.cpu_threshold
-			}
-			if(localStorage.getItem('gpu_available')== "true" && data.enable_gpu != undefined ){
+			}*/
+			/*if(localStorage.getItem('gpu_available')== "true" && data.enable_gpu != undefined ){
 				this.form.enable_gpu=data.enable_gpu
+			}
+			if(localStorage.getItem('interLink_available') == "true" && data.enable_InterLink !=''){
+				this.form.enable_InterLink=data.enable_InterLink
 			}
 			if(localStorage.getItem('yunikorn_enable') == "true" && data.total_cpu !=''){
 				this.form.total_cpu=data.total_cpu
-			}
-			if(localStorage.getItem('yunikorn_enable') == "true" && data.total_memory !=undefined){
+			}*/
+			/*if(localStorage.getItem('yunikorn_enable') == "true" && data.total_memory !=undefined){
 				if(data.total_memory == ""){
 					this.form.total_memory = ''
 					var total_value_select = "1"
@@ -2347,11 +2427,19 @@ export default {
 			setTimeout(function(){
 				$('#classmemory').val(value_select)
 				$('#total_classmemory').val(total_value_select)
-			},100)
-			var key=''
+			},100)*/
+			/*var key=''
 			var values= ''
-			key = Object.keys(data.envVars.Variables)
-			values = Object.values(data.envVars.Variables)
+			key = Object.keys(data.environment.Variables)
+
+			///////////////////////
+
+
+
+
+
+
+			values = Object.values(data.environment.Variables)
 			for (let i = 0; i < key.length; i++) {
 				this.envVars[key[i]]=values[i]
 			}
@@ -2374,9 +2462,10 @@ export default {
 			}else{
 				this.showselectLabel = false;
 				this.labels = {};
-			}
-
-			this.select_logLevel = data.log_Level
+			}*/
+			if(this.select_logLevel==''){
+				this.select_logLevel= 'INFO'
+			}else this.select_logLevel = data.log_level
 			if (this.isEmpty(this.inputs)) {
 				this.showselectInput = false
 			}else{
@@ -2389,28 +2478,28 @@ export default {
 			}
 			this.base64String = data.script
 
-			if(data.storage_provider.minio == undefined){
+			if(data.storage_providers.minio == undefined){
 				this.MINIO_DICT={}
 			}else{
-				this.MINIO_DICT=data.storage_provider.minio
+				this.MINIO_DICT=data.storage_providers.minio
 			}
 
-			if(data.storage_provider.onedata == undefined){
+			if(data.storage_providers.onedata == undefined){
 				this.ONEDATA_DICT={}
 			}else{
-				this.ONEDATA_DICT=data.storage_provider.onedata
+				this.ONEDATA_DICT=data.storage_providers.onedata
 			}
 
-			if(data.storage_provider.s3 == undefined){
+			if(data.storage_providers.s3 == undefined){
 				this.S3_DICT={}
 			}else{
-				this.S3_DICT=data.storage_provider.s3
+				this.S3_DICT=data.storage_providers.s3
 			}
 
-			if(data.storage_provider.webdav == undefined){
+			if(data.storage_providers.webdav == undefined){
 				this.DCACHE_DICT={}
 			}else{
-				this.DCACHE_DICT=data.storage_provider.webdav
+				this.DCACHE_DICT=data.storage_providers.webdav
 			}
 			this.storages_all=[]
 			if (this.isEmpty(this.MINIO_DICT)) {
@@ -2504,7 +2593,7 @@ export default {
 		height: calc(2.25rem + 3px);
 		width: 100%
 	}
-	}5
+	}
 
 /* Extra large devices (large desktops, 1200px and up)*/
 @media (min-width: 1200px) {

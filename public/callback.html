@@ -104,6 +104,7 @@
                   localStorage.setItem("authenticated", true);
                   localStorage.setItem("yunikorn_enable",response.data.yunikorn_enable);
                   localStorage.setItem("gpu_available",response.data.gpu_available);
+                  localStorage.setItem("interLink_available",response.data.interLink_available);
                   var url_redirect = window.location.origin + "/#/services"
                   window.location.href = url_redirect
               }).catch(function (error) {

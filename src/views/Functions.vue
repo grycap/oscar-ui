@@ -19,15 +19,16 @@
 				:items="services"
 				:loading="loading"
 				class="elevation-1"
-				item-key="service"
+				item-key="name"
 				:search="search"
 				:expand="expand"
+				:rows-per-page-items="item_per_page"
 				v-show="!show_spinner"
 			>
 				<template v-slot:items="props">
 					<tr >
-						<td class="text-xs-center">{{ props.item.service }}</td>
-						<td class="text-xs-center">{{ props.item.container }}</td>
+						<td class="text-xs-center">{{ props.item.name }}</td>
+						<td class="text-xs-center">{{ props.item.image }}</td>
 						<td class="text-xs-center">{{ props.item.cpu }}</td>
 						<td class="text-xs-center">{{ props.item.memory }}</td>
 						<div class="text-xs-center">
@@ -47,18 +48,18 @@
 								</v-btn>
 								<br>
 								
-								<v-btn class="buttom-options" outline @click="goLogs(props.item.service)">
+								<v-btn class="buttom-options" outline @click="goLogs(props.item.name)">
 									<v-icon small class="mr-2" >visibility</v-icon>
 								Logs
 								</v-btn>
 
 								<br>
-								<v-btn class="buttom-options" outline @click="goInvoke(props.item.service)">
+								<v-btn class="buttom-options" outline @click="goInvoke(props.item.name)">
 									<v-icon small class="mr-2" >sync_alt</v-icon>
 								Invoke
 								</v-btn>
 								<br>
-								<v-btn class="buttom-options" color="red" outline @click="deleteFunction(props.item,props.item.service)">
+								<v-btn class="buttom-options" color="red" outline @click="deleteFunction(props.item,props.item.name)">
 									<v-icon small class="mr-2" >delete</v-icon>
 								Delete
 								</v-btn>
@@ -69,7 +70,7 @@
 
 						<td class="text-xs-center">
 							<v-icon  medium v-show="props.expanded" @click="props.expanded = !props.expanded">expand_less</v-icon>
-							<v-icon  medium v-show="!props.expanded" @click="props.expanded = !props.expanded;showEnvVars(props.item.envVars.Variables)">expand_more</v-icon>
+							<v-icon  medium v-show="!props.expanded" @click="props.expanded = !props.expanded">expand_more</v-icon>
 						</td>
 					</tr>
 				</template>
@@ -96,8 +97,8 @@
 							<v-tabs-items v-model="model" >
 								<v-tab-item  :value="`tab-service`">
 									<v-card flat>
-										<v-card-text class="custom-padding xs6"> <strong>Name: </strong> {{props.item.service}}</v-card-text>
-										<v-card-text class="custom-padding"><strong>Image: </strong> {{props.item.container}}</v-card-text>
+										<v-card-text class="custom-padding xs6"> <strong>Name: </strong> {{props.item.name}}</v-card-text>
+										<v-card-text class="custom-padding"><strong>Image: </strong> {{props.item.image}}</v-card-text>
 										<v-card-text style="display:flex;margin-right: 5px;" class="custom-padding">
 											<strong style="padding-top: 12px;margin-right: 5px;">Token: </strong>
 											<v-text-field style="width: 80%!important;padding-top: 0px!important;margin-top: 0px!important;"
@@ -109,8 +110,43 @@
 												readonly
 											></v-text-field>
 										</v-card-text>
+										<v-card-text class="custom-padding"> <strong>Resources</strong>
+											<ul>
+												<li><strong>CPU: </strong> {{props.item.cpu}}</li> 
+												<li><strong> Memory: </strong> {{props.item.memory}}</li> 
+											</ul>
+										</v-card-text>
+										<v-card-text v-show=" getYunikorn_option == 'true'"  class="custom-padding"> <strong>Yunikorn resources</strong>
+											<ul>
+												<li><strong>CPU: </strong> {{props.item.total_cpu}}</li> 
+												<li><strong> Memory: </strong> {{props.item.total_memory}}</li> 
+											</ul>
+										</v-card-text>
+										<v-card-text  v-show=" getGpu_available == 'true'" class="custom-padding"><strong>Does this service use GPU? </strong>
+											<p style="display:inline" v-if=" useGPU(props.item.enable_gpu)">Yes</p> 
+											<p style="display:inline" v-if=" !useGPU(props.item.enable_gpu)">No</p> 
+										</v-card-text>
+										<v-card-text  class="custom-padding"><strong>Is your image base on Alpine? </strong>
+											<p style="display:inline" v-if=" alpineImage(props.item.alpine)">Yes</p> 
+											<p style="display:inline" v-if=" !alpineImage(props.item.alpine)">No</p> 
+										</v-card-text>
+										<v-card-text  class="custom-padding"><strong>Is this service expose? </strong>
+											<p style="display:inline" v-if=" isServiceExpose(props.item?.expose?.port)">Yes</p> 
+											<p style="display:inline" v-if=" !isServiceExpose(props.item?.expose?.port)">No</p> 
+											<ul v-if="isServiceExpose(props.item?.expose?.port)">
+												<li><strong>min_scale: </strong> {{props.item?.expose?.min_scale}}</li> 
+												<li><strong> max_scale: </strong> {{props.item?.expose?.max_scale}}</li> 
+												<li><strong> port: </strong> {{props.item?.expose?.port}}</li> 	
+												<li><strong> cpu_threshold: </strong> {{props.item?.expose?.cpu_threshold}}</li> 
+											</ul>
+										</v-card-text>
+										<v-card-text v-show="getInterLink_available"   class="custom-padding"><strong>Does this service use InterLink? </strong>
+											<p style="display:inline" v-if=" useInterLink(props.item.enable_InterLink)">Yes</p> 
+											<p style="display:inline" v-if=" !useInterLink(props.item.enable_InterLink)">No</p> 
+										</v-card-text>
+										
 										<v-card-text class="custom-padding"><strong>Environment variables: </strong>
-											<pre v-show="Object.keys(props.item.envVars.Variables).length!==0" id="json-renderer"></pre>
+											<pre v-show="Object.keys(props.item.environment.Variables).length!==0" id="json-renderer"></pre>
 										</v-card-text>
 
 										<v-card-actions>
@@ -305,7 +341,8 @@ export default {
 		disable_form: true,
 		disable_storage: true,
 		params_delete: '',
-		show1:false
+		show1:false,
+		item_per_page: [10,25,50,{"text":"$vuetify.dataIterator.rowsPerPageAll","value":-1}],
 	}),
   	methods: {
 		showEnvVars(value){
@@ -334,7 +371,9 @@ export default {
 		},
 		editFunction (func) {
 			const index = this.services.indexOf(func)
-			let servInfo = {
+			let servInfo = this.services[index];
+			servInfo.editionMode=true
+			/* {
 				editionMode: true,
 				name: this.services[index].service,
 				image: this.services[index].container,
@@ -342,7 +381,7 @@ export default {
 				input: this.services[index].inputs,
 				output: this.services[index].outputs,
 				log_Level: this.services[index].logLevel,
-				envVars: this.services[index].envVars,
+				environment: this.services[index].environment,
 				image_pull_secrets: this.services[index].image_pull_secrets,
 				annotations: this.services[index].annotations?this.services[index].annotations:{},
 				labels: this.services[index].labels?this.services[index].labels:{},
@@ -355,8 +394,9 @@ export default {
 				alpine:this.services[index].alpine,
 				expose:this.services[index].expose,
 				image_prefetch:this.services[index].image_prefetch,
-				enable_gpu:this.services[index].enable_gpu
-			}
+				enable_gpu:this.services[index].enable_gpu,
+				enable_InterLink:this.services[index].enable_InterLink
+			}*/
 			window.getApp.$emit('FUNC_OPEN_MANAGEMENT_DIALOG', servInfo)
 		},
 		deleteFunction(serv, servName) {
@@ -379,10 +419,14 @@ export default {
 		},
 		listServicesCallback(response) {
 			if(response.status == 200){
+				
 				this.show_spinner = false;
+				if (response.data !== null) {
 				this.services = Object.assign(this.services, response.data);
+				console.log(response.data)
 				this.services = response.data.map((serv) => {
-					return {
+					//console.log(serv)
+					return serv/*{
 						service: serv.name,
 						container: serv.image,
 						token: serv.token,
@@ -393,18 +437,20 @@ export default {
 						annotations: serv.annotations,
 						labels: serv.labels,
 						memory: serv.memory,
-						inputs: serv.input,
-						outputs: serv.output,
-						storage: serv.storage_providers,
+						input: serv.input,
+						output: serv.output,
+						storage_providers: serv.storage_providers,
 						script: serv.script,
 						total_cpu: serv.total_cpu,
 						total_memory: serv.total_memory,
 						alpine: serv.alpine,
 						image_prefetch: serv.image_prefetch,
 						expose:serv.expose,
-						enable_gpu: serv.enable_gpu
-					}
+						enable_gpu: serv.enable_gpu,
+						enable_InterLink: serv.enable_InterLink
+					}*/
 				})
+				}
 				this.loading = false;
 			}else{
 				this.show_alert = true;
@@ -424,8 +470,34 @@ export default {
 			const bottomOfPage = visible + scrollY >= pageHeight
 			return bottomOfPage || pageHeight < visible
         },
+		alpineImage (isAlpine) {
+			return isAlpine
+		},
+		useInterLink(useInterLink){
+			return useInterLink
+		},
+		useGPU(value){
+			return value
+		},
+		isServiceExpose(portValue){
+			if(portValue !== 0){
+				return true
+			}
+			return false
+		},
+		getInterLink_available(){
+			return localStorage.getItem('interLink_available')
+		}
 
   	},
+	  computed: {
+			getYunikorn_option () {
+				return localStorage.getItem('yunikorn_enable')
+			},
+			getGpu_available() {
+				return localStorage.getItem('gpu_available')
+			},
+		},
 	created: function () {
 		window.getApp.$on('FUNC_GET_FUNCTIONS_LIST', () => {
 			this.listServicesCall(this.listServicesCallback)
