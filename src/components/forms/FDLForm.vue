@@ -230,8 +230,8 @@ export default {
 				for (let index = 0; index < params.length; index++) {
 					if(result != null){
 						if(result.includes(params[index].name)){
-						options.method="PUT"
-						var typecall="edited"
+							options.method="PUT"
+							var typecall="edited"
 						}else{
 							options.method="POST"
 							var typecall="created"
@@ -248,7 +248,7 @@ export default {
 							this.form.check=false
 						}, 5000);
 					}else{
-						window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response, color: 'error' })
+						window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response.data, color: 'error' })
 						this.form.wrong=true
 						setTimeout(() => {
 							this.form.wrong=false
