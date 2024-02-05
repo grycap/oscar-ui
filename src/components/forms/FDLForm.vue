@@ -248,8 +248,7 @@ export default {
 							this.form.check=false
 						}, 5000);
 					}else{
-						console.log(response)
-						window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response.data, color: 'error' })
+						window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response, color: 'error' })
 						this.form.wrong=true
 						setTimeout(() => {
 							this.form.wrong=false
