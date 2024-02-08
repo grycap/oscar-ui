@@ -17,7 +17,6 @@
                   </v-card-text>
 
 
-                  <div class="styleflex" >
                   <v-card-text class="xs6" style="width: 25%"> <strong>User: </strong> {{user}}</v-card-text>
 
                   <v-card-text class="styleflex"  style="width: 50%" >
@@ -31,7 +30,6 @@
                     readonly
                     ></v-text-field>
                   </v-card-text>
-                  </div>
 
                   <div class="styleflex"  >
                     <!--
@@ -74,7 +72,6 @@
                       <p class="" v-else><strong>MinIO Endpoint: </strong> {{endpoint}}:{{port}}</p>
                   </v-card-text>
                  
-                  <div class="styleflex"  >
                     <v-card-text class="xs6" style="width: 25%"> <strong>Access Key: </strong> {{accessKey}}</v-card-text>
                     <v-card-text class="styleflex"  style="width: 50%" >
                       <strong style="margin-right: 5px">Secret Key: </strong>
@@ -87,7 +84,6 @@
                       readonly
                       ></v-text-field>
                     </v-card-text>
-                  </div>
                 </v-card-text>
               </v-card>
             </v-flex>

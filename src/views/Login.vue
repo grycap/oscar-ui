@@ -179,9 +179,9 @@ export default {
       localStorage.setItem("authenticated", true);
       localStorage.setItem("user", this.model.username);
       localStorage.setItem("password", this.model.password);
-      localStorage.setItem("yunikorn_enable",response.data.yunikorn_enable);
-      localStorage.setItem("gpu_available",response.data.gpu_available);
-      localStorage.setItem("interLink_available",response.data.interLink_available);
+      localStorage.setItem("yunikorn_enable",response.data.config.yunikorn_enable);
+      localStorage.setItem("gpu_available",response.data.config.gpu_available);
+      localStorage.setItem("interLink_available",response.data.config.interLink_available);
     },
     checkLoginCallback(response){
       if(response == 200){
