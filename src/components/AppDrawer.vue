@@ -252,7 +252,7 @@ export default {
 	},
 	getBucketListCallBack(response){
 		try{
-				if(response.status == 403){
+				if(typeof response === 'error'){
 					console.log("error 403")
 				}
 				console.log(response)
