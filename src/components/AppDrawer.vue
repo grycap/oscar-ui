@@ -252,10 +252,10 @@ export default {
 	},
 	getBucketListCallBack(response){
 		try{
-				console.log(response)
 				if(response.status == 403){
 					console.log("error 403")
 				}
+				console.log(response)
 				this.buckets = response.map((bucket) => {
 				return {
 					title: bucket.name,
