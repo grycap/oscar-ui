@@ -257,21 +257,22 @@ export default {
 				console.log(response.code)
 				console.log(response.name)
 				console.log(response.message)
-				if(response.code === '403'){
-					console.log("error 403")
-				}			
-				this.buckets = response.map((bucket) => {
-				return {
-					title: bucket.name,
-						to: `/buckets/${bucket.name}`,
-						active: false
-				}
+				if(response?.code !== 'AccessDenied'){
+					console.log("error 403 - AccessDenied")
+						
+					this.buckets = response.map((bucket) => {
+					return {
+						title: bucket.name,
+							to: `/buckets/${bucket.name}`,
+							active: false
+					}
+					})
+					this.menus.find((obj) => {
+					if (obj.title === 'Storage') {
+						obj.items = this.buckets
+					}
 				})
-				this.menus.find((obj) => {
-				if (obj.title === 'Storage') {
-					obj.items = this.buckets
-				}
-				})
+			}
 		}catch(err) {
       		console.error("ERROR with list buckets "+err);
 		}
