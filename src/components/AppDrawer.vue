@@ -254,7 +254,7 @@ export default {
 		try{
 				console.log(typeof response)
 
-				if(typeof response === 'error'){
+				if(response.code === '403'){
 					console.log("error 403")
 				}
 				console.log(Object.keys(response))
