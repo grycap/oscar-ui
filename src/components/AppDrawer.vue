@@ -213,7 +213,7 @@ export default {
 			this.errorEGI=false
 			var params = {'name': name.replace(/[^A-Z0-9]+/ig, "")};
 			this.createBucketCall(params,this.createBucketCallBack)
-		}else if( !this.checkIfToken()){
+		}else if( this.checkIfToken()){
 			this.errorEGI=true
 		}else{
 			this.error =true
