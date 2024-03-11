@@ -252,14 +252,7 @@ export default {
 	},
 	getBucketListCallBack(response){
 		try{
-				console.log(typeof response)
-				console.log(Object.keys(response))
-				console.log(response.code)
-				console.log(response.name)
-				console.log(response.message)
 				if(response?.code !== 'AccessDenied'){
-					console.log("error 403 - AccessDenied")
-						
 					this.buckets = response.map((bucket) => {
 					return {
 						title: bucket.name,
