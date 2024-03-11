@@ -271,7 +271,12 @@ export default {
 		}
 	},
     getBucketsList () {
+		try{
+
 		this.getBucketListCall(this.getBucketListCallBack)
+		}catch(err) {
+      		console.error("ERROR with list buckets "+err);
+		}
     },    
   }
 }
