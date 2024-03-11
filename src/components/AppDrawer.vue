@@ -208,7 +208,7 @@ export default {
       this.newBucketName = " ";
     },
     createBucket (name) {
-      	if (this.newBucketName.length > 0 && this.checkIfToken()){
+      	if (this.newBucketName.length > 0 && !this.checkIfToken()){
 			this.error = false
 			this.errorEGI=false
 			var params = {'name': name.replace(/[^A-Z0-9]+/ig, "")};
