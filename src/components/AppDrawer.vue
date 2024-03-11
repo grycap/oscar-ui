@@ -257,7 +257,7 @@ export default {
 				if(typeof response === 'error'){
 					console.log("error 403")
 				}
-				console.log(response)
+				console.log(Object.keys(response))
 				this.buckets = response.map((bucket) => {
 				return {
 					title: bucket.name,
