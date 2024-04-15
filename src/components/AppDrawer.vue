@@ -57,6 +57,7 @@
 										<button class="" type="button" @click="cleanfield()"><v-icon left color="red">cancel</v-icon></button>                        
 									</div>
 									<span v-show="error" style="color: #cc3300; font-size: 12px;"><b>Bucket name is required</b></span>                   
+									<span v-show="errorEGI" style="color: #cc3300; font-size: 12px;"><b>EGI auth does not allow create buckets</b></span>                   
 								</div>            
 								</div>   							              
 						</v-list>	
@@ -99,6 +100,7 @@ export default {
   },
   data: () => ({
     error: false,        
+	errorEGI: false,
     clipped: false,
     test: true,
     mini: false,
@@ -206,10 +208,13 @@ export default {
       this.newBucketName = " ";
     },
     createBucket (name) {
-      	if (this.newBucketName.length > 0){
+      	if (this.newBucketName.length > 0 && !this.checkIfToken()){
 			this.error = false
+			this.errorEGI=false
 			var params = {'name': name.replace(/[^A-Z0-9]+/ig, "")};
 			this.createBucketCall(params,this.createBucketCallBack)
+		}else if( this.checkIfToken()){
+			this.errorEGI=true
 		}else{
 			this.error =true
         	this.error_message_text = "Error"
@@ -252,23 +257,26 @@ export default {
 	},
 	getBucketListCallBack(response){
 		try{
-				this.buckets = response.map((bucket) => {
-				return {
-					title: bucket.name,
-						to: `/buckets/${bucket.name}`,
-						active: false
-				}
+				if(response?.code !== 'AccessDenied'){
+					this.buckets = response.map((bucket) => {
+					return {
+						title: bucket.name,
+							to: `/buckets/${bucket.name}`,
+							active: false
+					}
+					})
+					this.menus.find((obj) => {
+					if (obj.title === 'Storage') {
+						obj.items = this.buckets
+					}
 				})
-				this.menus.find((obj) => {
-				if (obj.title === 'Storage') {
-					obj.items = this.buckets
-				}
-				})
+			}
 		}catch(err) {
       		console.error("ERROR with list buckets "+err);
 		}
 	},
     getBucketsList () {
+
 		this.getBucketListCall(this.getBucketListCallBack)
     },    
   }

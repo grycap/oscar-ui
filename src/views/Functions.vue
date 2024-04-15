@@ -130,23 +130,28 @@
 											<p style="display:inline" v-if=" alpineImage(props.item.alpine)">Yes</p> 
 											<p style="display:inline" v-if=" !alpineImage(props.item.alpine)">No</p> 
 										</v-card-text>
-										<v-card-text  class="custom-padding"><strong>Is this service expose? </strong>
+										<v-card-text  class="custom-padding"><strong>Is this service exposed? </strong>
 											<p style="display:inline" v-if=" isServiceExpose(props.item?.expose?.port)">Yes</p> 
-											<p style="display:inline" v-if=" !isServiceExpose(props.item?.expose?.port)">No</p> 
+											<p style="display:inline" v-if=" !isServiceExpose(props.item?.expose?.port)">No</p>
 											<ul v-if="isServiceExpose(props.item?.expose?.port)">
+												<li v-if="props.item?.expose?.nodePort == 0"><strong>url: </strong> <a target="_blank"  :href="api+'/system/services/'+props.item.name+'/exposed/'">
+													{{api}}/system/services/{{props.item.name}}/exposed/ </a> </li> 
 												<li><strong>min_scale: </strong> {{props.item?.expose?.min_scale}}</li> 
 												<li><strong> max_scale: </strong> {{props.item?.expose?.max_scale}}</li> 
 												<li><strong> port: </strong> {{props.item?.expose?.port}}</li> 	
 												<li><strong> cpu_threshold: </strong> {{props.item?.expose?.cpu_threshold}}</li> 
+												<li><strong> rewrite_target: </strong> {{props.item?.expose?.rewrite_target}}</li> 
+												<li v-if="props.item?.expose?.nodePort != 0"><strong> nodePort: </strong> {{props.item?.expose?.nodePort}}</li> 
+												<li><strong> default_command: </strong> {{props.item?.expose?.default_command}}</li> 
 											</ul>
 										</v-card-text>
-										<v-card-text v-show="getInterLink_available"   class="custom-padding"><strong>Does this service use InterLink? </strong>
+										<v-card-text v-show="getInterLink_available"   class="custom-padding"><strong>Is this service using InterLink? </strong>
 											<p style="display:inline" v-if=" useInterLink(props.item.enable_InterLink)">Yes</p> 
 											<p style="display:inline" v-if=" !useInterLink(props.item.enable_InterLink)">No</p> 
 										</v-card-text>
 										
-										<v-card-text class="custom-padding"><strong>Environment variables: </strong>
-											<pre v-show="Object.keys(props.item.environment.Variables).length!==0" id="json-renderer"></pre>
+										<v-card-text v-show="Object.keys(props.item.environment.Variables).length!==0"  class="custom-padding"><strong>Environment variables: </strong>
+											<pre id="json-renderer">{{showEnvVars(props.item.environment.Variables)}}</pre>
 										</v-card-text>
 
 										<v-card-actions>
@@ -167,7 +172,7 @@
 												<b>Suffix</b>
 											</div>
 										</div>
-										<div v-for="(val, i) in props.item.inputs" :key="'A'+ i"  class="row" style="margin:10px 30px 20px 30px;border-bottom:1px solid #eee;padding-bottom:10px;">
+										<div v-for="(val, i) in props.item.input" :key="'A'+ i"  class="row" style="margin:10px 30px 20px 30px;border-bottom:1px solid #eee;padding-bottom:10px;">
 											<div class="col-3 col-md-3 text-left">
 												<span class="d-inline d-md-none">{{val.path}}</span>
 											</div>
@@ -203,7 +208,7 @@
 												<b>Suffix</b>
 											</div>
 										</div>
-										<div v-for="(val, i) in props.item.outputs" :key="'D'+ i"  class="row" style="margin:10px 30px 20px 30px;border-bottom:1px solid #eee;padding-bottom:10px;">
+										<div v-for="(val, i) in props.item.output" :key="'D'+ i"  class="row" style="margin:10px 30px 20px 30px;border-bottom:1px solid #eee;padding-bottom:10px;">
 											<div class="col-3 col-md-3 text-left">
 												<span class="d-inline d-md-none">{{val.path}}</span>
 											</div>
@@ -422,34 +427,34 @@ export default {
 				
 				this.show_spinner = false;
 				if (response.data !== null) {
-				this.services = Object.assign(this.services, response.data);
-				console.log(response.data)
-				this.services = response.data.map((serv) => {
-					//console.log(serv)
-					return serv/*{
-						service: serv.name,
-						container: serv.image,
-						token: serv.token,
-						cpu: serv.cpu,
-						logLevel: serv.log_level,
-						envVars: serv.environment,
-						image_pull_secrets:serv.image_pull_secrets,
-						annotations: serv.annotations,
-						labels: serv.labels,
-						memory: serv.memory,
-						input: serv.input,
-						output: serv.output,
-						storage_providers: serv.storage_providers,
-						script: serv.script,
-						total_cpu: serv.total_cpu,
-						total_memory: serv.total_memory,
-						alpine: serv.alpine,
-						image_prefetch: serv.image_prefetch,
-						expose:serv.expose,
-						enable_gpu: serv.enable_gpu,
-						enable_InterLink: serv.enable_InterLink
-					}*/
-				})
+					this.services = Object.assign(this.services, response.data);
+					console.log(response.data)
+					this.services = response.data.map((serv) => {
+						//console.log(serv)
+						return serv/*{
+							service: serv.name,
+							container: serv.image,
+							token: serv.token,
+							cpu: serv.cpu,
+							logLevel: serv.log_level,
+							envVars: serv.environment,
+							image_pull_secrets:serv.image_pull_secrets,
+							annotations: serv.annotations,
+							labels: serv.labels,
+							memory: serv.memory,
+							input: serv.input,
+							output: serv.output,
+							storage_providers: serv.storage_providers,
+							script: serv.script,
+							total_cpu: serv.total_cpu,
+							total_memory: serv.total_memory,
+							alpine: serv.alpine,
+							image_prefetch: serv.image_prefetch,
+							expose:serv.expose,
+							enable_gpu: serv.enable_gpu,
+							enable_InterLink: serv.enable_InterLink
+						}*/
+					})
 				}
 				this.loading = false;
 			}else{
@@ -508,6 +513,7 @@ export default {
                 // this.bottom = this.bottomVisible()
             }.bind(this));
 		this.listServicesCall(this.listServicesCallback)
+		this.api = localStorage.getItem("api");
 	}
 }
 </script>
