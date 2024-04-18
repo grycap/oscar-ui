@@ -124,16 +124,28 @@
                           {{ service.total_memory }}
                         </li>
                         <li v-show="interLink_available =='true'" ><strong>Does this service use Interlink? </strong> 
-                          <p style="display:inline" v-show="service.enable_InterLink == true" >Yes</p> 
-											    <p style="display:inline" v-show="service.enable_InterLink != true" >No</p> 
+                          <p style="display:inline" v-if="use(service.enable_InterLink)" >Yes</p> 
+											    <p style="display:inline" v-if="!use(service.enable_InterLink)" >No</p> 
                         </li>
                         <li ><strong>Does this service use Alpine? </strong>
-                          <p style="display:inline" v-show="service.alpine == true" >Yes</p> 
-											    <p style="display:inline" v-show="service.alpine != true " >No</p> 
+                          <p style="display:inline" v-if="use(service.alpine)" >Yes</p> 
+											    <p style="display:inline" v-if="!use(service.alpine)" >No</p> 
                         </li>
                         <li ><strong>Is this service exposed? </strong> 
-                          <p style="display:inline" v-show="service.expose.port != '0'" >Yes</p> 
-											    <p style="display:inline" v-show="service.expose.port == '0'" >No</p> 
+                          <p style="display:inline"  v-if="useExpose(service.expose.port)" >Yes</p> 
+                          <p style="display:inline"  v-if="!useExpose(service.expose.port)" >No</p> 
+                          <ul  v-if="service.expose?.port != '0'">
+                            <li v-if="service.expose?.nodePort == 0" ><strong>url: </strong> 
+                            <a target="_blank"  :href="api+'/system/services/'+service.service+'/exposed/'">
+													  {{api}}/system/services/{{service.service}}/exposed/ </a> </li> 
+                            <li><strong>min_scale:</strong> {{ service.expose?.min_scale }}</li>
+                            <li><strong>max_scale:</strong> {{ service.expose?.max_scale }}</li>
+                            <li><strong>port:</strong> {{ service.expose?.port }}</li>
+                            <li><strong>cpu_threshold:</strong> {{ service.expose?.cpu_threshold }}</li>
+                            <li><strong>rewrite_target:</strong> {{ service.expose?.rewrite_target }}</li>
+                            <li><strong>default_command: </strong>{{ service.expose?.default_command }}</li>
+                          </ul>
+											    
                         </li>
                         <li  v-show="service.inputs.length>0"><strong>Inputs:</strong></li>
                         <ul>
@@ -293,6 +305,10 @@ export default {
     use(value){
       console.log(value)
       return value
+    },
+    useExpose(value){
+       if (value != '0') return true
+       else return false
     }
   }
 }
