@@ -46,7 +46,7 @@
                     </v-card-text>
                     <v-card-text class="xs6"> <strong>GPU Available: </strong>
                       <p style="display:inline"  v-if="use(gpu_available)" >Yes</p> 
-											<p style="display:inline" v-if="!use(gpu_available)" !='true'" >No</p> 
+											<p style="display:inline" v-if="!use(gpu_available)" >No</p> 
                     </v-card-text>
                     <v-card-text class="xs6"> <strong>Yunikorn Enable: </strong>
                       <p style="display:inline"  v-if="use(yunikorn_enable)"  >Yes</p> 
