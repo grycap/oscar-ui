@@ -45,16 +45,16 @@
 											<p style="display:inline" v-if="!use(useSSL)" >No</p> 
                     </v-card-text>
                     <v-card-text class="xs6"> <strong>GPU Available: </strong>
-                      <p style="display:inline" v-show="gpu_available =='true'" >Yes</p> 
-											<p style="display:inline" v-show="gpu_available !='true'" >No</p> 
+                      <p style="display:inline"  v-if="use(gpu_available)" >Yes</p> 
+											<p style="display:inline" v-if="!use(gpu_available)" !='true'" >No</p> 
                     </v-card-text>
                     <v-card-text class="xs6"> <strong>Yunikorn Enable: </strong>
-                      <p style="display:inline" v-show="yunikorn_enable =='true'" >Yes</p> 
-											<p style="display:inline" v-show="yunikorn_enable !='true'" >No</p> 
+                      <p style="display:inline"  v-if="use(yunikorn_enable)"  >Yes</p> 
+											<p style="display:inline" v-if="!use(yunikorn_enable)" >No</p> 
                     </v-card-text>
                     <v-card-text class="xs6"> <strong>InterLink Available: </strong>
-                      <p style="display:inline" v-show="interLink_available =='true'" >Yes</p> 
-											<p style="display:inline" v-show="interLink_available !='true'" >No</p> 
+                      <p style="display:inline" v-if="use(interLink_available)"  >Yes</p> 
+											<p style="display:inline" v-if="!use(interLink_available)" >No</p> 
                     </v-card-text>
                   </div>
                 </v-card-text>
@@ -131,7 +131,7 @@
                           <p style="display:inline" v-show="service.alpine == true" >Yes</p> 
 											    <p style="display:inline" v-show="service.alpine != true " >No</p> 
                         </li>
-                        <li ><strong>Does this service is exposed? </strong> 
+                        <li ><strong>Is this service exposed? </strong> 
                           <p style="display:inline" v-show="service.expose.port != '0'" >Yes</p> 
 											    <p style="display:inline" v-show="service.expose.port == '0'" >No</p> 
                         </li>
@@ -194,16 +194,16 @@ export default {
   },
   data: () => ({
     user: (localStorage.getItem("user")?localStorage.getItem("user"): JSON.parse(localStorage.getItem("session")).user.info.name  ),
-    accessKey:localStorage["accessKey"],
-    api:localStorage["api"],
-    endpoint:localStorage["endpoint"],
-    gpu_available:localStorage["gpu_available"],
-    password:localStorage["password"],
-    port:localStorage["port"],
+    accessKey:localStorage.getItem("accessKey"),
+    api:localStorage.getItem("api"),
+    endpoint:localStorage.getItem("endpoint"),
+    gpu_available:localStorage.getItem("gpu_available"),
+    password:localStorage.getItem("password"),
+    port:localStorage.getItem("port"),
     useSSL:localStorage.getItem("useSSL"),
-    yunikorn_enable:localStorage["yunikorn_enable"],
-    secretKey:localStorage["secretKey"],
-    interLink_available:localStorage["interLink_available"],
+    yunikorn_enable:localStorage.getItem("yunikorn_enable"),
+    secretKey:localStorage.getItem("secretKey"),
+    interLink_available:localStorage.getItem("interLink_available"),
     showpassword:false,
     showpasswordminio:false,
     buckets: [],
@@ -291,6 +291,7 @@ export default {
 			}
 		},
     use(value){
+      console.log(value)
       return value
     }
   }
