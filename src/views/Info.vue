@@ -18,6 +18,7 @@
 
 
                   <v-card-text class="xs6" style="width: 25%"> <strong>User: </strong> {{user}}</v-card-text>
+                  <v-card-text class="xs6" style="width: 25%"> <strong>Id: </strong> {{accessKey.split('@')[0]}}</v-card-text>
 
                   <v-card-text class="styleflex"  style="width: 50%" >
                     <strong style="margin-right: 5px">Password: </strong>
@@ -152,7 +153,7 @@
                           <li v-for="inputs in service.inputs">
                             <div class="styleflex" >
                               <p> {{inputs.storage_provider}}: {{inputs.path}} </p>
-                              <v-icon v-if="inputs.storage_provider == 'minio' " @click="goBucket(inputs.path)"  class="iconclass iconposition"> forward</v-icon>
+                              <v-icon v-if="inputs.storage_provider == 'minio' || inputs.storage_provider == 'minio.default'" @click="goBucket(inputs.path)"  class="iconclass iconposition"> forward</v-icon>
                             </div>
                           </li>
                         </ul>
@@ -161,7 +162,7 @@
                           <li v-for="outputs in service.outputs">
                             <div class="styleflex" >
                               <p> {{outputs.storage_provider}}: {{outputs.path}}  </p> 
-                              <v-icon  v-if="outputs.storage_provider == 'minio' " @click="goBucket(outputs.path)"  class="iconclass iconposition"> forward</v-icon>
+                              <v-icon  v-if="outputs.storage_provider == 'minio' || outputs.storage_provider == 'minio.default'" @click="goBucket(outputs.path)"  class="iconclass iconposition"> forward</v-icon>
                             </div> 
                           </li>
                         </ul>
@@ -303,7 +304,6 @@ export default {
 			}
 		},
     use(value){
-      console.log(value)
       return value
     },
     useExpose(value){
