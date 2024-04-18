@@ -41,8 +41,8 @@
 										</v-card-text>
                     -->
                     <v-card-text class="xs6"> <strong>useSSL: </strong>
-											<p style="display:inline" v-show="useSSL =='true'" >Yes</p> 
-											<p style="display:inline" v-show="useSSL !='true'" >No</p> 
+											<p style="display:inline" v-show="use(useSSL)" >Yes</p> 
+											<p style="display:inline" v-show="!use(useSSL)" >No</p> 
                     </v-card-text>
                     <v-card-text class="xs6"> <strong>GPU Available: </strong>
                       <p style="display:inline" v-show="gpu_available =='true'" >Yes</p> 
@@ -290,6 +290,9 @@ export default {
 				this.loading = false;
 			}
 		},
+    use(value){
+      return value
+    }
   }
 }
 </script>
