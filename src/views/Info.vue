@@ -18,7 +18,7 @@
 
 
                   <v-card-text class="xs6" style="width: 25%"> <strong>User: </strong> {{user}}</v-card-text>
-                  <v-card-text class="xs6" style="width: 25%"> <strong>Id: </strong> {{accessKey.split('@')[0]}}</v-card-text>
+                  <v-card-text v-if="isMultiTenant()" class="xs6" style="width: 25%"> <strong>Id: </strong> {{accessKey.split('@')[0]}}</v-card-text>
 
                   <v-card-text class="styleflex"  style="width: 50%" >
                     <strong style="margin-right: 5px">Password: </strong>
@@ -309,6 +309,10 @@ export default {
     useExpose(value){
        if (value != '0') return true
        else return false
+    },
+    isMultiTenant(){
+      if(this.accessKey != 'minio')return true
+      else return false
     }
   }
 }
