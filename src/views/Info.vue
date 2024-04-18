@@ -41,8 +41,8 @@
 										</v-card-text>
                     -->
                     <v-card-text class="xs6"> <strong>useSSL: </strong>
-											<p style="display:inline" v-show="use(useSSL)" >Yes</p> 
-											<p style="display:inline" v-show="!use(useSSL)" >No</p> 
+											<p style="display:inline" v-if="use(useSSL)" >Yes</p> 
+											<p style="display:inline" v-if="!use(useSSL)" >No</p> 
                     </v-card-text>
                     <v-card-text class="xs6"> <strong>GPU Available: </strong>
                       <p style="display:inline" v-show="gpu_available =='true'" >Yes</p> 
@@ -200,7 +200,7 @@ export default {
     gpu_available:localStorage["gpu_available"],
     password:localStorage["password"],
     port:localStorage["port"],
-    useSSL:localStorage["useSSL"],
+    useSSL:localStorage.getItem("useSSL"),
     yunikorn_enable:localStorage["yunikorn_enable"],
     secretKey:localStorage["secretKey"],
     interLink_available:localStorage["interLink_available"],
