@@ -27,7 +27,6 @@
     "sweetalert2": "^11.4.8",
     "timers": "^0.1.1",
     "vue": "^2.5.17",
-    "vue-json-pretty": "^1.9.5",
     "vue-material": "^1.0.0-beta-14",
     "vue-perfect-scrollbar": "^0.1.0",
     "vue-router": "^3.0.1",
