@@ -18,6 +18,7 @@
 
 
                   <v-card-text class="xs6" style="width: 25%"> <strong>User: </strong> {{user}}</v-card-text>
+                  <v-card-text v-if="isMultiTenant()" class="xs6" style="width: 25%"> <strong>Id: </strong> {{accessKey.split('@')[0]}}</v-card-text>
 
                   <v-card-text class="styleflex"  style="width: 50%" >
                     <strong style="margin-right: 5px">Password: </strong>
@@ -41,20 +42,20 @@
 										</v-card-text>
                     -->
                     <v-card-text class="xs6"> <strong>useSSL: </strong>
-											<p style="display:inline" v-show="useSSL =='true'" >Yes</p> 
-											<p style="display:inline" v-show="useSSL !='true'" >No</p> 
+											<p style="display:inline" v-if="use(useSSL)" >Yes</p> 
+											<p style="display:inline" v-if="!use(useSSL)" >No</p> 
                     </v-card-text>
                     <v-card-text class="xs6"> <strong>GPU Available: </strong>
-                      <p style="display:inline" v-show="gpu_available =='true'" >Yes</p> 
-											<p style="display:inline" v-show="gpu_available !='true'" >No</p> 
+                      <p style="display:inline"  v-if="use(gpu_available)" >Yes</p> 
+											<p style="display:inline" v-if="!use(gpu_available)" >No</p> 
                     </v-card-text>
                     <v-card-text class="xs6"> <strong>Yunikorn Enable: </strong>
-                      <p style="display:inline" v-show="yunikorn_enable =='true'" >Yes</p> 
-											<p style="display:inline" v-show="yunikorn_enable !='true'" >No</p> 
+                      <p style="display:inline"  v-if="use(yunikorn_enable)"  >Yes</p> 
+											<p style="display:inline" v-if="!use(yunikorn_enable)" >No</p> 
                     </v-card-text>
                     <v-card-text class="xs6"> <strong>InterLink Available: </strong>
-                      <p style="display:inline" v-show="interLink_available =='true'" >Yes</p> 
-											<p style="display:inline" v-show="interLink_available !='true'" >No</p> 
+                      <p style="display:inline" v-if="use(interLink_available)"  >Yes</p> 
+											<p style="display:inline" v-if="!use(interLink_available)" >No</p> 
                     </v-card-text>
                   </div>
                 </v-card-text>
@@ -124,23 +125,35 @@
                           {{ service.total_memory }}
                         </li>
                         <li v-show="interLink_available =='true'" ><strong>Does this service use Interlink? </strong> 
-                          <p style="display:inline" v-show="service.enable_InterLink == true" >Yes</p> 
-											    <p style="display:inline" v-show="service.enable_InterLink != true" >No</p> 
+                          <p style="display:inline" v-if="use(service.enable_InterLink)" >Yes</p> 
+											    <p style="display:inline" v-if="!use(service.enable_InterLink)" >No</p> 
                         </li>
                         <li ><strong>Does this service use Alpine? </strong>
-                          <p style="display:inline" v-show="service.alpine == true" >Yes</p> 
-											    <p style="display:inline" v-show="service.alpine != true " >No</p> 
+                          <p style="display:inline" v-if="use(service.alpine)" >Yes</p> 
+											    <p style="display:inline" v-if="!use(service.alpine)" >No</p> 
                         </li>
-                        <li ><strong>Does this service is exposed? </strong> 
-                          <p style="display:inline" v-show="service.expose.port != '0'" >Yes</p> 
-											    <p style="display:inline" v-show="service.expose.port == '0'" >No</p> 
+                        <li ><strong>Is this service exposed? </strong> 
+                          <p style="display:inline"  v-if="useExpose(service.expose.port)" >Yes</p> 
+                          <p style="display:inline"  v-if="!useExpose(service.expose.port)" >No</p> 
+                          <ul  v-if="service.expose?.port != '0'">
+                            <li v-if="service.expose?.nodePort == 0" ><strong>url: </strong> 
+                            <a target="_blank"  :href="api+'/system/services/'+service.service+'/exposed/'">
+													  {{api}}/system/services/{{service.service}}/exposed/ </a> </li> 
+                            <li><strong>min_scale:</strong> {{ service.expose?.min_scale }}</li>
+                            <li><strong>max_scale:</strong> {{ service.expose?.max_scale }}</li>
+                            <li><strong>port:</strong> {{ service.expose?.port }}</li>
+                            <li><strong>cpu_threshold:</strong> {{ service.expose?.cpu_threshold }}</li>
+                            <li><strong>rewrite_target:</strong> {{ service.expose?.rewrite_target }}</li>
+                            <li><strong>default_command: </strong>{{ service.expose?.default_command }}</li>
+                          </ul>
+											    
                         </li>
                         <li  v-show="service.inputs.length>0"><strong>Inputs:</strong></li>
                         <ul>
                           <li v-for="inputs in service.inputs">
                             <div class="styleflex" >
                               <p> {{inputs.storage_provider}}: {{inputs.path}} </p>
-                              <v-icon v-if="inputs.storage_provider == 'minio' " @click="goBucket(inputs.path)"  class="iconclass iconposition"> forward</v-icon>
+                              <v-icon v-if="inputs.storage_provider == 'minio' || inputs.storage_provider == 'minio.default'" @click="goBucket(inputs.path)"  class="iconclass iconposition"> forward</v-icon>
                             </div>
                           </li>
                         </ul>
@@ -149,7 +162,7 @@
                           <li v-for="outputs in service.outputs">
                             <div class="styleflex" >
                               <p> {{outputs.storage_provider}}: {{outputs.path}}  </p> 
-                              <v-icon  v-if="outputs.storage_provider == 'minio' " @click="goBucket(outputs.path)"  class="iconclass iconposition"> forward</v-icon>
+                              <v-icon  v-if="outputs.storage_provider == 'minio' || outputs.storage_provider == 'minio.default'" @click="goBucket(outputs.path)"  class="iconclass iconposition"> forward</v-icon>
                             </div> 
                           </li>
                         </ul>
@@ -194,16 +207,16 @@ export default {
   },
   data: () => ({
     user: (localStorage.getItem("user")?localStorage.getItem("user"): JSON.parse(localStorage.getItem("session")).user.info.name  ),
-    accessKey:localStorage["accessKey"],
-    api:localStorage["api"],
-    endpoint:localStorage["endpoint"],
-    gpu_available:localStorage["gpu_available"],
-    password:localStorage["password"],
-    port:localStorage["port"],
-    useSSL:localStorage["useSSL"],
-    yunikorn_enable:localStorage["yunikorn_enable"],
-    secretKey:localStorage["secretKey"],
-    interLink_available:localStorage["interLink_available"],
+    accessKey:localStorage.getItem("accessKey"),
+    api:localStorage.getItem("api"),
+    endpoint:localStorage.getItem("endpoint"),
+    gpu_available:localStorage.getItem("gpu_available"),
+    password:localStorage.getItem("password"),
+    port:localStorage.getItem("port"),
+    useSSL:localStorage.getItem("useSSL"),
+    yunikorn_enable:localStorage.getItem("yunikorn_enable"),
+    secretKey:localStorage.getItem("secretKey"),
+    interLink_available:localStorage.getItem("interLink_available"),
     showpassword:false,
     showpasswordminio:false,
     buckets: [],
@@ -290,6 +303,17 @@ export default {
 				this.loading = false;
 			}
 		},
+    use(value){
+      return value
+    },
+    useExpose(value){
+       if (value != '0') return true
+       else return false
+    },
+    isMultiTenant(){
+      if(this.accessKey != 'minio')return true
+      else return false
+    }
   }
 }
 </script>
