@@ -24,7 +24,16 @@
             </v-btn>
           </v-flex>
           <v-divider > </v-divider>
-          <textarea  class='textbox' v-model="inputData"  rows="15" placeholder="Introduce here your input as a text"></textarea>
+          <textarea id="input-text" v-show="inputType=='Text'"   ref="inputtext" class='textbox' v-model="inputData"  rows="15" placeholder="Introduce here your input as a text"></textarea> 
+          <v-img    id="input-image" v-show="inputType=='Image'"   ref="inputimage"  class='textbox'  v-model="inputData" /> 
+          <video    id="input-video"  v-show="inputType=='Video'"   ref="inputvideo"  class='textbox'   controls >  </video> 
+          <audio    id="input-audio"  v-show="inputType=='Audio'"   ref="inputaudio"  class='textbox'   controls >  </audio> 
+          <div v-show="inputType=='CantRender'"> <v-alert
+            :value="true"
+            type="success"
+          >
+            Your file has been upload successfully, but it won't be render.
+          </v-alert></div>
         </div>
           <v-divider  vertical class="vertical-line" />
         <div class="outputclass">
@@ -44,14 +53,9 @@
               </v-card-actions>
               <div >
                 <textarea  v-if="outputTypeSelected=='Text'" class='result' v-model="outputData" rows="30" placeholder="Output"></textarea>
+                <vue-json-pretty  v-if="outputTypeSelected=='JSON'"  v-model="outputData" />
                 <v-img  v-if="outputTypeSelected=='Image'" ref="output" ></v-img>
-                <div class="audio" v-if="outputTypeSelected=='Audio'"  >
-                  <audio  id="myAudio" ref="output" v-if="outputTypeSelected=='Audio'" controls >  </audio>
-                </div>
-                <div class="video" v-if="outputTypeSelected=='Video'"  >
-                  <video  id="myVideo" ref="output" v-if="outputTypeSelected=='Video'" controls >  </video>
-                </div>
-                <textarea  v-if="outputTypeSelected=='Zip'" class='result' v-model="outputData" rows="30" placeholder="Output"></textarea>
+                <textarea  v-if="outputTypeSelected=='Other'" class='result' v-model="outputData" rows="30" placeholder="Output"></textarea>
               </div>
               <v-divider></v-divider>
               <v-card-actions>
@@ -81,7 +85,8 @@ import Services from '../components/services';
 import { IntersectingCirclesSpinner } from 'epic-spinners';
 import moment from 'moment';
 import Editor from './AceEditor';
-
+import VueJsonPretty from 'vue-json-pretty';
+import 'vue-json-pretty/lib/styles.css';
 import { select } from 'async';
 /* eslint-disable */
 export default {
@@ -89,6 +94,7 @@ export default {
     components: {
 		IntersectingCirclesSpinner,
         'editor': Editor,
+        VueJsonPretty,
 	},
 	name: 'Logs',
 	data () {
@@ -98,8 +104,9 @@ export default {
         fileinput:"",
         inputData:"",
         output:"",
-        outputType:["Text","Image","Audio","Video","Zip"],
+        outputType:["Text","Image","Other"],
         outputTypeSelected:"Text",
+        inputType:"Text",
         outputData:"",
         token:"",
         show_spinner: false,
@@ -114,11 +121,52 @@ export default {
         goBack(){
             this.$router.push({name: "Functions"})
         },
+        checkEnd(end) {
+          if(this.fileinput[0].name.endsWith(end)){
+            return true
+          }else{
+            return false
+          }
+        },
         selectFile(event) {
           this.fileinput=event.target.files
           let reader = new FileReader();
-          reader.onload = e => { this.inputData= e.target.result; };
+          reader.onload = e => { 
+            this.inputData= e.target.result; 
+            //console.log(e.target.result)
+            //console.log(this.inputData)
+            //console.log(this.fileinput)
+            const image=["jpg","png","jpeg"]
+            const video=["mp4","mkv"]
+            const audio = ["mp3"]
+            //this.fileinput[0].name.endsWith('jpg')
+            if( image.map(this.checkEnd).includes(true) ){
+              this.inputType="Image" 
+              this.$refs.inputimage.src = "data:image/png;base64,"+ btoa(this.inputData);
+            /*}else if (video.map(this.checkEnd).includes(true)){
+              this.inputType="Video" 
+              this.$refs.inputvideo.src = "data:video/mp4;base64,"+ btoa(this.inputData);
+            }else if (audio.map(this.checkEnd).includes(true)){
+              this.inputType="Audio" 
+              this.$refs.inputaudio.src = "data:audio/mp3;base64,"+ btoa(this.inputData);*/
+            }else if( video.map(this.checkEnd).includes(true) || audio.map(this.checkEnd).includes(true) ){
+              this.inputType="CantRender" 
+            }else{
+              this.inputType="Text"
+              this.$refs.inputtext.src = this.inputData;
+            }
+          };
           reader.readAsBinaryString(this.fileinput[0]);
+          //console.log(this.fileinput[0].name)
+          //console.log(this.inputData)
+          //if(this.fileinput[0].name.endsWith('jpg')){
+            //console.log(document.getElementById("theinputbox"))
+            //document.getElementById("theinputbox").type="image"
+            //console.log(document.getElementById("theinputbox"))
+          //
+          //console.log(this.inputData)
+            // = "New text!";
+          //}
 
         },
 
@@ -145,13 +193,26 @@ export default {
               this.dialog=true
             }else if(this.outputTypeSelected=='Text'){
               try {
-                this.outputData = window.atob(response.data);
+                var auxiliaryData = window.atob(response.data);
               } catch(e) {
-                this.outputData = response.data;
+                var auxiliaryData = response.data;
+              }
+              try {
+                this.outputData = JSON.parse(auxiliaryData.replaceAll("'", '"'))
+                this.outputTypeSelected='JSON'
+              } catch(e) {
+                this.outputData = auxiliaryData
               }
               this.dialog=true
-            }else if(this.outputTypeSelected=='Audio'){
-              this.$refs.output.src = "data:audio/mp3;base64,"+ response.data;
+            /*}else if(this.outputTypeSelected=='Audio'){
+              //this.$refs.output.src = "data:audio/mp3;base64,"+ response.data;
+              //console.log(window.atob(response.data))
+              element.setAttribute('href', 'data:audio/mp3;base64,' + window.atob(response.data));
+              element.setAttribute('download', "result.mp3");
+              element.style.display = 'none';
+              document.body.appendChild(element);
+              element.click();
+              document.body.removeChild(element);
               this.dialog=true
             }else if(this.outputTypeSelected=='Video'){
               this.$refs.output.src = "data:video/mp4;base64,"+ response.data;
@@ -161,8 +222,8 @@ export default {
               //x.setAttribute("src", window.atob(response.data));
               //x.setAttribute("type", "audio/mp3");
               //document.getElementById("myAudio").appendChild(x);
-              //this.$refs.output.src = window.atob(response.data);
-            }else if(this.outputTypeSelected=='Zip'){
+              //this.$refs.output.src = window.atob(response.data);*/
+            }else if(this.outputTypeSelected=='Other'){
               console.log(response)
               var element = document.createElement('a');
               element.setAttribute('href', 'data:text/zip;base64,' + response.data);
@@ -176,7 +237,16 @@ export default {
             
           }else{
             this.show_alert = true;
+            if(response?.message == 'Request failed with status code 429'){
+              window.getApp.$emit('APP_SHOW_SNACKBAR', { text: " Error 429: Too many request, try later", color: 'error' })
+            }else if(response?.message == "Request failed with status code 502"){
+              window.getApp.$emit('APP_SHOW_SNACKBAR', { text: " Request failed 'Time out', try later", color: 'error' })
+            }else if(response?.message == "Request failed with status code 504"){
+              window.getApp.$emit('APP_SHOW_SNACKBAR', { text: " Request failed 'Time out', try later", color: 'error' })
+            }else{
 				    window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response.status+ " An error had occurred", color: 'error' })
+
+            }
 			
           }
         },
