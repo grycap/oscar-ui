@@ -133,10 +133,10 @@
 											    <p style="display:inline" v-if="!use(service.alpine)" >No</p> 
                         </li>
                         <li ><strong>Is this service exposed? </strong> 
-                          <p style="display:inline"  v-if="useExpose(service.expose.port)" >Yes</p> 
-                          <p style="display:inline"  v-if="!useExpose(service.expose.port)" >No</p> 
-                          <ul  v-if="service.expose?.port != '0'">
-                            <li v-if="service.expose?.nodePort == 0" ><strong>url: </strong> 
+                          <p style="display:inline"  v-if="useExpose(service.expose.api_port)" >Yes</p> 
+                          <p style="display:inline"  v-if="!useExpose(service.expose.api_port)" >No</p> 
+                          <ul  v-if="useExpose(service.expose.api_port)">
+                            <li v-if="useExpose(service.expose.api_port)" ><strong>url: </strong> 
                             <a target="_blank"  :href="api+'/system/services/'+service.service+'/exposed/'">
 													  {{api}}/system/services/{{service.service}}/exposed/ </a> </li> 
                             <li><strong>min_scale:</strong> {{ service.expose?.min_scale }}</li>
@@ -304,10 +304,12 @@ export default {
 			}
 		},
     use(value){
-      return value
+      if (value == "true") 
+      return true
+      else return false
     },
     useExpose(value){
-       if (value != '0') return true
+       if (value != undefined && value != '0') return true
        else return false
     },
     isMultiTenant(){

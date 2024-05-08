@@ -131,14 +131,14 @@
 											<p style="display:inline" v-if=" !alpineImage(props.item.alpine)">No</p> 
 										</v-card-text>
 										<v-card-text  class="custom-padding"><strong>Is this service exposed? </strong>
-											<p style="display:inline" v-if=" isServiceExpose(props.item?.expose?.port)">Yes</p> 
-											<p style="display:inline" v-if=" !isServiceExpose(props.item?.expose?.port)">No</p>
-											<ul v-if="isServiceExpose(props.item?.expose?.port)">
+											<p style="display:inline" v-if=" isServiceExpose(props.item?.expose?.api_port)">Yes</p> 
+											<p style="display:inline" v-if=" !isServiceExpose(props.item?.expose?.api_port)">No</p>
+											<ul v-if="isServiceExpose(props.item?.expose?.api_port)">
 												<li v-if="props.item?.expose?.nodePort == 0"><strong>url: </strong> <a target="_blank"  :href="api+'/system/services/'+props.item.name+'/exposed/'">
 													{{api}}/system/services/{{props.item.name}}/exposed/ </a> </li> 
 												<li><strong>min_scale: </strong> {{props.item?.expose?.min_scale}}</li> 
 												<li><strong> max_scale: </strong> {{props.item?.expose?.max_scale}}</li> 
-												<li><strong> port: </strong> {{props.item?.expose?.port}}</li> 	
+												<li><strong> api_port: </strong> {{props.item?.expose?.api_port}}</li> 	
 												<li><strong> cpu_threshold: </strong> {{props.item?.expose?.cpu_threshold}}</li> 
 												<li><strong> rewrite_target: </strong> {{props.item?.expose?.rewrite_target}}</li> 
 												<li v-if="props.item?.expose?.nodePort != 0"><strong> nodePort: </strong> {{props.item?.expose?.nodePort}}</li> 
