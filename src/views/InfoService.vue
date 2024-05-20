@@ -213,7 +213,6 @@ export default {
 				this.show_spinner = false;
 				if (response.data !== null) {
 					this.services = Object.assign(this.services, response.data);
-					console.log(response.data)
 					this.services = response.data.map((serv) => {
 						return serv
 					})
@@ -266,9 +265,7 @@ export default {
 			},
 		},
 	created: function () {
-		this.service = this.$attrs.data
-		console.log(this.service)
-		
+		this.service = this.$attrs.data		
 	},
 	mounted: function () {
 		/*window.getApp.$on('FUNC_OPEN_MANAGEMENT_DIALOG', (data) => {
