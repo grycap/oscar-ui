@@ -79,201 +79,8 @@
 
 					<div class=" div-list-content" >
 						<v-card style="padding:0 2rem 2rem 2rem;">
+							<InfoService :data="props.item" ></InfoService>
 
-							<v-tabs
-								v-model="model"
-								centered
-								slider-color="yellow"
-							>
-								<v-tab
-								class="text-xs-center"
-								:href="`#tab-service`"
-								>
-									Service Info
-								</v-tab>
-
-							</v-tabs>
-
-							<v-tabs-items v-model="model" >
-								<v-tab-item  :value="`tab-service`">
-									<v-card flat>
-										<v-card-text class="custom-padding xs6"> <strong>Name: </strong> {{props.item.name}}</v-card-text>
-										<v-card-text class="custom-padding"><strong>Image: </strong> {{props.item.image}}</v-card-text>
-										<v-card-text style="display:flex;margin-right: 5px;" class="custom-padding">
-											<strong style="padding-top: 12px;margin-right: 5px;">Token: </strong>
-											<v-text-field style="width: 80%!important;padding-top: 0px!important;margin-top: 0px!important;"
-												:value="props.item.token"
-												:append-icon="show1 ? 'visibility' : 'visibility_off'"
-												:type="show1 ? 'text' : 'password'"
-												name="input-10-1"
-												@click:append="show1 = !show1"
-												readonly
-											></v-text-field>
-										</v-card-text>
-										<v-card-text class="custom-padding"> <strong>Resources</strong>
-											<ul>
-												<li><strong>CPU: </strong> {{props.item.cpu}}</li> 
-												<li><strong> Memory: </strong> {{props.item.memory}}</li> 
-											</ul>
-										</v-card-text>
-										<v-card-text v-show=" getYunikorn_option == 'true'"  class="custom-padding"> <strong>Yunikorn resources</strong>
-											<ul>
-												<li><strong>CPU: </strong> {{props.item.total_cpu}}</li> 
-												<li><strong> Memory: </strong> {{props.item.total_memory}}</li> 
-											</ul>
-										</v-card-text>
-										<v-card-text  v-show=" getGpu_available == 'true'" class="custom-padding"><strong>Does this service use GPU? </strong>
-											<p style="display:inline" v-if=" useGPU(props.item.enable_gpu)">Yes</p> 
-											<p style="display:inline" v-if=" !useGPU(props.item.enable_gpu)">No</p> 
-										</v-card-text>
-										<v-card-text  class="custom-padding"><strong>Is your image base on Alpine? </strong>
-											<p style="display:inline" v-if=" alpineImage(props.item.alpine)">Yes</p> 
-											<p style="display:inline" v-if=" !alpineImage(props.item.alpine)">No</p> 
-										</v-card-text>
-										<v-card-text  class="custom-padding"><strong>Is this service exposed? </strong>
-											<p style="display:inline" v-if=" isServiceExpose(props.item?.expose?.api_port)">Yes</p> 
-											<p style="display:inline" v-if=" !isServiceExpose(props.item?.expose?.api_port)">No</p>
-											<ul v-if="isServiceExpose(props.item?.expose?.api_port)">
-												<li v-if="props.item?.expose?.nodePort == 0"><strong>url: </strong> <a target="_blank"  :href="api+'/system/services/'+props.item.name+'/exposed/'">
-													{{api}}/system/services/{{props.item.name}}/exposed/ </a> </li> 
-												<li><strong>min_scale: </strong> {{props.item?.expose?.min_scale}}</li> 
-												<li><strong> max_scale: </strong> {{props.item?.expose?.max_scale}}</li> 
-												<li><strong> api_port: </strong> {{props.item?.expose?.api_port}}</li> 	
-												<li><strong> cpu_threshold: </strong> {{props.item?.expose?.cpu_threshold}}</li> 
-												<li><strong> rewrite_target: </strong> {{props.item?.expose?.rewrite_target}}</li> 
-												<li v-if="props.item?.expose?.nodePort != 0"><strong> nodePort: </strong> {{props.item?.expose?.nodePort}}</li> 
-												<li><strong> default_command: </strong> {{props.item?.expose?.default_command}}</li> 
-											</ul>
-										</v-card-text>
-										<v-card-text v-show="getInterLink_available"   class="custom-padding"><strong>Is this service using InterLink? </strong>
-											<p style="display:inline" v-if=" useInterLink(props.item.enable_InterLink)">Yes</p> 
-											<p style="display:inline" v-if=" !useInterLink(props.item.enable_InterLink)">No</p> 
-										</v-card-text>
-										
-										<v-card-text v-show="Object.keys(props.item.environment.Variables).length!==0"  class="custom-padding"><strong>Environment variables: </strong>
-											<pre id="json-renderer">{{showEnvVars(props.item.environment.Variables)}}</pre>
-										</v-card-text>
-
-										<v-card-actions>
-											<span class="custom-padding" style="padding:10px;"><strong>Inputs:</strong></span>
-										</v-card-actions>
-
-										<div class="row" style="margin:15px 30px 0px 30px;">
-											<div class="col-3 col-md-3 text-left d-md-inline" style="background-color:#eee;">
-												<b>Path</b>
-											</div>
-											<div class="col-3 col-md-3 text-left d-md-inline" style="background-color:#eee;">
-												<b>Storage Provider</b>
-											</div>
-											<div class="col-3 col-md-3 text-left d-md-inline" style="background-color:#eee;">
-												<b>Prefix</b>
-											</div>
-											<div class="col-3 col-md-3 text-left d-md-inline" style="background-color:#eee;">
-												<b>Suffix</b>
-											</div>
-										</div>
-										<div v-for="(val, i) in props.item.input" :key="'A'+ i"  class="row" style="margin:10px 30px 20px 30px;border-bottom:1px solid #eee;padding-bottom:10px;">
-											<div class="col-3 col-md-3 text-left">
-												<span class="d-inline d-md-none">{{val.path}}</span>
-											</div>
-											<div class="col-3 col-md-3 text-left">
-												<span class="d-inline d-md-none">{{val.storage_provider}}</span>
-											</div>
-											<div class="col-3 col-md-3 text-left">
-												<div v-for="(val,i) in val.prefix" :key="'B'+ i">
-													<span class="d-inline d-md-none">{{val}}</span>
-												</div>
-											</div>
-											<div class="col-3 col-md-3 text-left">
-												<div v-for="(val,i) in val.suffix" :key="'C'+ i">
-													<span class="d-inline d-md-none">{{val}}</span>
-												</div>
-											</div>
-										</div>
-
-										<v-card-actions>
-											<span class="custom-padding" style="padding:10px;"><strong>Outputs:</strong></span>
-										</v-card-actions>
-										<div class="row" style="margin:15px 30px 0px 30px;">
-											<div class="col-3 col-md-3 text-left d-md-inline" style="background-color:#eee;">
-												<b>Path</b>
-											</div>
-											<div class="col-3 col-md-3 text-left d-md-inline" style="background-color:#eee;">
-												<b>Storage Provider</b>
-											</div>
-											<div class="col-3 col-md-3 text-left d-md-inline" style="background-color:#eee;">
-												<b>Prefix</b>
-											</div>
-											<div class="col-3 col-md-3 text-left d-md-inline" style="background-color:#eee;">
-												<b>Suffix</b>
-											</div>
-										</div>
-										<div v-for="(val, i) in props.item.output" :key="'D'+ i"  class="row" style="margin:10px 30px 20px 30px;border-bottom:1px solid #eee;padding-bottom:10px;">
-											<div class="col-3 col-md-3 text-left">
-												<span class="d-inline d-md-none">{{val.path}}</span>
-											</div>
-											<div class="col-3 col-md-3 text-left">
-												<span class="d-inline d-md-none">{{val.storage_provider}}</span>
-											</div>
-											<div class="col-3 col-md-3 text-left">
-												<div v-for="(val,i) in val.prefix" :key="'E'+ i">
-													<span class="d-inline d-md-none">{{val}}</span>
-												</div>
-											</div>
-											<div class="col-3 col-md-3 text-left">
-												<div v-for="(val,i) in val.suffix" :key="'F'+ i">
-													<span class="d-inline d-md-none">{{val}}</span>
-												</div>
-											</div>
-										</div>
-									</v-card>
-								</v-tab-item>
-								<v-tab-item :value="`tab-storage`">
-									<v-card flat>
-										<v-card-text class="custom-padding xs6"> <strong>S3: </strong></v-card-text>
-										<div class="row container">
-											<input type="password" class="form-control" id="access_key" aria-describedby="emailHelp" :disabled="disable_storage" placeholder="Access Key" style="margin-bottom:5px;">
-											<input type="password" class="form-control" id="secret" aria-describedby="emailHelp" :disabled="disable_storage" placeholder="Secret Key" style="margin-bottom:5px;">
-											<input type="text" class="form-control" id="region_key" aria-describedby="emailHelp" :disabled="disable_storage" placeholder="Region" style="margin-bottom:5px;">
-
-										</div>
-
-										<v-card-text class="custom-padding xs6"> <strong>ONEDATA: </strong></v-card-text>
-										<div class="row container">
-											<input type="text" class="form-control" id="access_key" aria-describedby="emailHelp" :disabled="disable_storage" placeholder="ONE PROVIDER HOST" style="margin-bottom:5px;">
-											<input type="password" class="form-control" id="secret" aria-describedby="emailHelp" :disabled="disable_storage" placeholder="TOKEN" style="margin-bottom:5px;">
-											<input type="text" class="form-control" id="region_key" aria-describedby="emailHelp" :disabled="disable_storage" placeholder="SPACE" style="margin-bottom:5px;">
-
-										</div>
-
-										<div class="row col-12" style="margin-top:5rem;justify-content: flex-end;">
-											<v-btn
-												color="primary"
-												@click="edit_storage()"
-											>
-												EDIT
-											</v-btn>
-
-											<v-btn
-												color="error"
-												@click="cancel_storage()"
-												:disabled="disable_storage"
-											>
-												CANCEL
-											</v-btn>
-
-											<v-btn
-												color="success"
-												@click="done_storage()"
-												:disabled="disable_storage"
-											>
-												DONE
-											</v-btn>
-										</div>
-
-									</v-card>
-								</v-tab-item>
-							</v-tabs-items>
 						</v-card>
 					</div>
 
@@ -306,6 +113,7 @@ import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import axios from 'axios'
 import FunctionForm from '@/components/forms/FunctionForm'
 import FDLForm from '@/components/forms/FDLForm'
+import InfoService from '@/views/InfoService';
 
 import { IntersectingCirclesSpinner } from 'epic-spinners'
 import Services from '../components/services';
@@ -317,6 +125,7 @@ export default {
 		FDLForm,
 		VuePerfectScrollbar,
 		IntersectingCirclesSpinner,
+		InfoService,
 	},
 	props: {
 		openFaaS: {}
@@ -338,7 +147,6 @@ export default {
 		loading: true,
 		search: '',
 		services:[],
-		env_Vars: {},
 		index: '',
 		expand: false,
 		expand_icon: 'expand_more',
@@ -346,7 +154,6 @@ export default {
 		disable_form: true,
 		disable_storage: true,
 		params_delete: '',
-		show1:false,
 		item_per_page: [10,25,50,{"text":"$vuetify.dataIterator.rowsPerPageAll","value":-1}],
 	}),
   	methods: {
@@ -378,30 +185,6 @@ export default {
 			const index = this.services.indexOf(func)
 			let servInfo = this.services[index];
 			servInfo.editionMode=true
-			/* {
-				editionMode: true,
-				name: this.services[index].service,
-				image: this.services[index].container,
-				token: this.services[index].token,
-				input: this.services[index].inputs,
-				output: this.services[index].outputs,
-				log_Level: this.services[index].logLevel,
-				environment: this.services[index].environment,
-				image_pull_secrets: this.services[index].image_pull_secrets,
-				annotations: this.services[index].annotations?this.services[index].annotations:{},
-				labels: this.services[index].labels?this.services[index].labels:{},
-				cpu: this.services[index].cpu,
-				script: this.services[index].script,
-				memory: this.services[index].memory,
-				storage_provider: this.services[index].storage,
-				total_memory:this.services[index].total_memory,
-				total_cpu:this.services[index].total_cpu,
-				alpine:this.services[index].alpine,
-				expose:this.services[index].expose,
-				image_prefetch:this.services[index].image_prefetch,
-				enable_gpu:this.services[index].enable_gpu,
-				enable_InterLink:this.services[index].enable_InterLink
-			}*/
 			window.getApp.$emit('FUNC_OPEN_MANAGEMENT_DIALOG', servInfo)
 		},
 		deleteFunction(serv, servName) {
@@ -428,32 +211,8 @@ export default {
 				this.show_spinner = false;
 				if (response.data !== null) {
 					this.services = Object.assign(this.services, response.data);
-					console.log(response.data)
 					this.services = response.data.map((serv) => {
-						//console.log(serv)
-						return serv/*{
-							service: serv.name,
-							container: serv.image,
-							token: serv.token,
-							cpu: serv.cpu,
-							logLevel: serv.log_level,
-							envVars: serv.environment,
-							image_pull_secrets:serv.image_pull_secrets,
-							annotations: serv.annotations,
-							labels: serv.labels,
-							memory: serv.memory,
-							input: serv.input,
-							output: serv.output,
-							storage_providers: serv.storage_providers,
-							script: serv.script,
-							total_cpu: serv.total_cpu,
-							total_memory: serv.total_memory,
-							alpine: serv.alpine,
-							image_prefetch: serv.image_prefetch,
-							expose:serv.expose,
-							enable_gpu: serv.enable_gpu,
-							enable_InterLink: serv.enable_InterLink
-						}*/
+						return serv
 					})
 				}
 				this.loading = false;
@@ -526,7 +285,7 @@ export default {
 }
 
 .div-list-content{
-	max-height: 350px;
+	max-height: 1000px;
 	background-color: #ffffff;
 	overflow-y: auto;
 }
