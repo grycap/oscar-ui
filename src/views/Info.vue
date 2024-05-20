@@ -8,7 +8,7 @@
           <v-layout row wrap>
             <v-flex xs12 sm6>
               <v-card flat>
-                <v-card-title>
+                <v-card-title  >
                   <span class="headline">OSCAR cluster Info</span>
                 </v-card-title>
                 <v-card-text>
@@ -64,8 +64,8 @@
 
             <v-flex xs12 sm6>
               <v-card flat>
-                <v-card-title>
-                  <span class="headline">Minio Buckets</span>
+                <v-card-title> 
+                  <span class="headline">MinIO</span>
                 </v-card-title>
                 <v-card-text>
                   <v-card-text class="xs6 textinfo styleflex" style="margin-right: 5px;padding-bottom: 5px;">
@@ -88,87 +88,16 @@
                 </v-card-text>
               </v-card>
             </v-flex>
-            <v-flex xs6>
+            <v-flex xs6 sm6>
               <v-layout row>
                 <v-card-title>
-                  <v-card-title>
+                  <v-card-title  class="panel_info">
                   <span class="headline">OSCAR services</span>
                   </v-card-title>
                   <v-card-text>
-                  <ul >
-                    <li v-for="service in services">
-                      <div style="display: inline-flex;">
-                        <h5 >{{ service.service }}</h5>
-                        <v-menu>
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-icon   v-bind="attrs" v-on="on"  class="iconclass iconposition" >more_vert</v-icon>
-                        </template>
-                        <v-list style="padding-left: 10px;padding-right: 10px;" >
-                            <v-icon  class="iconclass" @click="goLogs(service.service)" >visibility</v-icon>
-                            <v-icon  class="iconclass" @click="goInvoke(service.service)"> sync_alt</v-icon>
-                        </v-list>
-                        </v-menu>
-                      </div>
-                      <ul style="padding-bottom: 30px;" >
-                        <li ><strong>Image:</strong> {{ service.container }}</li>
-                        <li ><strong>CPUs:</strong> {{ service.cpu }}</li>
-                        <li ><strong>Memory:</strong> {{ service.memory }}</li>
-                        <li ><strong>Log Level:</strong> {{ service.logLevel }}</li>
-                        <li v-show="gpu_available =='true'" ><strong>Does this service use GPU? </strong>
-                          <p style="display:inline" v-show="service.enable_gpu =='true'" >Yes</p> 
-											    <p style="display:inline" v-show="service.enable_gpu !='true'" >No</p> 
-                        </li>
-                        <li v-show="yunikorn_enable =='true'" ><strong>Yunikorn Total CPUs: </strong> 
-                          {{ service.total_cpu }}
-                        </li>
-                        <li v-show="yunikorn_enable =='true'" ><strong>Yunikorn Total Memory: </strong> 
-                          {{ service.total_memory }}
-                        </li>
-                        <li v-show="interLink_available =='true'" ><strong>Does this service use Interlink? </strong> 
-                          <p style="display:inline" v-if="use(service.enable_InterLink)" >Yes</p> 
-											    <p style="display:inline" v-if="!use(service.enable_InterLink)" >No</p> 
-                        </li>
-                        <li ><strong>Does this service use Alpine? </strong>
-                          <p style="display:inline" v-if="use(service.alpine)" >Yes</p> 
-											    <p style="display:inline" v-if="!use(service.alpine)" >No</p> 
-                        </li>
-                        <li ><strong>Is this service exposed? </strong> 
-                          <p style="display:inline"  v-if="useExpose(service.expose.port)" >Yes</p> 
-                          <p style="display:inline"  v-if="!useExpose(service.expose.port)" >No</p> 
-                          <ul  v-if="service.expose?.port != '0'">
-                            <li v-if="service.expose?.nodePort == 0" ><strong>url: </strong> 
-                            <a target="_blank"  :href="api+'/system/services/'+service.service+'/exposed/'">
-													  {{api}}/system/services/{{service.service}}/exposed/ </a> </li> 
-                            <li><strong>min_scale:</strong> {{ service.expose?.min_scale }}</li>
-                            <li><strong>max_scale:</strong> {{ service.expose?.max_scale }}</li>
-                            <li><strong>port:</strong> {{ service.expose?.port }}</li>
-                            <li><strong>cpu_threshold:</strong> {{ service.expose?.cpu_threshold }}</li>
-                            <li><strong>rewrite_target:</strong> {{ service.expose?.rewrite_target }}</li>
-                            <li><strong>default_command: </strong>{{ service.expose?.default_command }}</li>
-                          </ul>
-											    
-                        </li>
-                        <li  v-show="service.inputs.length>0"><strong>Inputs:</strong></li>
-                        <ul>
-                          <li v-for="inputs in service.inputs">
-                            <div class="styleflex" >
-                              <p> {{inputs.storage_provider}}: {{inputs.path}} </p>
-                              <v-icon v-if="inputs.storage_provider == 'minio' || inputs.storage_provider == 'minio.default'" @click="goBucket(inputs.path)"  class="iconclass iconposition"> forward</v-icon>
-                            </div>
-                          </li>
-                        </ul>
-                        <li v-show="service.outputs.length>0"><strong>Outputs:</strong></li>
-                        <ul>
-                          <li v-for="outputs in service.outputs">
-                            <div class="styleflex" >
-                              <p> {{outputs.storage_provider}}: {{outputs.path}}  </p> 
-                              <v-icon  v-if="outputs.storage_provider == 'minio' || outputs.storage_provider == 'minio.default'" @click="goBucket(outputs.path)"  class="iconclass iconposition"> forward</v-icon>
-                            </div> 
-                          </li>
-                        </ul>
-                      </ul>
-                    </li>
-                  </ul>
+                    <div v-for="service in services">
+							        <InfoService class="infoservice" :data="service" ></InfoService>
+                  </div>
                   </v-card-text>
                 </v-card-title>
               </v-layout>
@@ -176,7 +105,7 @@
             <v-flex xs6>
               <v-layout row>
                 <v-card-title>
-                  <v-card-title>
+                  <v-card-title  class="panel_info">
                     <span class="headline">Buckets</span>
                   </v-card-title>
                     <v-card-text>
@@ -199,8 +128,12 @@
 
 <script>
 import Services from '@/components/services';
+import InfoService from '@/views/InfoService';
 export default {
   mixins:[Services],
+  components: {
+		InfoService,
+	},
   props: {
     minio: {},
     openFaaS: {}
@@ -273,41 +206,22 @@ export default {
     },
     listServicesCallback(response) {
 			if(response.status == 200){
-				this.show_spinner = false;
-				this.services = Object.assign(this.services, response.data);
-				this.services = response.data.map((serv) => {
-					return {
-						service: serv.name,
-						container: serv.image,
-						token: serv.token,
-						cpu: serv.cpu,
-						logLevel: serv.log_level,
-						envVars: serv.environment,
-						image_pull_secrets:serv.image_pull_secrets,
-						annotations: serv.annotations,
-						labels: serv.labels,
-						memory: serv.memory,
-						inputs: serv.input,
-						outputs: serv.output,
-						storage: serv.storage_providers,
-						script: serv.script,
-						total_cpu: serv.total_cpu,
-						total_memory: serv.total_memory,
-						alpine: serv.alpine,
-						enable_gpu: serv.enable_gpu,
-						enable_InterLink: serv.enable_InterLink,
-						expose: serv.expose
-					}
-				})
-        console.log(this.services)
+				if (response.data !== null) {
+					this.services = Object.assign(this.services, response.data);
+					this.services = response.data.map((serv) => {
+						return serv
+					})
+				}
 				this.loading = false;
 			}
 		},
     use(value){
-      return value
+      if (value == "true") 
+      return true
+      else return false
     },
     useExpose(value){
-       if (value != '0') return true
+       if (value != undefined && value != '0') return true
        else return false
     },
     isMultiTenant(){
@@ -336,5 +250,16 @@ export default {
   }
   .styleflex{
     display: flex;
+  }
+  .panel_info{
+    margin-top: 5%;
+  }
+  .infoservice{
+    border: 1px;
+    border-style: solid;
+    border-color: black;
+    margin-bottom: 2.5%;
+    padding-bottom: 2.5%;
+    padding-top: 2.5%;
   }
 </style>
