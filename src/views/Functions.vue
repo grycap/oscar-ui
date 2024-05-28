@@ -41,7 +41,6 @@
 								</v-btn>
 							</template>
 							<v-list >
-								
 								<v-btn class="buttom-options" 	outline @click="editFunction(props.item)" >
 									<v-icon small class="mr-2">edit</v-icon>
 								Edit
@@ -74,7 +73,6 @@
 						</td>
 					</tr>
 				</template>
-
 				<template v-slot:expand="props" style="margin-top:1rem">
 
 					<div class=" div-list-content" >
@@ -83,10 +81,7 @@
 
 						</v-card>
 					</div>
-
-
 				</template>
-
 				 <template v-slot:no-data>
 					<v-alert :value="true" type="info" color="#83C3FA"  style="color:black;">
 					There are no services deployed. 
@@ -136,7 +131,7 @@ export default {
 		show_spinner: true,
 		show_alert: false,
 		headers: [
-			{ text: 'SERVICE', sortable: false, align: 'center', value: 'service' },
+			{ text: 'SERVICE', sortable: false, align: 'center', value: 'name' },
 			{ text: 'CONTAINER', sortable: false, align: 'center', value: 'container' },
 			{ text: 'CPU', sortable: false, align: 'center',value: 'cpu' },
 			{ text: 'MEMORY', sortable: false, align: 'center', value: 'memory' },
