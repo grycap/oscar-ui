@@ -165,6 +165,18 @@ export default [
 				)
 			},
 			{
+				path: '/juno',
+				meta: {
+					public: false
+				},
+				name: 'Juno',
+				component: () => import(
+				/* webpackChunkName: "routes" */
+				/* webpackMode: "lazy" */
+				`@/views/Juno.vue`
+				)
+			},
+			{
 				path: '/settings',
 				meta: {
 				public: false

@@ -6,11 +6,9 @@
       <v-card>
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-layout row wrap>
-            <v-flex xs12 sm6>
+            <v-flex xs12 sm12>
               <v-card flat>
-                <v-card-title  >
-                  <span class="headline">OSCAR cluster Info</span>
-                </v-card-title>
+                  <h2 style="padding: 16px;text-align: center;" >Juno</h2>
                 <v-card-text>
                   <v-card-text class="xs6 textinfo styleflex" style="margin-right: 5px;padding-bottom: 5px;">
                       <p class="" ><strong>OSCAR Endpoint: </strong> {{api}}</p>
@@ -60,47 +58,6 @@
                   </div>
                 </v-card-text>
               </v-card>
-            </v-flex>
-
-            <v-flex xs12 sm6>
-              <v-card flat>
-                <v-card-title> 
-                  <span class="headline">MinIO</span>
-                </v-card-title>
-                <v-card-text>
-                  <v-card-text class="xs6 textinfo styleflex" style="margin-right: 5px;padding-bottom: 5px;">
-                      <p class="" v-if="port=='NaN'" ><strong>MinIO Endpoint: </strong> {{endpoint}}</p>
-                      <p class="" v-else><strong>MinIO Endpoint: </strong> {{endpoint}}:{{port}}</p>
-                  </v-card-text>
-                 
-                    <v-card-text class="xs6" style="width: 25%"> <strong>Access Key: </strong> {{accessKey}}</v-card-text>
-                    <v-card-text class="styleflex"  style="width: 50%" >
-                      <strong style="margin-right: 5px">Secret Key: </strong>
-                      <v-text-field  style="width: 10%!important;padding-top: 0px!important;margin-top: -12px!important;"
-                      :value="secretKey"
-                      :append-icon="showpasswordminio ?  'visibility' : 'visibility_off'"
-                      :type="showpasswordminio ? 'text' : 'password'"
-                      name="input-10-1"
-                      @click:append="showpasswordminio = !showpasswordminio"
-                      readonly
-                      ></v-text-field>
-                    </v-card-text>
-                </v-card-text>
-              </v-card>
-            </v-flex>
-            <v-flex xs12 sm12 xl12>
-              <v-layout row>
-                <v-flex xs12 sm12 >
-                  <v-card-title  class="panel_info">
-                  <span class="headline">OSCAR services</span>
-                  </v-card-title>
-                  <v-card-text>
-                    <div v-for="service in services">
-							        <InfoService class="infoservice" :data="service" ></InfoService>
-                  </div>
-                  </v-card-text>
-                </v-flex>
-              </v-layout>
             </v-flex>
  
           </v-layout>
@@ -152,8 +109,13 @@ export default {
     openFaaSConfig: {}
   }),
   created: function () {
-    this.getBucketsList()
-    this.listServicesCall(this.listServicesCallback)
+    //this.getBucketsList()
+    //this.listServicesCall(this.listServicesCallback)
+    (async() => {
+    const url1 = 'https://raw.githubusercontent.com/SergioLangaritaBenitez/juno/main/juno.yaml'
+    const res = await axios.get(url1)
+    console.log(res.data)
+    })()
   },
   methods: {
     goLogs(service){

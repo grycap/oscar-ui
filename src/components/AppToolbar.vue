@@ -10,6 +10,15 @@
         <div class="identifieruser">
           <strong >{{showinfo}}</strong>
         </div>
+        <strong >
+        <input  class="identifieruser"
+           v-on:focus="$event.target.select()" 
+           ref="myinput" 
+           readonly 
+           :value="text"/>
+          </strong>
+        <button @click="copy">Copy</button>
+
         <v-btn class="fullscreen" icon @click="handleFullScreen()">
           <v-icon>fullscreen</v-icon>
         </v-btn>
@@ -27,7 +36,8 @@ export default {
     NotificationList
   },
   data: () => ({
-    showinfo:  (localStorage.getItem("user")?localStorage.getItem("user"): JSON.parse(localStorage.getItem("session")).user.info.name  )+" - " + localStorage.getItem("api") ,
+    showinfo:  (localStorage.getItem("user")?localStorage.getItem("user"): JSON.parse(localStorage.getItem("session")).user.info.name  )+" - " ,
+    text: localStorage.getItem("api"),
     mini: false,
     items: [
       {
@@ -72,6 +82,10 @@ export default {
     },
     handleFullScreen () {
       Util.toggleFullScreen()
+    },
+    copy() {
+      this.$refs.myinput.focus();
+      document.execCommand('copy');
     }
   }
 }
@@ -94,5 +108,7 @@ export default {
   font-size: 15px;
   vertical-align: middle;
 }
-
+.identifieruser input{
+  size: 400;
+}
 </style>
