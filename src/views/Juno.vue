@@ -29,6 +29,7 @@
                     readonly
                     ></v-text-field>
                   </v-card-text>
+                  <p >{{ juno_service }}</p>
 
                   <div class="styleflex"  >
                     <!--
@@ -82,6 +83,8 @@ export default {
   },
   data: () => ({
     user: (localStorage.getItem("user")?localStorage.getItem("user"): JSON.parse(localStorage.getItem("session")).user.info.name  ),
+    juno_service: "",
+    loaded: false,
     accessKey:localStorage.getItem("accessKey"),
     api:localStorage.getItem("api"),
     endpoint:localStorage.getItem("endpoint"),
@@ -109,15 +112,25 @@ export default {
     openFaaSConfig: {}
   }),
   created: function () {
-    //this.getBucketsList()
-    //this.listServicesCall(this.listServicesCallback)
-    (async() => {
-    const url1 = 'https://raw.githubusercontent.com/SergioLangaritaBenitez/juno/main/juno.yaml'
-    const res = await axios.get(url1)
-    console.log(res.data)
-    })()
+    this.getJuno()
+   
   },
   methods: {
+    async getJuno(){
+      var options={
+        method: 'get',
+        headers: {
+          'Accept-Encoding': 'application/json',
+          'content-type': 'application/json',
+          'mode': "no-cors",
+        }
+      }
+      const response = await fetch("https://raw.githubusercontent.com/SergioLangaritaBenitez/juno/main/juno.yaml",options);  
+      var data = await response.json()
+      this.juno_service = data
+      console.log(response)
+      console.log(this.juno_service)
+    },
     goLogs(service){
       this.$router.push({name: "Logs", params:{serviceName: service}})
     },
