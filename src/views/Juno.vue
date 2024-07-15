@@ -145,7 +145,7 @@ export default {
       this.form.environment.Variables["OSCAR_ENDPOINT"]=this.api
       let user=""
       if (this.isMultiTenant()){
-        user="juno"+accessKey.slice(0, 6)
+        user="juno"+this.accessKey.slice(0, 6)
       }else{
         user="junoroot"
       }

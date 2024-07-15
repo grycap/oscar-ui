@@ -66,7 +66,7 @@
 				</v-flex>
 				<v-flex row xs12 >				
 					<v-btn id="btn_juno" depressed round flat block small @click.native="collapse('btn_juno')" >		
-						<v-icon  left style="padding-right:12px">info</v-icon>
+						<v-icon  left style="padding-right:12px">woman</v-icon>
 						<span v-show="this.mini==false">Juno</span>						
 					</v-btn>
 				</v-flex>
