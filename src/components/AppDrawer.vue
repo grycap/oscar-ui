@@ -65,7 +65,7 @@
 					</template>
 				</v-flex>
 				<v-flex row xs12 >				
-					<v-btn id="btn_info" depressed round flat block small @click.native="collapse('btn_juno')" >		
+					<v-btn id="btn_juno" depressed round flat block small @click.native="collapse('btn_juno')" >		
 						<v-icon  left style="padding-right:12px">info</v-icon>
 						<span v-show="this.mini==false">Juno</span>						
 					</v-btn>
@@ -177,6 +177,7 @@ export default {
 		$("#btn_sett").css("color","#000")
 		$("#btn_logout").css("color","#000")
 		$("#btn_storage").css("color","#000")
+		$("#btn_juno").css("color","#000")
 		$("#btn_info").css("color","#000")
 		
 		
@@ -193,8 +194,8 @@ export default {
 			$("#btn_logout").css("color","#0056b3")
 			this.$router.push({name: "Login"})
 		}else if (id == "btn_juno"){
-			$("#btn_logout").css("color","#0056b3")
-			this.$router.push({name: "Juno"})
+			$("#btn_juno").css("color","#0056b3")
+			this.$router.push({name: "Juno"}).catch(err => {})
 		}else if (id == "btn_storage"){
 			$("#name_buckets").slideToggle("slow");					
 			this.drawer2 = (!this.drawer2)
@@ -314,7 +315,7 @@ export default {
 }
 
 
-#btn_storage,#btn_dash,#btn_funct,#btn_sett,#btn_logout, #btn_info {
+#btn_storage,#btn_dash,#btn_funct,#btn_sett,#btn_logout, #btn_info, #btn_juno {
 	text-transform:capitalize;
 	font-size:13px;	
 	padding-left:30px;
@@ -323,11 +324,11 @@ export default {
 	font-weight:400;
 }
 
-#btn_storage:hover,#btn_dash:hover,#btn_funct:hover,#btn_sett:hover,#btn_logout:hover , #btn_info:hover{
+#btn_storage:hover,#btn_dash:hover,#btn_funct:hover,#btn_sett:hover,#btn_logout:hover , #btn_info:hover,  #btn_juno:hover{
     color: #0056b3;    
 }
 
-#btn_dash .v-btn__content,  #btn_funct .v-btn__content, #btn_sett .v-btn__content,#btn_logout .v-btn__content, #btn_info .v-btn__content{
+#btn_dash .v-btn__content,  #btn_funct .v-btn__content, #btn_sett .v-btn__content,#btn_logout .v-btn__content, #btn_info .v-btn__content, #btn_juno .v-btn__content{
     justify-content: left!important;
 	
 }

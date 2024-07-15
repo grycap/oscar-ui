@@ -8,55 +8,54 @@
           <v-layout row wrap>
             <v-flex xs12 sm12>
               <v-card flat>
-                  <h2 style="padding: 16px;text-align: center;" >Juno</h2>
-                <v-card-text>
-                  <v-card-text class="xs6 textinfo styleflex" style="margin-right: 5px;padding-bottom: 5px;">
-                      <p class="" ><strong>OSCAR Endpoint: </strong> {{api}}</p>
-                  </v-card-text>
+                  <h2 style="padding: 16px;text-align: center;position:relative" >Juno</h2>
+                <v-card-text >
+                  <v-layout class="rounded rounded-md" v-show="show_spinner" style="position:relative;align-content: center;">
+                    <intersecting-circles-spinner style="left: 49.5%;"   :animation-duration="1200" :size="50" :color="'#0066ff'" />
+                  </v-layout>
+
+                  <v-layout v-if="!show_spinner" class="rounded rounded-md">
+                   
+                    <v-flex  xs5 sm5 style="display: inline-block;"><pre  >{{printJuno()}}</pre></v-flex>
+                    <v-flex xs6 sm6 style="display: inline-block;">
+                    <v-flex  >
+                      <v-text-field  
+                        v-model="form.image"
+                        :counter="200"
+                        label="Image"
+                        style="padding-right: 5px;"
+                      ></v-text-field>   
+                      <v-text-field
+                        v-model="form.cpu"
+                        :counter="10"
+                        label="CPU"
+                        style="padding-right: 5px;"
+                      ></v-text-field>
+                      <v-text-field 
+                        v-model="form.memory"
+                        :counter="10"
+                        label="Memory RAM"
+                        style="padding-right: 5px;"
+                      ></v-text-field>
+                      <textarea
+                        v-model="form.script"
+                        :counter="15"
+                        label="Memory RAM"
+                        rows="12"
+                        style="padding-right: 5px;width: 100%;"
+                      ></textarea>
+
+                      <v-btn color="success" @click="submit" >Create Juno
+                      </v-btn>
 
 
-                  <v-card-text class="xs6" style="width: 25%"> <strong>User: </strong> {{user}}</v-card-text>
-                  <v-card-text v-if="isMultiTenant()" class="xs6" style="width: 25%"> <strong>Id: </strong> {{accessKey.split('@')[0]}}</v-card-text>
+                      
+                    </v-flex>
+                  </v-flex>
+                  </v-layout>
 
-                  <v-card-text class="styleflex"  style="width: 50%" >
-                    <strong style="margin-right: 5px">Password: </strong>
-                    <v-text-field  style="width: 10%!important;padding-top: 0px!important;margin-top: -12px!important;"
-                    :value="password"
-                    :append-icon="showpassword ?  'visibility' : 'visibility_off'"
-                    :type="showpassword ? 'text' : 'password'"
-                    name="input-10-1"
-                    @click:append="showpassword = !showpassword"
-                    readonly
-                    ></v-text-field>
-                  </v-card-text>
-                  <p >{{ juno_service }}</p>
 
-                  <div class="styleflex"  >
-                    <!--
-                    <v-card-text v-show=" getYunikorn_option == 'true'"  class="custom-padding"> <strong>Yunikorn resources</strong>
-											<ul>
-												<li><strong>CPU: </strong> {{props.item.total_cpu}}</li> 
-												<li><strong> Memory: </strong> {{props.item.total_memory}}</li> 
-											</ul>
-										</v-card-text>
-                    -->
-                    <v-card-text class="xs6"> <strong>useSSL: </strong>
-											<p style="display:inline" v-if="use(useSSL)" >Yes</p> 
-											<p style="display:inline" v-if="!use(useSSL)" >No</p> 
-                    </v-card-text>
-                    <v-card-text class="xs6"> <strong>GPU Available: </strong>
-                      <p style="display:inline"  v-if="use(gpu_available)" >Yes</p> 
-											<p style="display:inline" v-if="!use(gpu_available)" >No</p> 
-                    </v-card-text>
-                    <v-card-text class="xs6"> <strong>Yunikorn Enable: </strong>
-                      <p style="display:inline"  v-if="use(yunikorn_enable)"  >Yes</p> 
-											<p style="display:inline" v-if="!use(yunikorn_enable)" >No</p> 
-                    </v-card-text>
-                    <v-card-text class="xs6"> <strong>InterLink Available: </strong>
-                      <p style="display:inline" v-if="use(interLink_available)"  >Yes</p> 
-											<p style="display:inline" v-if="!use(interLink_available)" >No</p> 
-                    </v-card-text>
-                  </div>
+                  
                 </v-card-text>
               </v-card>
             </v-flex>
@@ -72,10 +71,13 @@
 <script>
 import Services from '@/components/services';
 import InfoService from '@/views/InfoService';
+import YAML from 'yaml'
+import { IntersectingCirclesSpinner } from 'epic-spinners'
 export default {
   mixins:[Services],
   components: {
 		InfoService,
+    IntersectingCirclesSpinner,
 	},
   props: {
     minio: {},
@@ -83,8 +85,7 @@ export default {
   },
   data: () => ({
     user: (localStorage.getItem("user")?localStorage.getItem("user"): JSON.parse(localStorage.getItem("session")).user.info.name  ),
-    juno_service: "",
-    loaded: false,
+    show_spinner: true,
     accessKey:localStorage.getItem("accessKey"),
     api:localStorage.getItem("api"),
     endpoint:localStorage.getItem("endpoint"),
@@ -101,6 +102,7 @@ export default {
     services:[],
     menus:[],
     valid: true,
+    form: {},
     rules: {
       required: value => !!value || 'Required.',
       endpoint: [
@@ -117,19 +119,42 @@ export default {
   },
   methods: {
     async getJuno(){
-      var options={
-        method: 'get',
-        headers: {
-          'Accept-Encoding': 'application/json',
-          'content-type': 'application/json',
-          'mode': "no-cors",
-        }
+      const url="https://raw.githubusercontent.com/SergioLangaritaBenitez/juno/main/juno.yaml"
+      await $.ajax({
+          url: url,
+          type: 'GET',
+          context: this,
+          success: function (response) {
+            const parse=YAML.parse(response)
+            this.form=Object.assign({}, parse.functions.oscar[0]["oscar-cluster"]);
+          }
+      });
+      const script="https://raw.githubusercontent.com/SergioLangaritaBenitez/juno/main/script.sh"
+      await $.ajax({
+          url: script,
+          type: 'GET',
+          context: this,
+          success: function (response) {
+            this.form.script=response
+          }
+      });
+      this.show_spinner=false
+    },
+    printJuno(){
+      const token=Math.random().toString(36).substring(2)+Math.random().toString(36).substring(2)  
+      this.form.environment.Variables["OSCAR_ENDPOINT"]=this.api
+      let user=""
+      if (this.isMultiTenant()){
+        user="juno"+accessKey.slice(0, 6)
+      }else{
+        user="junoroot"
       }
-      const response = await fetch("https://raw.githubusercontent.com/SergioLangaritaBenitez/juno/main/juno.yaml",options);  
-      var data = await response.json()
-      this.juno_service = data
-      console.log(response)
-      console.log(this.juno_service)
+      this.form.name=user
+      this.form.environment.Variables["JUPYTER_DIRECTORY"]= "/mnt/"+user
+      this.form.environment.Variables["JHUB_BASE_URL"]= "/system/services/"+user+"/exposed" 
+      this.form.mount.path="/"+user
+
+      return this.form
     },
     goLogs(service){
       this.$router.push({name: "Logs", params:{serviceName: service}})
@@ -175,19 +200,38 @@ export default {
 				this.loading = false;
 			}
 		},
-    use(value){
-      if (value == "true") 
-      return true
-      else return false
-    },
-    useExpose(value){
-       if (value != undefined && value != '0') return true
-       else return false
-    },
     isMultiTenant(){
       if(this.accessKey != 'minio')return true
       else return false
-    }
+    },
+    newFunction () {
+			this.createServiceCall(this.form,this.createServiceCallBack)
+
+		},
+		createServiceCallBack(response){
+			if(response.status == 201){
+				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${this.form.name} was successfully created.`, color: 'success', timeout: 12000 })
+				this.dialog = false;
+				window.getApp.$emit('REFRESH_BUCKETS_LIST')
+      }else if(response == "Error: Request failed with status code 409"){
+        this.editServiceCall(this.form, this.editServiceCallBack)
+			}else {
+				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response, color: 'error' })
+
+			}
+
+		},
+    submit(){
+			this.newFunction()
+    },
+    editServiceCallBack(response){
+			if(response.status == 204){
+				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${this.form.name} has been updated`, color: 'success' })
+			}else {
+				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response, color: 'error' })
+			}
+
+		},
   }
 }
 </script>
