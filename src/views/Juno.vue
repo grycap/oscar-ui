@@ -146,14 +146,15 @@ export default {
       let user=""
       if (this.isMultiTenant()){
         user="juno"+this.accessKey.slice(0, 6)
+        this.form.allowed_users =[this.accessKey]
       }else{
         user="junoroot"
       }
       this.form.name=user
+      this.form.environment.Variables["JUPYTER_TOKEN"]= token
       this.form.environment.Variables["JUPYTER_DIRECTORY"]= "/mnt/"+user
       this.form.environment.Variables["JHUB_BASE_URL"]= "/system/services/"+user+"/exposed" 
       this.form.mount.path="/"+user
-
       return this.form
     },
     goLogs(service){
