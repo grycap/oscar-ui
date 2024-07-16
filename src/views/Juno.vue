@@ -146,7 +146,7 @@ export default {
       let user=""
       if (this.isMultiTenant()){
         user="juno"+this.accessKey.slice(0, 6)
-        this.form.allowed_users =[this.accessKey]
+        //this.form.allowed_users =[this.accessKey]
       }else{
         user="junoroot"
       }
