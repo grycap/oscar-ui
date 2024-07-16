@@ -154,7 +154,7 @@ export default {
       this.form.environment.Variables["JUPYTER_TOKEN"]= token
       this.form.environment.Variables["JUPYTER_DIRECTORY"]= "/mnt/"+user
       this.form.environment.Variables["JHUB_BASE_URL"]= "/system/services/"+user+"/exposed" 
-      this.form.mount.path="/"+user
+      this.form.mount.path=user
       return this.form
     },
     goLogs(service){
