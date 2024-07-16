@@ -13,5 +13,5 @@ module.exports = {
     "response_default_minio": "minio.minio",
     "external_ui": "https://ui.oscar.grycap.net/?endpoint=",
     "ai4eosc_servers": ["https://inference.cloud.ai4eosc.eu"],
-    "imagine_servers": ["https://inference.cloud.imagine-ai.eu"],
+    "imagine_servers": ["https://inference.cloud.imagine-ai.eu","https://inference-walton.cloud.imagine-ai.eu"],
 }
