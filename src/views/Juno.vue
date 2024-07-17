@@ -47,15 +47,10 @@
 
                       <v-btn color="success" @click="submit" >Create Juno
                       </v-btn>
-
-
-                      
+                      <i v-show="waiting_cluster" class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"></i>
                     </v-flex>
                   </v-flex>
                   </v-layout>
-
-
-                  
                 </v-card-text>
               </v-card>
             </v-flex>
@@ -86,18 +81,10 @@ export default {
   data: () => ({
     user: (localStorage.getItem("user")?localStorage.getItem("user"): JSON.parse(localStorage.getItem("session")).user.info.name  ),
     show_spinner: true,
+    waiting_cluster: false,
     accessKey:localStorage.getItem("accessKey"),
     api:localStorage.getItem("api"),
     endpoint:localStorage.getItem("endpoint"),
-    gpu_available:localStorage.getItem("gpu_available"),
-    password:localStorage.getItem("password"),
-    port:localStorage.getItem("port"),
-    useSSL:localStorage.getItem("useSSL"),
-    yunikorn_enable:localStorage.getItem("yunikorn_enable"),
-    secretKey:localStorage.getItem("secretKey"),
-    interLink_available:localStorage.getItem("interLink_available"),
-    showpassword:false,
-    showpasswordminio:false,
     buckets: [],
     services:[],
     menus:[],
@@ -119,7 +106,7 @@ export default {
   },
   methods: {
     async getJuno(){
-      const url="https://raw.githubusercontent.com/SergioLangaritaBenitez/juno/main/juno.yaml"
+      const url="https://raw.githubusercontent.com/grycap/juno/main/juno.yaml"
       await $.ajax({
           url: url,
           type: 'GET',
@@ -129,7 +116,7 @@ export default {
             this.form=Object.assign({}, parse.functions.oscar[0]["oscar-cluster"]);
           }
       });
-      const script="https://raw.githubusercontent.com/SergioLangaritaBenitez/juno/main/script.sh"
+      const script="https://raw.githubusercontent.com/grycap/juno/main/script.sh"
       await $.ajax({
           url: script,
           type: 'GET',
@@ -157,50 +144,7 @@ export default {
       this.form.mount.path=user
       return this.form
     },
-    goLogs(service){
-      this.$router.push({name: "Logs", params:{serviceName: service}})
-    },
-    goInvoke(service){
-			this.$router.push({name: "Invoke", params:{serviceName: service}})
-		},
-    goBucket(bucket){
-			this.$router.push({name: "BucketContent", params:{bucketName: bucket.split("/")[0] }})
-		},
-    changeview(index){
-      this.showservices[index]=!this.showservices[index]
-    },
-    getBucketListCallBack(response){
-      try{
-        this.buckets = response.map((bucket) => {
-              return {
-                title: bucket.name,
-                to: `/buckets/${bucket.name}`,
-                active: false
-              }
-        })
-      }catch(err) {
-            console.error("ERROR with list buckets "+err);
-      }
-      this.menus.find((obj) => {
-            if (obj.title === 'Storage') {
-              obj.items = this.buckets
-            }
-      })
-	  },
-    getBucketsList () {
-      this.getBucketListCall(this.getBucketListCallBack)
-    },
-    listServicesCallback(response) {
-			if(response.status == 200){
-				if (response.data !== null) {
-					this.services = Object.assign(this.services, response.data);
-					this.services = response.data.map((serv) => {
-						return serv
-					})
-				}
-				this.loading = false;
-			}
-		},
+
     isMultiTenant(){
       if(this.accessKey != 'minio')return true
       else return false
@@ -218,11 +162,11 @@ export default {
         this.editServiceCall(this.form, this.editServiceCallBack)
 			}else {
 				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response, color: 'error' })
-
 			}
 
 		},
     submit(){
+      //this.waiting_cluster = true;
 			this.newFunction()
     },
     editServiceCallBack(response){
@@ -231,7 +175,6 @@ export default {
 			}else {
 				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response, color: 'error' })
 			}
-
 		},
   }
 }
