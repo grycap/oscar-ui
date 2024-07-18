@@ -9,47 +9,36 @@
             <v-flex xs12 sm12>
               <v-card flat>
                   <h2 style="padding: 16px;text-align: center;position:relative" >Juno</h2>
-                <v-card-text >
+                <v-card-text  >
                   <v-layout class="rounded rounded-md" v-show="show_spinner" style="position:relative;align-content: center;">
                     <intersecting-circles-spinner style="left: 49.5%;"   :animation-duration="1200" :size="50" :color="'#0066ff'" />
                   </v-layout>
-
-                  <v-layout v-if="!show_spinner" class="rounded rounded-md">
-                   
-                    <v-flex  xs5 sm5 style="display: inline-block;"><pre  >{{printJuno()}}</pre></v-flex>
-                    <v-flex xs6 sm6 style="display: inline-block;">
-                    <v-flex  >
-                      <v-text-field  
-                        v-model="form.image"
-                        :counter="200"
-                        label="Image"
-                        style="padding-right: 5px;"
-                      ></v-text-field>   
-                      <v-text-field
-                        v-model="form.cpu"
-                        :counter="10"
-                        label="CPU"
-                        style="padding-right: 5px;"
-                      ></v-text-field>
-                      <v-text-field 
-                        v-model="form.memory"
-                        :counter="10"
-                        label="Memory RAM"
-                        style="padding-right: 5px;"
-                      ></v-text-field>
-                      <textarea
-                        v-model="form.script"
-                        :counter="15"
-                        label="Memory RAM"
-                        rows="12"
-                        style="padding-right: 5px;width: 100%;"
-                      ></textarea>
-
-                      <v-btn color="success" @click="submit" >Create Juno
-                      </v-btn>
-                      <i v-show="waiting_cluster" class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"></i>
+                  <v-layout v-if="!show_spinner" class="rounded rounded-md" >
+                    <v-flex xs6 sm6  >
+                      <v-flex  >
+                        <v-text-field  
+                          v-model="form.image"
+                          :counter="200"
+                          label="Image"
+                          style="padding-right: 5px;"
+                        ></v-text-field>   
+                        <v-text-field
+                          v-model="form.cpu"
+                          :counter="10"
+                          label="CPU"
+                          style="padding-right: 5px;"
+                        ></v-text-field>
+                        <v-text-field 
+                          v-model="form.memory"
+                          :counter="10"
+                          label="Memory RAM"
+                          style="padding-right: 5px;"
+                        ></v-text-field>
+                        <v-btn color="success" style="display: flex; align-self: center;" @click="submit" >Create Juno
+                        </v-btn>
+                        <i v-show="waiting_cluster" class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"></i>
+                      </v-flex>
                     </v-flex>
-                  </v-flex>
                   </v-layout>
                 </v-card-text>
               </v-card>
@@ -65,13 +54,12 @@
 
 <script>
 import Services from '@/components/services';
-import InfoService from '@/views/InfoService';
+import env from '../env';
 import YAML from 'yaml'
 import { IntersectingCirclesSpinner } from 'epic-spinners'
 export default {
   mixins:[Services],
   components: {
-		InfoService,
     IntersectingCirclesSpinner,
 	},
   props: {
@@ -106,7 +94,7 @@ export default {
   },
   methods: {
     async getJuno(){
-      const url="https://raw.githubusercontent.com/grycap/juno/main/juno.yaml"
+      const url=env.juno.repo+env.juno.service
       await $.ajax({
           url: url,
           type: 'GET',
@@ -116,7 +104,7 @@ export default {
             this.form=Object.assign({}, parse.functions.oscar[0]["oscar-cluster"]);
           }
       });
-      const script="https://raw.githubusercontent.com/grycap/juno/main/script.sh"
+      const script=env.juno.repo+env.juno.script
       await $.ajax({
           url: script,
           type: 'GET',
@@ -126,33 +114,29 @@ export default {
           }
       });
       this.show_spinner=false
-    },
-    printJuno(){
+
       const token=Math.random().toString(36).substring(2)+Math.random().toString(36).substring(2)  
       this.form.environment.Variables["OSCAR_ENDPOINT"]=this.api
       let user=""
+      let bucket=""
       if (this.isMultiTenant()){
         user="juno"+this.accessKey.slice(0, 6)
+        bucket="home"+this.accessKey.slice(0, 6)
         this.form.allowed_users =[this.accessKey]
       }else{
-        user="junoroot"
+        user="junooscar"
+        bucket="home"
       }
       this.form.name=user
       this.form.environment.Variables["JUPYTER_TOKEN"]= token
-      this.form.environment.Variables["JUPYTER_DIRECTORY"]= "/mnt/"+user
+      this.form.environment.Variables["JUPYTER_DIRECTORY"]= "/mnt/"+bucket
       this.form.environment.Variables["JHUB_BASE_URL"]= "/system/services/"+user+"/exposed" 
-      this.form.mount.path=user
-      return this.form
+      this.form.mount.path=bucket
     },
-
     isMultiTenant(){
       if(this.accessKey != 'minio')return true
       else return false
     },
-    newFunction () {
-			this.createServiceCall(this.form,this.createServiceCallBack)
-
-		},
 		createServiceCallBack(response){
 			if(response.status == 201){
 				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${this.form.name} was successfully created.`, color: 'success', timeout: 12000 })
@@ -166,8 +150,7 @@ export default {
 
 		},
     submit(){
-      //this.waiting_cluster = true;
-			this.newFunction()
+      this.createServiceCall(this.form,this.createServiceCallBack)
     },
     editServiceCallBack(response){
 			if(response.status == 204){
@@ -202,12 +185,5 @@ export default {
   .panel_info{
     margin-top: 0%;
   }
-  .infoservice{
-    border: 1px;
-    border-style: solid;
-    border-color: black;
-    margin-bottom: 2.5%;
-    padding-bottom: 2.5%;
-    padding-top: 2.5%;
-  }
+
 </style>

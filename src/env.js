@@ -6,7 +6,7 @@ module.exports = {
     "url_user_info": "$EGI_CHECKIN_ISSUER/protocol/openid-connect/userinfo",
     "token_endpoint": "$EGI_CHECKIN_ISSUER/protocol/openid-connect/token",
     "api" : "",
-    "deploy_container" : "false",
+    "deploy_container" : "true",
     "minio_local_endpoint" :"localhost",
     "minio_local_port": "30300",
     "minio_local_ssl": false ,
@@ -14,4 +14,9 @@ module.exports = {
     "external_ui": "https://ui.oscar.grycap.net/?endpoint=",
     "ai4eosc_servers": ["https://inference.cloud.ai4eosc.eu"],
     "imagine_servers": ["https://inference.cloud.imagine-ai.eu","https://inference-walton.cloud.imagine-ai.eu"],
+    "juno":{
+        repo: "https://raw.githubusercontent.com/grycap/oscar-juno/main/",
+        service: "juno.yaml",
+        script:"script.sh",
+    }
 }
