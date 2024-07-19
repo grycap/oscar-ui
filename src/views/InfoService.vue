@@ -110,6 +110,45 @@
 			</div>
 		</div>
 
+
+		<v-card-actions>
+			<span class="custom-padding" style="padding:10px;"><strong>Mount:</strong></span>
+		</v-card-actions>
+
+		<div class="row" style="margin:15px 30px 0px 30px;">
+			<div class="col-3 col-md-3 text-left d-md-inline" style="background-color:#eee;">
+				<b>Path</b>
+			</div>
+			<div class="col-3 col-md-3 text-left d-md-inline" style="background-color:#eee;">
+				<b>Storage Provider</b>
+			</div>
+			<div class="col-3 col-md-3 text-left d-md-inline" style="background-color:#eee;">
+				<b>Prefix</b>
+			</div>
+			<div class="col-3 col-md-3 text-left d-md-inline" style="background-color:#eee;">
+				<b>Suffix</b>
+			</div>
+		</div>
+		<div v-if='service.mount.path != "" ' :key="'G'"  class="row" style="margin:10px 30px 20px 30px;border-bottom:1px solid #eee;padding-bottom:10px;">
+			<div class="col-3 col-md-3 text-left">
+				<span class="d-inline d-md-none">{{service.mount.path}}</span>
+			</div>
+			<div class="col-3 col-md-3 text-left">
+				<span class="d-inline d-md-none">{{service.mount.storage_provider}}</span>
+			</div>
+			<div class="col-3 col-md-3 text-left">
+				<div v-for="(val,i) in service.mount.prefix" :key="'H'+ i">
+					<span class="d-inline d-md-none">{{service.mount}}</span>
+				</div>
+			</div>
+			<div class="col-3 col-md-3 text-left">
+				<div v-for="(val,i) in service.mount.suffix" :key="'I'+ i">
+					<span class="d-inline d-md-none">{{service.mount}}</span>
+				</div>
+			</div>
+		</div>
+
+
 		<v-card-actions>
 			<span class="custom-padding" style="padding:10px;"><strong>Outputs:</strong></span>
 		</v-card-actions>

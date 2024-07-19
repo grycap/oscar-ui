@@ -15,13 +15,7 @@
                   </v-layout>
                   <v-layout v-if="!show_spinner" class="rounded rounded-md" >
                     <v-flex xs6 sm6  >
-                      <v-flex  >
-                        <v-text-field  
-                          v-model="form.image"
-                          :counter="200"
-                          label="Image"
-                          style="padding-right: 5px;"
-                        ></v-text-field>   
+                      <v-flex  >   
                         <v-text-field
                           v-model="form.cpu"
                           :counter="10"
@@ -34,6 +28,13 @@
                           label="Memory RAM"
                           style="padding-right: 5px;"
                         ></v-text-field>
+                        <v-select
+                          v-model="bucket_selected"
+                          style="padding-top: 25px;"
+                          :items="bucket_list"
+                          label="Buckets"
+                          outline
+                        ></v-select>
                         <v-btn color="success" style="display: flex; align-self: center;" @click="submit" >Create Juno
                         </v-btn>
                         <i v-show="waiting_cluster" class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"></i>
@@ -73,7 +74,8 @@ export default {
     accessKey:localStorage.getItem("accessKey"),
     api:localStorage.getItem("api"),
     endpoint:localStorage.getItem("endpoint"),
-    buckets: [],
+    bucket_list: [],
+    bucket_selected:"",
     services:[],
     menus:[],
     valid: true,
@@ -90,10 +92,10 @@ export default {
   }),
   created: function () {
     this.getJuno()
-   
   },
   methods: {
     async getJuno(){
+      this.getBucketListCall(this.getBucketCallBack)
       const url=env.juno.repo+env.juno.service
       await $.ajax({
           url: url,
@@ -113,10 +115,7 @@ export default {
             this.form.script=response
           }
       });
-      this.show_spinner=false
-
       const token=Math.random().toString(36).substring(2)+Math.random().toString(36).substring(2)  
-      this.form.environment.Variables["OSCAR_ENDPOINT"]=this.api
       let user=""
       let bucket=""
       if (this.isMultiTenant()){
@@ -128,11 +127,26 @@ export default {
         bucket="home"
       }
       this.form.name=user
+      this.form.environment.Variables["OSCAR_ENDPOINT"]=this.api
       this.form.environment.Variables["JUPYTER_TOKEN"]= token
-      this.form.environment.Variables["JUPYTER_DIRECTORY"]= "/mnt/"+bucket
       this.form.environment.Variables["JHUB_BASE_URL"]= "/system/services/"+user+"/exposed" 
-      this.form.mount.path=bucket
+      this.bucket_list.push(bucket)
+      this.bucket_selected=bucket
+      this.show_spinner=false
     },
+    getBucketCallBack(response){
+      try{
+				if(response?.code !== 'AccessDenied'){
+					response.forEach(element => {
+            this.bucket_list.push(element.name)  
+          });
+          console.log(response)
+			  }
+      }catch(err) {
+            console.error("ERROR with list buckets "+err);
+      }
+		},
+
     isMultiTenant(){
       if(this.accessKey != 'minio')return true
       else return false
@@ -140,7 +154,6 @@ export default {
 		createServiceCallBack(response){
 			if(response.status == 201){
 				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${this.form.name} was successfully created.`, color: 'success', timeout: 12000 })
-				this.dialog = false;
 				window.getApp.$emit('REFRESH_BUCKETS_LIST')
       }else if(response == "Error: Request failed with status code 409"){
         this.editServiceCall(this.form, this.editServiceCallBack)
@@ -150,6 +163,8 @@ export default {
 
 		},
     submit(){
+      this.form.environment.Variables["JUPYTER_DIRECTORY"]= "/mnt/"+this.bucket_selected
+      this.form.mount.path=this.bucket_selected
       this.createServiceCall(this.form,this.createServiceCallBack)
     },
     editServiceCallBack(response){
