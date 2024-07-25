@@ -10,6 +10,7 @@
         <div class="identifieruser">
           <strong >{{showinfo}}</strong>
         </div>
+        <strong >  <button ref="myinput"  @click="copy">{{api}}</button>  </strong>
         <v-btn class="fullscreen" icon @click="handleFullScreen()">
           <v-icon>fullscreen</v-icon>
         </v-btn>
@@ -27,41 +28,11 @@ export default {
     NotificationList
   },
   data: () => ({
-    showinfo:  (localStorage.getItem("user")?localStorage.getItem("user"): JSON.parse(localStorage.getItem("session")).user.info.name  )+" - " + localStorage.getItem("api") ,
+    showinfo:  (localStorage.getItem("user")?localStorage.getItem("user"): JSON.parse(localStorage.getItem("session")).user.info.name  )+" - " ,
+    api: localStorage.getItem("api"),
     mini: false,
-    items: [
-      {
-        icon: 'account_circle',
-        href: '#',
-        title: 'Profile',
-        click: (e) => {
-          console.log(e)
-        }
-      },
-      {
-        icon: 'settings',
-        href: '#',
-        title: 'Settings',
-        click: (e) => {
-          console.log(e)
-        }
-      },
-      {
-        icon: 'fullscreen_exit',
-        href: '#',
-        title: 'Logout',
-        click: (e) => {
-          window.getApp.$emit('APP_LOGOUT')
-        }
-      }
-    ],
     notificationCounter: 3
   }),
-  computed: {
-    notificationShow () {
-      return (this.notificationCounter > 0)
-    }
-  },
   methods: {
     handleDrawerToggle () {
       window.getApp.$emit('APP_DRAWER_TOGGLED')      
@@ -72,6 +43,9 @@ export default {
     },
     handleFullScreen () {
       Util.toggleFullScreen()
+    },
+    copy() {
+      navigator.clipboard.writeText(this.api);
     }
   }
 }
@@ -92,7 +66,8 @@ export default {
   font-family:  Roboto;
   display: inline;
   font-size: 15px;
-  vertical-align: middle;
 }
-
+.identifieruser button{
+  size: 500;
+}
 </style>

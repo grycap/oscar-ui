@@ -31,7 +31,8 @@
     "vue-material": "^1.0.0-beta-14",
     "vue-perfect-scrollbar": "^0.1.0",
     "vue-router": "^3.0.1",
-    "vuetify": "^1.5.24"
+    "vuetify": "^1.5.24",
+    "yaml": "^2.4.5"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^5.0.8",

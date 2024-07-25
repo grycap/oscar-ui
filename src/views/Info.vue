@@ -88,9 +88,9 @@
                 </v-card-text>
               </v-card>
             </v-flex>
-            <v-flex xs6 sm6>
+            <v-flex xs12 sm12 xl12>
               <v-layout row>
-                <v-card-title>
+                <v-flex xs12 sm12 >
                   <v-card-title  class="panel_info">
                   <span class="headline">OSCAR services</span>
                   </v-card-title>
@@ -99,25 +99,10 @@
 							        <InfoService class="infoservice" :data="service" ></InfoService>
                   </div>
                   </v-card-text>
-                </v-card-title>
+                </v-flex>
               </v-layout>
             </v-flex>
-            <v-flex xs6>
-              <v-layout row>
-                <v-card-title>
-                  <v-card-title  class="panel_info">
-                    <span class="headline">Buckets</span>
-                  </v-card-title>
-                    <v-card-text>
-                        <ul >
-                          <li v-for="bucket in buckets">
-                            {{ bucket.title }}
-                          </li>
-                        </ul> 
-                    </v-card-text>
-                </v-card-title>
-              </v-layout >
-            </v-flex >
+ 
           </v-layout>
         </v-form>
       </v-card>
@@ -252,7 +237,7 @@ export default {
     display: flex;
   }
   .panel_info{
-    margin-top: 5%;
+    margin-top: 0%;
   }
   .infoservice{
     border: 1px;

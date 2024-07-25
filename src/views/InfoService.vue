@@ -4,7 +4,7 @@
 			Service {{service.name}} Info
 	</h4>
 	<v-card flat>
-		<v-card-text class="custom-padding xs6"> <strong>Name: </strong> {{service.name}}</v-card-text>
+		<v-card-text class="custom-padding "> <strong>Name: </strong> {{service.name}}</v-card-text>
 		<v-card-text class="custom-padding"><strong>Image: </strong> {{service.image}}</v-card-text>
 		<v-card-text style="display:flex;margin-right: 5px;" class="custom-padding">
 			<strong style="padding-top: 12px;margin-right: 5px;">Token: </strong>
@@ -43,7 +43,7 @@
 			<ul v-if="isServiceExpose(service?.expose?.api_port)">
 				<li v-if="service?.expose?.nodePort == 0"><strong>url: </strong> <a target="_blank"  :href="api+'/system/services/'+service.name+'/exposed/'">
 					{{api}}/system/services/{{service.name}}/exposed/ </a> </li> 
-				<li><strong>min_scale: </strong> {{service?.expose?.min_scale}}</li> 
+				<li><strong> min_scale: </strong> {{service?.expose?.min_scale}}</li> 
 				<li><strong> max_scale: </strong> {{service?.expose?.max_scale}}</li> 
 				<li><strong> api_port: </strong> {{service?.expose?.api_port}}</li> 	
 				<li><strong> cpu_threshold: </strong> {{service?.expose?.cpu_threshold}}</li> 
@@ -69,6 +69,9 @@
 					</li>
 				</ul>
 			</div>
+		</v-card-text>
+		<v-card-text v-show="service.allowed_users.length===0"  class="custom-padding"><strong>Allowed users: </strong>
+			<p style="display:inline">Public</p> 
 		</v-card-text>
 		<v-card-actions>
 			<span class="custom-padding" style="padding:10px;"><strong>Inputs:</strong></span>
@@ -106,6 +109,45 @@
 				</div>
 			</div>
 		</div>
+
+
+		<v-card-actions>
+			<span class="custom-padding" style="padding:10px;"><strong>Mount:</strong></span>
+		</v-card-actions>
+
+		<div class="row" style="margin:15px 30px 0px 30px;">
+			<div class="col-3 col-md-3 text-left d-md-inline" style="background-color:#eee;">
+				<b>Path</b>
+			</div>
+			<div class="col-3 col-md-3 text-left d-md-inline" style="background-color:#eee;">
+				<b>Storage Provider</b>
+			</div>
+			<div class="col-3 col-md-3 text-left d-md-inline" style="background-color:#eee;">
+				<b>Prefix</b>
+			</div>
+			<div class="col-3 col-md-3 text-left d-md-inline" style="background-color:#eee;">
+				<b>Suffix</b>
+			</div>
+		</div>
+		<div v-if='service.mount.path != "" ' :key="'G'"  class="row" style="margin:10px 30px 20px 30px;border-bottom:1px solid #eee;padding-bottom:10px;">
+			<div class="col-3 col-md-3 text-left">
+				<span class="d-inline d-md-none">{{service.mount.path}}</span>
+			</div>
+			<div class="col-3 col-md-3 text-left">
+				<span class="d-inline d-md-none">{{service.mount.storage_provider}}</span>
+			</div>
+			<div class="col-3 col-md-3 text-left">
+				<div v-for="(val,i) in service.mount.prefix" :key="'H'+ i">
+					<span class="d-inline d-md-none">{{service.mount}}</span>
+				</div>
+			</div>
+			<div class="col-3 col-md-3 text-left">
+				<div v-for="(val,i) in service.mount.suffix" :key="'I'+ i">
+					<span class="d-inline d-md-none">{{service.mount}}</span>
+				</div>
+			</div>
+		</div>
+
 
 		<v-card-actions>
 			<span class="custom-padding" style="padding:10px;"><strong>Outputs:</strong></span>
