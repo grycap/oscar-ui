@@ -14,7 +14,7 @@
                     <intersecting-circles-spinner style="left: 49.5%;"   :animation-duration="1200" :size="50" :color="'#0066ff'" />
                   </v-layout>
                   <v-layout v-if="!show_spinner" class="rounded rounded-md" >
-                    <v-flex xs6 sm6  >
+                    <v-flex xs12 sm12  >
                       <v-flex  >   
                         <v-text-field
                           v-model="form.cpu"
@@ -35,9 +35,14 @@
                           label="Buckets"
                           outline
                         ></v-select>
-                        <v-btn color="success" style="display: flex; align-self: center;" @click="submit" >Create Juno
+                        <v-text-field
+                          v-model="form.vo"
+                          label="VO"
+                          style="padding-right: 5px;"
+                        ></v-text-field>
+                        <v-btn color="success" style="display: inline-flex; align-self: center;" @click="submit" >Create Juno
                         </v-btn>
-                        <i v-show="waiting_cluster" class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"></i>
+                        <i v-if="waiting_cluster" style="display: inline-flex; margin-left: 10%;" class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"></i>
                       </v-flex>
                     </v-flex>
                   </v-layout>
@@ -155,14 +160,17 @@ export default {
 			if(response.status == 201){
 				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${this.form.name} was successfully created.`, color: 'success', timeout: 12000 })
 				window.getApp.$emit('REFRESH_BUCKETS_LIST')
+        this.waiting_cluster=false
       }else if(response == "Error: Request failed with status code 409"){
         this.editServiceCall(this.form, this.editServiceCallBack)
 			}else {
 				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response, color: 'error' })
+        this.waiting_cluster=false
 			}
 
 		},
     submit(){
+      this.waiting_cluster=true
       this.form.environment.Variables["JUPYTER_DIRECTORY"]= "/mnt/"+this.bucket_selected
       this.form.mount.path=this.bucket_selected
       this.createServiceCall(this.form,this.createServiceCallBack)
@@ -173,6 +181,7 @@ export default {
 			}else {
 				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response, color: 'error' })
 			}
+      this.waiting_cluster=false
 		},
   }
 }
