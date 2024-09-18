@@ -409,6 +409,7 @@ export default {
 		previewFileCallBack(response){
 			let extension=this.getFileExtension1(response).split("?")[0]
 			console.log(response)
+			console.log(extension)
 			if(extension=="json" ||  extension=="txt" || extension == "sh"){
 				let bucketName= response.split("?")[0].replace("//","-").split("/")[1]
 				let parts=response.split("?")[0].replace("//","-").split("/")
