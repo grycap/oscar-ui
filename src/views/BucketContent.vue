@@ -273,6 +273,7 @@ import { saveAs } from 'file-saver'
 import JSZip from "jszip";
 import JSZipUtils from "jszip-utils"
 import Services from '../components/services'
+import { not } from 'joi'
 export default {
 	mixins:[Services],
 	components: {
@@ -407,7 +408,12 @@ export default {
 			this.previewFileCall(params_preview,this.previewFileCallBack)
 		},
 		previewFileCallBack(response){
-			let extension=this.getFileExtension1(response).split("?")[0]
+			let nodtdot=response.split("?")[0].split('.')
+			let extension=notdot[nodtdot.length-1]
+			//this.getFileExtension2(response).split("?")[0]
+			//https://minio.sleepy-lumiere4.im.grycap.net/plants/in/logo-im1.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=4877511c7dde8a33cf178f288acf35e5b348e90f2ea82f0be93524825781cf55%40egi.eu%2F20240918%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240918T092054Z&X-Amz-Expires=30000&X-Amz-SignedHeaders=host&X-Amz-Signature=e88c207f416c86506cd930bb07b33bc0aec586ed22d0769b9b00e760a1c07ef1
+			//                                                                                                                                                                                            eu%2F20240918%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240918T092054Z&X-Amz-Expires=30000&X-Amz-SignedHeaders=host&X-Amz-Signature=e88c207f416c86506cd930bb07b33bc0aec586ed22d0769b9b00e760a1c07ef1
+			//https://minio.sleepy-lumiere4.im.grycap.net/plants/in/logo-im1.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minio%2F20240918%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240918T092244Z&X-Amz-Expires=30000&X-Amz-SignedHeaders=host&X-Amz-Signature=fd296bd24254535c9a3b4f3798163e7b00020e600817acf94c556ababa0eb9af
 			console.log(response)
 			console.log(extension)
 			if(extension=="json" ||  extension=="txt" || extension == "sh"){
@@ -687,6 +693,9 @@ export default {
 			}              
 		},
 		getFileExtension1(filename) {
+			return (/[.]/.exec(filename)) ? /[^.]+$/.exec(filename)[0] : undefined;
+		},
+		getFileExtension2(filename) {
 			return (/[.]/.exec(filename)) ? /[^.]+$/.exec(filename)[0] : undefined;
 		},
 		closeActionsBar () {
