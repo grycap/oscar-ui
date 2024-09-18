@@ -687,8 +687,6 @@ export default {
 			}              
 		},
 		getFileExtension1(filename) {
-			//https://minio.sleepy-lumiere4.im.grycap.net/plants/in/logo-im1.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=4877511c7dde8a33cf178f288acf35e5b348e90f2ea82f0be93524825781cf55%40egi.eu%2F20240918%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240918T085509Z&X-Amz-Expires=30000&X-Amz-SignedHeaders=host&X-Amz-Signature=fb98c51be535a0660f60c599f60d26b90ef524e520f1c26f79803f23b16613f1
-			//https://minio.sleepy-lumiere4.im.grycap.net/plants/in/logo-im1.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minio%2F20240918%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240918T085532Z&X-Amz-Expires=30000&X-Amz-SignedHeaders=host&X-Amz-Signature=4cac6f76501df067e9308e6e9361a363e669346213d3682d209ab6513be400c0
 			notdot=filename.split('?')[0].split('.')
 			return notdot[notdot.length - 1]
 			
