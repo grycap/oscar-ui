@@ -687,10 +687,7 @@ export default {
 			}              
 		},
 		getFileExtension1(filename) {
-			notdot=filename.split('?')[0].split('.')
-			return notdot[notdot.length - 1]
-			
-			//return (/[.]/.exec(filename)) ? /[^.]+$/.exec(filename)[0] : undefined;
+			return (/[.]/.exec(filename)) ? /[^.]+$/.exec(filename)[0] : undefined;
 		},
 		closeActionsBar () {
 			this.selected = []
