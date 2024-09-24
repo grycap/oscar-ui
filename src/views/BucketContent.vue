@@ -273,7 +273,6 @@ import { saveAs } from 'file-saver'
 import JSZip from "jszip";
 import JSZipUtils from "jszip-utils"
 import Services from '../components/services'
-import { not } from 'joi'
 export default {
 	mixins:[Services],
 	components: {
@@ -687,9 +686,6 @@ export default {
 			}              
 		},
 		getFileExtension1(filename) {
-			return (/[.]/.exec(filename)) ? /[^.]+$/.exec(filename)[0] : undefined;
-		},
-		getFileExtension2(filename) {
 			return (/[.]/.exec(filename)) ? /[^.]+$/.exec(filename)[0] : undefined;
 		},
 		closeActionsBar () {
