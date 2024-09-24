@@ -407,7 +407,8 @@ export default {
 			this.previewFileCall(params_preview,this.previewFileCallBack)
 		},
 		previewFileCallBack(response){
-			let extension=this.getFileExtension1(response).split("?")[0]
+			const notdot=response.split("?")[0].split('.')
+			const extension=notdot[notdot.length-1]
 			if(extension=="json" ||  extension=="txt" || extension == "sh"){
 				let bucketName= response.split("?")[0].replace("//","-").split("/")[1]
 				let parts=response.split("?")[0].replace("//","-").split("/")
