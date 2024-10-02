@@ -116,7 +116,7 @@ export default {
   },
 	methods: {
         goBack(){
-            this.$router.push({name: "Functions"})
+            this.$router.push(this.$router.prevRoute)
         },
         checkEnd(end) {
           if(this.fileinput[0].name.endsWith(end)){

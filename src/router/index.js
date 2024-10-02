@@ -8,7 +8,8 @@ const router = new Router({
   base: '/',
   // mode: 'history',
   linkActiveClass: 'active',
-  routes: paths
+  routes: paths,
+  prevRoute: null
 })
 // router gards
 router.beforeEach((to, from, next) => {
@@ -17,6 +18,7 @@ router.beforeEach((to, from, next) => {
   } else {
     var auth = localStorage.getItem("authenticated");
     if(typeof auth != 'undefined' && auth == "true"){
+      router.prevRoute=from
       next()
     }
     else {
