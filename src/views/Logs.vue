@@ -60,10 +60,13 @@
             </template>
              <template v-slot:no-data>
                 <v-alert :value="true" type="info" color="#83C3FA"  style="color:black;">
-					There are no logs. If you do not know how to invoke a service, follow the 
+					There are no logs. If you do not know how to run a service asynchronously, follow the 
 					<a style="color:black; text-decoration: underline;" target="_blank" href="https://docs.oscar.grycap.net/usage/#minio-storage-tab">
 						MinIO Storage Tab documentation.
 					</a>
+                    Alternatively, you can invoke it synchronously on the
+                    <a style="color:black; text-decoration: underline;" @click="goInvoke">Invoke page</a>
+
 				</v-alert>
             </template>
             <v-alert slot="no-results" :value="true" color="error" icon="warning">
@@ -243,6 +246,9 @@ export default {
             }
 
         },
+        goInvoke(){
+            this.$router.push({name: "Invoke", params:{serviceName:this.serviceName}}).catch(err => {})
+        }
 		
 	},
 	created: function () {
