@@ -221,13 +221,14 @@ export default {
       this.newBucketName = " ";
     },
     createBucket (name) {
-      	if (this.newBucketName.length > 0 && !this.checkIfToken()){
+		//if (this.newBucketName.length > 0 && !this.checkIfToken()){
+		if (this.newBucketName.length > 0){
 			this.error = false
 			this.errorEGI=false
 			var params = {'name': name.replace(/[^A-Z0-9]+/ig, "")};
 			this.createBucketCall(params,this.createBucketCallBack)
-		}else if( this.checkIfToken()){
-			this.errorEGI=true
+		/*}else if( this.checkIfToken()){
+			this.errorEGI=true*/
 		}else{
 			this.error =true
         	this.error_message_text = "Error"
