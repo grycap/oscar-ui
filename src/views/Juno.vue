@@ -13,7 +13,24 @@
                   <v-layout class="rounded rounded-md" v-show="show_spinner" style="position:relative;align-content: center;">
                     <intersecting-circles-spinner style="left: 49.5%;"   :animation-duration="1200" :size="50" :color="'#0066ff'" />
                   </v-layout>
-                  <v-layout v-if="!show_spinner" class="rounded rounded-md" >
+                  <v-layout v-if="!show_spinner && junoexist==true" class="rounded rounded-md" >
+                    <v-flex xs12 sm12  >
+                      <div class=" text-center">
+                        <v-icon
+                          class="mb-6"
+                          color="success"
+                          size="128"
+                        >check_circle_outline</v-icon>
+
+                        <div class="text-h4 font-weight-bold">The Juno service '{{ serviceName }}' is already deployed</div>
+                        <v-btn color="success" style="display: inline-flex; align-self: center;" 
+                        target="_blank" 
+                        :href="api+'/system/services/'+serviceName+'/exposed/?token='+serviceDefinition.environment.Variables.JUPYTER_TOKEN" >Access to Juno
+                        </v-btn>
+                      </div>
+                    </v-flex>
+                  </v-layout>
+                  <v-layout v-if="!show_spinner && junoexist==false" class="rounded rounded-md" >
                     <v-flex xs12 sm12  >
                       <v-flex  >   
                         <v-text-field
@@ -82,6 +99,9 @@ export default {
     bucket_list: [],
     bucket_selected:"",
     services:[],
+    serviceName:"",
+    serviceDefinition:{},
+    junoexist: false,
     menus:[],
     valid: true,
     form: {},
@@ -96,10 +116,20 @@ export default {
     openFaaSConfig: {}
   }),
   created: function () {
-    this.getJuno()
+    let bucket=""
+    if (this.isMultiTenant()){
+      this.serviceName="juno"+this.accessKey.slice(0, 6)
+      bucket="home"+this.accessKey.slice(0, 6)
+      this.form.allowed_users =[this.accessKey]
+    }else{
+      this.serviceName="junooscar"
+      bucket="home"
+    }
+    this.listServicesCall(this.getCheckServiceCallBack)
+    this.getJuno(this.serviceName,bucket)
   },
   methods: {
-    async getJuno(){
+    async getJuno(user,bucket){
       this.getBucketListCall(this.getBucketCallBack)
       const url=env.juno.repo+env.juno.service
       await $.ajax({
@@ -121,16 +151,6 @@ export default {
           }
       });
       const token=Math.random().toString(36).substring(2)+Math.random().toString(36).substring(2)  
-      let user=""
-      let bucket=""
-      if (this.isMultiTenant()){
-        user="juno"+this.accessKey.slice(0, 6)
-        bucket="home"+this.accessKey.slice(0, 6)
-        this.form.allowed_users =[this.accessKey]
-      }else{
-        user="junooscar"
-        bucket="home"
-      }
       this.form.name=user
       this.form.environment.Variables["OSCAR_ENDPOINT"]=this.api
       this.form.environment.Variables["JUPYTER_TOKEN"]= token
@@ -139,13 +159,32 @@ export default {
       this.bucket_selected=bucket
       this.show_spinner=false
     },
+    getCheckServiceCallBack(response){
+      try{
+				if(response?.status == 200){
+          let exist =response.data.map(Service => {
+                if(Service.name== this.serviceName){
+                  return true
+                }
+                else return false
+              }
+            )
+          if (exist.includes(true)){
+            const index=exist.indexOf(true)
+            this.serviceDefinition=response.data[index]
+            this.junoexist=true
+          }
+			  }
+      }catch(err) {
+            console.error("ERROR with list Services "+err);
+      }
+		},
     getBucketCallBack(response){
       try{
 				if(response?.code !== 'AccessDenied'){
 					response.forEach(element => {
             this.bucket_list.push(element.name)  
           });
-          console.log(response)
 			  }
       }catch(err) {
             console.error("ERROR with list buckets "+err);
@@ -161,6 +200,7 @@ export default {
 				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${this.form.name} was successfully created.`, color: 'success', timeout: 12000 })
 				window.getApp.$emit('REFRESH_BUCKETS_LIST')
         this.waiting_cluster=false
+        this.junoexist = true
       }else if(response == "Error: Request failed with status code 409"){
         this.editServiceCall(this.form, this.editServiceCallBack)
 			}else {
@@ -173,6 +213,7 @@ export default {
       this.waiting_cluster=true
       this.form.environment.Variables["JUPYTER_DIRECTORY"]= "/mnt/"+this.bucket_selected
       this.form.mount.path=this.bucket_selected
+      this.serviceDefinition=this.form
       this.createServiceCall(this.form,this.createServiceCallBack)
     },
     editServiceCallBack(response){
