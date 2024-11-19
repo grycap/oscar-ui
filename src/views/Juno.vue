@@ -22,7 +22,7 @@
                           size="128"
                         >check_circle_outline</v-icon>
 
-                        <div class="text-h4 font-weight-bold">The Juno service {{ serviceName }} already deployed</div>
+                        <div class="text-h4 font-weight-bold">The Juno service '{{ serviceName }}' is already deployed</div>
                         <v-btn color="success" style="display: inline-flex; align-self: center;" 
                         target="_blank" 
                         :href="api+'/system/services/'+serviceName+'/exposed/?token='+serviceDefinition.environment.Variables.JUPYTER_TOKEN" >Access to Juno
