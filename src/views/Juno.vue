@@ -161,7 +161,6 @@ export default {
     },
     getCheckServiceCallBack(response){
       try{
-        console.log(this.serviceName)
 				if(response?.status == 200){
           let exist =response.data.map(Service => {
                 if(Service.name== this.serviceName){
@@ -175,7 +174,6 @@ export default {
             this.serviceDefinition=response.data[index]
             this.junoexist=true
           }
-        console.log(this.junoexist)
 			  }
       }catch(err) {
             console.error("ERROR with list Services "+err);
@@ -187,7 +185,6 @@ export default {
 					response.forEach(element => {
             this.bucket_list.push(element.name)  
           });
-          console.log(response)
 			  }
       }catch(err) {
             console.error("ERROR with list buckets "+err);
@@ -203,6 +200,7 @@ export default {
 				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${this.form.name} was successfully created.`, color: 'success', timeout: 12000 })
 				window.getApp.$emit('REFRESH_BUCKETS_LIST')
         this.waiting_cluster=false
+        this.junoexist = true
       }else if(response == "Error: Request failed with status code 409"){
         this.editServiceCall(this.form, this.editServiceCallBack)
 			}else {
@@ -215,6 +213,7 @@ export default {
       this.waiting_cluster=true
       this.form.environment.Variables["JUPYTER_DIRECTORY"]= "/mnt/"+this.bucket_selected
       this.form.mount.path=this.bucket_selected
+      this.serviceDefinition=this.form
       this.createServiceCall(this.form,this.createServiceCallBack)
     },
     editServiceCallBack(response){
