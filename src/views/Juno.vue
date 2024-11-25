@@ -223,6 +223,7 @@ export default {
 
       this.form.environment.Variables["JUPYTER_DIRECTORY"]= "/mnt/"+this.bucket_selected
       this.form.mount.path=this.bucket_selected
+      this.form.vo=this.oidc_groups
       this.serviceDefinition=this.form
       this.createServiceCall(this.form,this.createServiceCallBack)
     },
