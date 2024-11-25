@@ -67,7 +67,7 @@
 				<v-flex row xs12 >				
 					<v-btn id="btn_juno" depressed round flat block small @click.native="collapse('btn_juno')" >		
 						<v-icon  left style="padding-right:12px">description</v-icon>
-						<span v-show="this.mini==false">Juno</span>						
+						<span v-show="this.mini==false">Jupyter Notebook</span>						
 					</v-btn>
 				</v-flex>
 				<v-flex row xs12 >				

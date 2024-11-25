@@ -182,6 +182,7 @@ export default {
       localStorage.setItem("yunikorn_enable",response.data.config?.yunikorn_enable);
       localStorage.setItem("gpu_available",response.data.config?.gpu_available);
       localStorage.setItem("interLink_available",response.data.config?.interLink_available);
+      localStorage.setItem("oidc_groups",response.data.config?.oidc_groups);
     },
     checkLoginCallback(response){
       if(response == 200){

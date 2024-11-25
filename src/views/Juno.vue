@@ -23,10 +23,19 @@
                         >check_circle_outline</v-icon>
 
                         <div class="text-h4 font-weight-bold">The Juno service '{{ serviceName }}' is already deployed</div>
-                        <v-btn color="success" style="display: inline-flex; align-self: center;" 
-                        target="_blank" 
-                        :href="api+'/system/services/'+serviceName+'/exposed/?token='+serviceDefinition.environment.Variables.JUPYTER_TOKEN" >Access to Juno
-                        </v-btn>
+                        <div>
+                          <v-btn color="success" style="display: inline-flex; align-self: center;" 
+                          target="_blank" 
+                          :href="api+'/system/services/'+serviceName+'/exposed/?token='+serviceDefinition.environment.Variables.JUPYTER_TOKEN" >
+                          Access Jupyter Notebook
+                          </v-btn>
+                        </div>
+                        <div>
+                          <v-btn color="error" style="display: inline-flex; align-self: center;" 
+                          @click="deleteJuno">
+                          Delete Jupyter Notebook
+                          </v-btn>
+                        </div>
                       </div>
                     </v-flex>
                   </v-layout>
@@ -53,13 +62,12 @@
                           outline
                         ></v-select>
                         <v-text-field
-                          v-model="form.vo"
+                          v-model="oidc_groups"
                           label="VO"
                           style="padding-right: 5px;"
                         ></v-text-field>
                         <v-btn color="success" style="display: inline-flex; align-self: center;" @click="submit" >Create Juno
                         </v-btn>
-                        <i v-if="waiting_cluster" style="display: inline-flex; margin-left: 10%;" class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"></i>
                       </v-flex>
                     </v-flex>
                   </v-layout>
@@ -92,10 +100,10 @@ export default {
   data: () => ({
     user: (localStorage.getItem("user")?localStorage.getItem("user"): JSON.parse(localStorage.getItem("session")).user.info.name  ),
     show_spinner: true,
-    waiting_cluster: false,
-    accessKey:localStorage.getItem("accessKey"),
-    api:localStorage.getItem("api"),
-    endpoint:localStorage.getItem("endpoint"),
+    accessKey: localStorage.getItem("accessKey"),
+    api: localStorage.getItem("api"),
+    endpoint: localStorage.getItem("endpoint"),
+    oidc_groups: (localStorage.getItem("oidc_groups")=="undefined"?"":localStorage.getItem("oidc_groups")),
     bucket_list: [],
     bucket_selected:"",
     services:[],
@@ -157,7 +165,6 @@ export default {
       this.form.environment.Variables["JHUB_BASE_URL"]= "/system/services/"+user+"/exposed" 
       this.bucket_list.push(bucket)
       this.bucket_selected=bucket
-      this.show_spinner=false
     },
     getCheckServiceCallBack(response){
       try{
@@ -174,6 +181,8 @@ export default {
             this.serviceDefinition=response.data[index]
             this.junoexist=true
           }
+          this.show_spinner=false
+
 			  }
       }catch(err) {
             console.error("ERROR with list Services "+err);
@@ -199,20 +208,22 @@ export default {
 			if(response.status == 201){
 				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Function ${this.form.name} was successfully created.`, color: 'success', timeout: 12000 })
 				window.getApp.$emit('REFRESH_BUCKETS_LIST')
-        this.waiting_cluster=false
         this.junoexist = true
       }else if(response == "Error: Request failed with status code 409"){
         this.editServiceCall(this.form, this.editServiceCallBack)
 			}else {
 				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response, color: 'error' })
-        this.waiting_cluster=false
 			}
+      this.show_spinner=false
+
 
 		},
     submit(){
-      this.waiting_cluster=true
+      this.show_spinner=true
+
       this.form.environment.Variables["JUPYTER_DIRECTORY"]= "/mnt/"+this.bucket_selected
       this.form.mount.path=this.bucket_selected
+      this.form.vo=this.oidc_groups
       this.serviceDefinition=this.form
       this.createServiceCall(this.form,this.createServiceCallBack)
     },
@@ -222,8 +233,23 @@ export default {
 			}else {
 				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response, color: 'error' })
 			}
-      this.waiting_cluster=false
 		},
+    deleteJuno(){
+      this.show_spinner=true
+      this.deleteServiceCall( this.serviceName,this.deleteJunoCallback)
+    },
+    deleteJunoCallback(response){
+      if(response.status == 204){
+				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: `Jupyter Notebook ${this.form.name} has been deleted`, color: 'success' })
+        this.junoexist= false
+
+			}else {
+				window.getApp.$emit('APP_SHOW_SNACKBAR', { text: response, color: 'error' })
+			}
+      this.show_spinner=false
+
+
+    }
   }
 }
 </script>
