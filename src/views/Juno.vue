@@ -103,7 +103,7 @@ export default {
     accessKey: localStorage.getItem("accessKey"),
     api: localStorage.getItem("api"),
     endpoint: localStorage.getItem("endpoint"),
-    oidc_groups: (localStorage.getItem("oidc_groups")=="undefined"?localStorage.getItem("oidc_groups"):""),
+    oidc_groups: (localStorage.getItem("oidc_groups")=="undefined"?"":localStorage.getItem("oidc_groups")),
     bucket_list: [],
     bucket_selected:"",
     services:[],
