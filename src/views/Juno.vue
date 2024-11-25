@@ -8,7 +8,7 @@
           <v-layout row wrap>
             <v-flex xs12 sm12>
               <v-card flat>
-                  <h2 style="padding: 16px;text-align: center;position:relative" >Juno</h2>
+                  <h2 style="padding: 16px;text-align: center;position:relative" >Jupyter Notebook</h2>
                 <v-card-text  >
                   <v-layout class="rounded rounded-md" v-show="show_spinner" style="position:relative;align-content: center;">
                     <intersecting-circles-spinner style="left: 49.5%;"   :animation-duration="1200" :size="50" :color="'#0066ff'" />
